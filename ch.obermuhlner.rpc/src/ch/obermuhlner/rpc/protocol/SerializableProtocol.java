@@ -9,7 +9,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-
 /**
  * Uses Java {@link Serializable serialization} as {@link Protocol} to convert an object into a serialized representation and back. 
  *
@@ -20,7 +19,7 @@ public class SerializableProtocol<T extends Serializable> implements Protocol<T>
 	private final ClassLoader classLoader;
 
 	/**
-	 * Constructs a {@link Protocol} that uses the specified {@link ClassLoader} to deserialize the object.
+	 * Constructs a {@link SerializableProtocol} that uses the specified {@link ClassLoader} to deserialize the object.
 	 * 
 	 * @param classLoader the {@link ClassLoader} to create deserialized object instances, or <code>null</code> to use the standard Java class loader.
 	 */
