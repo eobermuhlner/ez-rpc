@@ -1,0 +1,85 @@
+package ch.obermuhlner.rpc.transport;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.protocol.Protocol;
+import ch.obermuhlner.rpc.service.Request;
+import ch.obermuhlner.rpc.service.Response;
+
+public class SocketServerTransport extends ServerTransportImpl {
+
+	private Protocol protocol;
+	
+	private int port;
+
+	private ServerSocket serverSocket;
+
+	private ExecutorService executorService;
+
+	public SocketServerTransport(Protocol protocol, int port) {
+		this(protocol, port, Executors.newCachedThreadPool());
+	}
+	
+	public SocketServerTransport(Protocol protocol, int port, ExecutorService executorService) {
+		this.protocol = protocol;
+		this.port = port;
+		this.executorService = executorService;
+	}
+	
+	public void run() {
+		try {
+			serverSocket = new ServerSocket(port);
+			
+			for (;;) {
+				executorService.execute(new SocketHandler(serverSocket.accept()));
+			}
+		} catch (IOException e) {
+			executorService.shutdown();
+		}
+	}
+	
+	private class SocketHandler implements Runnable {
+		private Socket socket;
+
+		public SocketHandler(Socket socket) {
+			this.socket = socket;
+		}
+		
+		public void run() {
+			try {
+				InputStream in = socket.getInputStream();
+
+				byte[] sizeData = new byte[4];
+				in.read(sizeData);
+				int requestSize = ByteUtils.toInt(sizeData);
+				
+				byte[] requestData = new byte[requestSize];
+				in.read(requestData);
+				
+				Request request = (Request) protocol.deserialize(requestData);
+				Response response = receive(request);
+				byte[] responseData = protocol.serialize(response);
+				
+				OutputStream out = socket.getOutputStream();
+				out.write(ByteUtils.toBytes(responseData.length));
+				out.write(responseData);
+				out.flush();
+			} catch (IOException e) {
+				throw new RpcServiceException(e);
+			} finally {
+				try {
+					socket.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+	}
+}
