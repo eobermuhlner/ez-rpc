@@ -4,7 +4,6 @@ import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
 
 public class HelloServiceSimpleLocalApp {
 
-
 	public static void main(String[] args) {
 		HelloServiceClient helloServiceClient = new HelloServiceClient();
 	

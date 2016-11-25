@@ -6,6 +6,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.converter.Converter;
+import ch.obermuhlner.rpc.transport.Transport;
 
 public class ServiceFactory {
 
@@ -30,6 +32,31 @@ public class ServiceFactory {
 					} else {
 						Method implMethod = serviceImpl.getClass().getMethod(method.getName(), method.getParameterTypes());
 						return implMethod.invoke(serviceImpl, args);
+					}
+				});
+		
+		@SuppressWarnings("unchecked")
+		Service proxyService = (Service) proxyObject;
+		
+		return proxyService;
+	}
+
+	public static <Service, AsyncService> Service createRemoteService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, Transport transport) {
+		Object proxyObject = Proxy.newProxyInstance(
+				serviceType.getClassLoader(),
+				new Class<?>[] { serviceType, asyncServiceType },
+				(Object proxy, Method method, Object[] args) -> {
+					boolean async = method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class;
+					
+					String serviceName = serviceType.getName();
+					String methodName = async ? withoutAsyncSuffix(method.getName()) : method.getName();
+
+					CompletableFuture<Object> future = transport.send(new Request(serviceName, methodName, args))
+							.thenApply(response -> response.result);
+					if (async) {
+						return future;
+					} else {
+						return future.get();
 					}
 				});
 		
