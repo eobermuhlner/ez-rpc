@@ -1,19 +1,12 @@
-package ch.obermuhlner.rpc.converter;
+package ch.obermuhlner.rpc.protocol;
 
 /**
- * Converts an object into a serialized form and from the serialized form back into an object.
+ * Protocol converts an object into a serialized form and from the serialized form back into an object.
  *
  * @param <T> the type of the object to convert
  */
-public interface Converter<T> {
+public interface Protocol<T> {
 
-	/**
-	 * Returns the length of the serialized form (if known).
-	 * 
-	 * @return the length of the serialized form in bytes if it is always the same, or negative if it varies with the data in the object or cannot be determined in advance. 
-	 */
-	int serializedLength();
-	
 	/**
 	 * Serializes an object into a byte array.
 	 * 

@@ -1,4 +1,4 @@
-package ch.obermuhlner.rpc.converter;
+package ch.obermuhlner.rpc.protocol;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,26 +11,21 @@ import java.io.Serializable;
 
 
 /**
- * Uses Java {@link Serializable serialization} to convert an object into a serialized representation and back. 
+ * Uses Java {@link Serializable serialization} as {@link Protocol} to convert an object into a serialized representation and back. 
  *
  * @param <T> the type of the object to convert
  */
-public class SerializableConverter<T extends Serializable> implements Converter<T> {
+public class SerializableProtocol<T extends Serializable> implements Protocol<T> {
 
 	private final ClassLoader classLoader;
 
 	/**
-	 * Constructs a converter that uses the specified {@link ClassLoader} to deserialize the object.
+	 * Constructs a {@link Protocol} that uses the specified {@link ClassLoader} to deserialize the object.
 	 * 
 	 * @param classLoader the {@link ClassLoader} to create deserialized object instances, or <code>null</code> to use the standard Java class loader.
 	 */
-	public SerializableConverter(ClassLoader classLoader) {
+	public SerializableProtocol(ClassLoader classLoader) {
 		this.classLoader = classLoader;
-	}
-	
-	@Override
-	public int serializedLength() {
-		return -1;
 	}
 	
 	@Override
