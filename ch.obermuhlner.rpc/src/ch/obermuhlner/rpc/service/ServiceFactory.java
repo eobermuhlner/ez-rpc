@@ -27,10 +27,10 @@ public class ServiceFactory {
 								throw new RpcServiceException(e);
 							}
 						});
+					} else {
+						Method implMethod = serviceImpl.getClass().getMethod(method.getName(), method.getParameterTypes());
+						return implMethod.invoke(serviceImpl, args);
 					}
-					
-					Method implMethod = serviceImpl.getClass().getMethod(method.getName(), method.getParameterTypes());
-					return implMethod.invoke(serviceImpl, args);
 				});
 		
 		@SuppressWarnings("unchecked")
