@@ -10,7 +10,7 @@ import ch.obermuhlner.rpc.RpcServiceException;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
 
-public class LocalTransport implements Transport {
+public class LocalTransport implements ClientTransport, ServerTransport {
 
 	private final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
 	private final Map<String, Method> methodMap = new ConcurrentHashMap<>();

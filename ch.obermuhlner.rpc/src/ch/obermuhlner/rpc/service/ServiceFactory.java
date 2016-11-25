@@ -6,7 +6,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import ch.obermuhlner.rpc.RpcServiceException;
-import ch.obermuhlner.rpc.transport.Transport;
+import ch.obermuhlner.rpc.transport.ClientTransport;
+import ch.obermuhlner.rpc.transport.ServerTransport;
 
 public class ServiceFactory {
 
@@ -40,7 +41,7 @@ public class ServiceFactory {
 		return proxyService;
 	}
 
-	public static <Service, AsyncService> Service createRemoteService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, Transport transport) {
+	public static <Service, AsyncService> Service createRemoteService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ClientTransport clientTransport) {
 		Object proxyObject = Proxy.newProxyInstance(
 				serviceType.getClassLoader(),
 				new Class<?>[] { serviceType, asyncServiceType },
@@ -50,7 +51,7 @@ public class ServiceFactory {
 					String serviceName = serviceType.getName();
 					String methodName = async ? withoutAsyncSuffix(method.getName()) : method.getName();
 
-					CompletableFuture<Object> future = transport.send(new Request(serviceName, methodName, args))
+					CompletableFuture<Object> future = clientTransport.send(new Request(serviceName, methodName, args))
 							.thenApply(response -> response.result);
 					if (async) {
 						return future;
@@ -65,8 +66,8 @@ public class ServiceFactory {
 		return proxyService;
 	}
 	
-	public static <Service, ServiceImpl extends Service> void publishService(Class<Service> serviceType, ServiceImpl serviceImpl, Transport transport) {
-		transport.register(serviceType, serviceImpl);
+	public static <Service, ServiceImpl extends Service> void publishService(Class<Service> serviceType, ServiceImpl serviceImpl, ServerTransport serverTransport) {
+		serverTransport.register(serviceType, serviceImpl);
 	}
 
 	private static String withoutAsyncSuffix(String name) {
