@@ -5,7 +5,7 @@ package ch.obermuhlner.rpc.protocol;
  *
  * @param <T> the type of the object to convert
  */
-public interface Protocol<T> {
+public interface Protocol {
 
 	/**
 	 * Serializes an object into a byte array.
@@ -13,7 +13,7 @@ public interface Protocol<T> {
 	 * @param element the object to serializable, or <code>null</code>
 	 * @return the serialized representation
 	 */
-	byte[] serialize(T element);
+	byte[] serialize(Object element);
 	
 	/**
 	 * Deserializes a byte array into an object.
@@ -21,5 +21,5 @@ public interface Protocol<T> {
 	 * @param data the serialized representation
 	 * @return the deserialized object, or <code>null</code>
 	 */
-	T deserialize(byte[] data);
+	Object deserialize(byte[] data);
 }

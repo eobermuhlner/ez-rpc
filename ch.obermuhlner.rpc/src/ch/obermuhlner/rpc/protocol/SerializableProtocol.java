@@ -14,7 +14,7 @@ import java.io.Serializable;
  *
  * @param <T> the type of the object to convert
  */
-public class SerializableProtocol<T extends Serializable> implements Protocol<T> {
+public class SerializableProtocol implements Protocol {
 
 	private final ClassLoader classLoader;
 
@@ -28,14 +28,14 @@ public class SerializableProtocol<T extends Serializable> implements Protocol<T>
 	}
 	
 	@Override
-	public byte[] serialize(T source) {
+	public byte[] serialize(Object source) {
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream(512);
 		serialize(source, byteStream);
 		return byteStream.toByteArray();
 	}
 
 	@Override
-	public T deserialize(byte[] source) {
+	public Object deserialize(byte[] source) {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(source);
 		return deserialize(inputStream, classLoader);
 	}
@@ -56,14 +56,11 @@ public class SerializableProtocol<T extends Serializable> implements Protocol<T>
 	 * @param classLoader the {@link ClassLoader} to create deserialized object instances, or <code>null</code> to use the standard Java class loader.
 	 * @return the deserialized object
 	 */
-	public static <T extends Serializable> T deserialize(InputStream inputStream, ClassLoader classLoader) {
+	public static Object deserialize(InputStream inputStream, ClassLoader classLoader) {
 		ObjectInputStream in = null;
 		try {
 			in = new ClassLoaderObjectInputStream(inputStream, classLoader);
-			@SuppressWarnings("unchecked")
-			T result = (T) in.readObject();
-			return result;
-
+			return in.readObject();
 		}
 		catch (ClassNotFoundException exception) {
 			throw new IllegalArgumentException(exception);
@@ -87,7 +84,7 @@ public class SerializableProtocol<T extends Serializable> implements Protocol<T>
 	 * @param source the object to serialize, or <code>null</code>
 	 * @param outputStream the {@link OutputStream} to serialize into
 	 */
-	public static <T extends Serializable> void serialize(T source, OutputStream outputStream) {
+	public static void serialize(Object source, OutputStream outputStream) {
 		ObjectOutputStream out = null;
 		try {
 			out = new ObjectOutputStream(outputStream);
