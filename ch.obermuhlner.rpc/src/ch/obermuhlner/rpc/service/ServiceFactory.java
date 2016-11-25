@@ -6,7 +6,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import ch.obermuhlner.rpc.RpcServiceException;
-import ch.obermuhlner.rpc.converter.Converter;
 import ch.obermuhlner.rpc.transport.Transport;
 
 public class ServiceFactory {
@@ -64,6 +63,10 @@ public class ServiceFactory {
 		Service proxyService = (Service) proxyObject;
 		
 		return proxyService;
+	}
+	
+	public static <Service, ServiceImpl extends Service> void publishService(Class<Service> serviceType, ServiceImpl serviceImpl, Transport transport) {
+		transport.register(serviceType, serviceImpl);
 	}
 
 	private static String withoutAsyncSuffix(String name) {

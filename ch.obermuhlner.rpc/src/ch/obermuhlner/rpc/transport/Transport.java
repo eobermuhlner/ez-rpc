@@ -10,4 +10,6 @@ public interface Transport {
 	CompletableFuture<Response> send(Request request);
 	
 	Response receive(Request request);
+	
+	<Service> void register(Class<Service> serviceType, Service service);
 }

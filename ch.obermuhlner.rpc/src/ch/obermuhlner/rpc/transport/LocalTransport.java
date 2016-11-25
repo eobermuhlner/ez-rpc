@@ -15,6 +15,7 @@ public class LocalTransport implements Transport {
 	private final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
 	private final Map<String, Method> methodMap = new ConcurrentHashMap<>();
 	
+	@Override
 	public <Service> void register(Class<Service> serviceType, Service service) {
 		String serviceName = serviceType.getName();
 		
