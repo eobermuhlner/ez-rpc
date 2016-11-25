@@ -6,7 +6,7 @@ public class HelloServiceImpl implements HelloService {
 
 	@Override
 	public void ping() {
-		new RuntimeException("Ping").printStackTrace();
+		new RuntimeException("Ping").printStackTrace(System.out);
 	}
 
 	@Override
