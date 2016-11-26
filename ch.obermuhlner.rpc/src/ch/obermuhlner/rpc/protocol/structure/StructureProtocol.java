@@ -85,7 +85,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 			writer.writeSetEnd();
 		} else if (element instanceof Double) {
 			writer.writeDouble((Double) element);
-		} else if (element instanceof Double) {
+		} else if (element instanceof Integer) {
 			writer.writeInt((Integer) element);
 		} else if (element instanceof Long) {
 			writer.writeLong((Long) element);
