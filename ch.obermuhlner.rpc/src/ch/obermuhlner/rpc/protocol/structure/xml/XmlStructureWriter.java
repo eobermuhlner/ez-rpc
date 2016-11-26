@@ -1,8 +1,9 @@
-package ch.obermuhlner.rpc.protocol.structure;
+package ch.obermuhlner.rpc.protocol.structure.xml;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.regex.Pattern;
+
+import ch.obermuhlner.rpc.protocol.structure.StructureWriter;
 
 public class XmlStructureWriter implements StructureWriter {
 

@@ -1,10 +1,12 @@
-package ch.obermuhlner.rpc.protocol.structure;
+package ch.obermuhlner.rpc.protocol.structure.binary;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.protocol.structure.StructureReader;
+import ch.obermuhlner.rpc.protocol.structure.Type;
 
 public class BinaryStructureReader implements StructureReader {
 

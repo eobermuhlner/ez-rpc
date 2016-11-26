@@ -1,8 +1,10 @@
-package ch.obermuhlner.rpc.protocol.structure;
+package ch.obermuhlner.rpc.protocol.structure.binary;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import ch.obermuhlner.rpc.protocol.structure.StructureWriter;
 
 public class BinaryStructureWriter implements StructureWriter {
 
