@@ -30,7 +30,8 @@ public class HelloServiceSocketClientApp {
 				HelloServiceImpl.class.getClassLoader());
 		SocketClientTransport socketClientTransport = new SocketClientTransport(protocol, "localhost", port);
 		
-		HelloService proxyService = ServiceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, socketClientTransport);
+		ServiceFactory serviceFactory = new ServiceFactory();
+		HelloService proxyService = serviceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, socketClientTransport);
 		
 		helloServiceClient.setHelloService(proxyService);
 		helloServiceClient.setHelloServiceAsync((HelloServiceAsync) proxyService);

@@ -19,7 +19,8 @@ public class HelloServiceLocalApp {
 	
 		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		
-		HelloService proxyService = ServiceFactory.createLocalService(HelloService.class, HelloServiceAsync.class, helloServiceImpl);
+		ServiceFactory serviceFactory = new ServiceFactory();
+		HelloService proxyService = serviceFactory.createLocalService(HelloService.class, HelloServiceAsync.class, helloServiceImpl);
 		
 		helloServiceClient.setHelloService(proxyService);
 		helloServiceClient.setHelloServiceAsync((HelloServiceAsync) proxyService);

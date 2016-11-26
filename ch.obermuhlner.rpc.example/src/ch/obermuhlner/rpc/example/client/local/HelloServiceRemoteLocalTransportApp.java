@@ -22,8 +22,9 @@ public class HelloServiceRemoteLocalTransportApp {
 		
 		LocalTransport transport = new LocalTransport();
 		
-		ServiceFactory.publishService(HelloService.class, helloServiceImpl, transport);
-		HelloService proxyService = ServiceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, transport);
+		ServiceFactory serviceFactory = new ServiceFactory();
+		serviceFactory.publishService(HelloService.class, helloServiceImpl, transport);
+		HelloService proxyService = serviceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, transport);
 		
 		helloServiceClient.setHelloService(proxyService);
 		helloServiceClient.setHelloServiceAsync((HelloServiceAsync) proxyService);

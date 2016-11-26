@@ -13,7 +13,7 @@ public class ServiceFactory {
 
 	private static final String ASYNC_SUFFIX = "Async";
 
-	public static <Service, AsyncService, ServiceImpl extends Service> Service createLocalService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ServiceImpl serviceImpl) {
+	public <Service, AsyncService, ServiceImpl extends Service> Service createLocalService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ServiceImpl serviceImpl) {
 		Object proxyObject = Proxy.newProxyInstance(
 				serviceType.getClassLoader(),
 				new Class<?>[] { serviceType, asyncServiceType },
@@ -41,7 +41,7 @@ public class ServiceFactory {
 		return proxyService;
 	}
 
-	public static <Service, AsyncService> Service createRemoteService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ClientTransport clientTransport) {
+	public <Service, AsyncService> Service createRemoteService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ClientTransport clientTransport) {
 		Object proxyObject = Proxy.newProxyInstance(
 				serviceType.getClassLoader(),
 				new Class<?>[] { serviceType, asyncServiceType },
@@ -70,11 +70,11 @@ public class ServiceFactory {
 		return proxyService;
 	}
 	
-	public static <Service, ServiceImpl extends Service> void publishService(Class<Service> serviceType, ServiceImpl serviceImpl, ServerTransport serverTransport) {
+	public <Service, ServiceImpl extends Service> void publishService(Class<Service> serviceType, ServiceImpl serviceImpl, ServerTransport serverTransport) {
 		serverTransport.register(serviceType, serviceImpl);
 	}
 
-	private static String withoutAsyncSuffix(String name) {
+	private String withoutAsyncSuffix(String name) {
 		if (name.endsWith(ASYNC_SUFFIX)) {
 			return name.substring(0, name.length() - ASYNC_SUFFIX.length());
 		}

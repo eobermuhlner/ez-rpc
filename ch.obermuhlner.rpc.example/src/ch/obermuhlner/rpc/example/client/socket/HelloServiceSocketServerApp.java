@@ -27,7 +27,8 @@ public class HelloServiceSocketServerApp {
 		
 		SocketServerTransport socketServerTransport = new SocketServerTransport(protocol, port);
 
-		ServiceFactory.publishService(HelloService.class, helloServiceImpl, socketServerTransport);
+		ServiceFactory serviceFactory = new ServiceFactory();
+		serviceFactory.publishService(HelloService.class, helloServiceImpl, socketServerTransport);
 
 		System.out.println("Server running ...");
 		executorService.execute(() -> socketServerTransport.run());
