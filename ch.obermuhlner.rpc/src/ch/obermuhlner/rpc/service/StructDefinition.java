@@ -1,4 +1,4 @@
-package ch.obermuhlner.rpc.protocol.structure;
+package ch.obermuhlner.rpc.service;
 
 public class StructDefinition {
 

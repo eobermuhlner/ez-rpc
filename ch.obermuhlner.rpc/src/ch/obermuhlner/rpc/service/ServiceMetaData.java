@@ -5,7 +5,6 @@ import java.util.Map;
 
 import ch.obermuhlner.rpc.RpcServiceException;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
-import ch.obermuhlner.rpc.protocol.structure.StructDefinition;
 
 public class ServiceMetaData {
 
