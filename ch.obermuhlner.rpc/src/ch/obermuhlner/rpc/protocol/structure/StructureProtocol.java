@@ -16,10 +16,10 @@ import java.util.Set;
 import java.util.function.Function;
 
 import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.meta.ServiceMetaData;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
-import ch.obermuhlner.rpc.service.ServiceMetaData;
 
 public class StructureProtocol<T> implements Protocol<T> {
 

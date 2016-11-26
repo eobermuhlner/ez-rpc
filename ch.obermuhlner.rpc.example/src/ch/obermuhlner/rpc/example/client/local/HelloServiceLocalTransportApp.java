@@ -4,10 +4,10 @@ import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.api.HelloServiceAsync;
 import ch.obermuhlner.rpc.example.client.HelloServiceClient;
 import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
+import ch.obermuhlner.rpc.meta.ServiceMetaData;
 import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
 import ch.obermuhlner.rpc.service.ProtocolFactory;
 import ch.obermuhlner.rpc.service.ServiceFactory;
-import ch.obermuhlner.rpc.service.ServiceMetaData;
 import ch.obermuhlner.rpc.transport.LocalTransport;
 
 public class HelloServiceLocalTransportApp {

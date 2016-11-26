@@ -1,4 +1,4 @@
-package ch.obermuhlner.rpc.service;
+package ch.obermuhlner.rpc.meta;
 
 public class StructDefinition {
 
