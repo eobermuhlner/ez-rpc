@@ -2,9 +2,9 @@ package ch.obermuhlner.rpc.example.api;
 
 import java.util.List;
 
-import ch.obermuhlner.rpc.annotation.RpcObject;
+import ch.obermuhlner.rpc.annotation.RpcStruct;
 
-@RpcObject(name = "Person")
+@RpcStruct(name = "Person")
 public class Person {
 	public String name;
 	public int age;

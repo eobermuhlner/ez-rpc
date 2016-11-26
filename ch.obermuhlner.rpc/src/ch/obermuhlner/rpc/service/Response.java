@@ -2,9 +2,9 @@ package ch.obermuhlner.rpc.service;
 
 import java.io.Serializable;
 
-import ch.obermuhlner.rpc.annotation.RpcObject;
+import ch.obermuhlner.rpc.annotation.RpcStruct;
 
-@RpcObject(name = "RpcResponse")
+@RpcStruct(name = "RpcResponse")
 public class Response implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

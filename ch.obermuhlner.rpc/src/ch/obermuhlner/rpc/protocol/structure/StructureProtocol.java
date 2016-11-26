@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import ch.obermuhlner.rpc.RpcServiceException;
-import ch.obermuhlner.rpc.annotation.RpcObject;
+import ch.obermuhlner.rpc.annotation.RpcStruct;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
@@ -43,7 +43,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 	public void registerStruct(Class<?> type) {
 		String name = type.getName();
 		
-		RpcObject annotation = type.getAnnotation(RpcObject.class);
+		RpcStruct annotation = type.getAnnotation(RpcStruct.class);
 		if (annotation != null) {
 			if (annotation.name() != null && !annotation.name().equals("")) {
 				name = annotation.name();

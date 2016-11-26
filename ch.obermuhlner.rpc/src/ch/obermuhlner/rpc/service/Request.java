@@ -3,9 +3,9 @@ package ch.obermuhlner.rpc.service;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import ch.obermuhlner.rpc.annotation.RpcObject;
+import ch.obermuhlner.rpc.annotation.RpcStruct;
 
-@RpcObject(name = "RpcRequest")
+@RpcStruct(name = "RpcRequest")
 public class Request implements Serializable {
 
 	private static final long serialVersionUID = 1L;
