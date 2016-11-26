@@ -76,8 +76,10 @@ public class StructureProtocol<T> implements Protocol<T> {
 			Map<Object, Object> map = (Map<Object, Object>) element;
 			writer.writeMapBegin(map.size());
 			for (Entry<Object, Object> entry : map.entrySet()) {
+				writer.writeMapEntryBegin();
 				write(writer, entry.getKey());
 				write(writer, entry.getValue());
+				writer.writeMapEntryEnd();
 			}
 			writer.writeSetEnd();
 		} else if (element instanceof Double) {
@@ -190,7 +192,9 @@ public class StructureProtocol<T> implements Protocol<T> {
 		
 		int size = reader.readSetBegin();
 		for (int i = 0; i < size; i++) {
+			reader.readMapEntryBegin();
 			set.put(read(reader), read(reader));
+			reader.readMapEntryEnd();
 		}
 		
 		return set;

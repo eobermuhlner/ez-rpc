@@ -95,6 +95,16 @@ public class BinaryStructureWriter implements StructureWriter {
 	}
 
 	@Override
+	public void writeMapEntryBegin() {
+		// does nothing
+	}
+
+	@Override
+	public void writeMapEntryEnd() {
+		// does nothing
+	}
+
+	@Override
 	public void writeFieldBegin(String name) {
 		try {
 			out.writeByte(FIELD);

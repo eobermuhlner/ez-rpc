@@ -113,6 +113,16 @@ public class BinaryStructureReader implements StructureReader {
 	}
 
 	@Override
+	public void readMapEntryBegin() {
+		// ignore
+	}
+
+	@Override
+	public void readMapEntryEnd() {
+		// ignore
+	}
+
+	@Override
 	public String readFieldBegin() {
 		try {
 			return in.readUTF();

@@ -19,6 +19,9 @@ public interface StructureReader {
 	int readMapBegin();
 	void readMapEnd();
 	
+	void readMapEntryBegin();
+	void readMapEntryEnd();
+	
 	String readFieldBegin();
 	void readFieldEnd();
 	

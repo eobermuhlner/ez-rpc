@@ -17,6 +17,9 @@ public interface StructureWriter {
 	void writeMapBegin(int size);
 	void writeMapEnd();
 
+	void writeMapEntryBegin();
+	void writeMapEntryEnd();
+
 	void writeFieldBegin(String name);
 	void writeFieldEnd();
 	void writeFieldStop();
