@@ -20,6 +20,10 @@ public class MetaDataService {
 	private final Map<String, StructDefinition> mapTypeToStructDefinition = new HashMap<>();
 
 	public synchronized void load(File file) {
+		if (!file.exists()) {
+			return;
+		}
+		
 		MetaData loading = loadMetaData(file);
 		
 		for (StructDefinition structDefinition : loading.getStructDefinitions()) {

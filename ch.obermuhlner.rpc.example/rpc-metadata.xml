@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<metaData>
+    <struct>
+        <name>ch.obermuhlner.rpc.example.api.HelloService</name>
+        <javaTypeName>ch.obermuhlner.rpc.example.api.HelloService</javaTypeName>
+    </struct>
+    <struct>
+        <name>ExampleData</name>
+        <javaTypeName>ch.obermuhlner.rpc.example.api.ExampleData</javaTypeName>
+    </struct>
+</metaData>
