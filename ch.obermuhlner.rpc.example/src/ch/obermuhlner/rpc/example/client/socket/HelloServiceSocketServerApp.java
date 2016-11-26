@@ -5,7 +5,6 @@ import java.util.concurrent.Executors;
 
 import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
-import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.protocol.structure.BinaryStructureReader;
 import ch.obermuhlner.rpc.protocol.structure.BinaryStructureWriter;
 import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
@@ -21,10 +20,11 @@ public class HelloServiceSocketServerApp {
 		
 		int port = 5924;
 		//Protocol<Object> protocol = new SerializableProtocol(HelloServiceImpl.class.getClassLoader());
-		Protocol<Object> protocol = new StructureProtocol<Object>(
+		StructureProtocol<Object> protocol = new StructureProtocol<Object>(
 				(in) -> new BinaryStructureReader(in),
 				(out) -> new BinaryStructureWriter(out),
 				HelloServiceImpl.class.getClassLoader());
+		
 		SocketServerTransport socketServerTransport = new SocketServerTransport(protocol, port);
 
 		ServiceFactory.publishService(HelloService.class, helloServiceImpl, socketServerTransport);
