@@ -37,6 +37,7 @@ public class HelloServiceClient {
 		exampleData.listField = new ArrayList<>();
 		exampleData.listField.add("alpha");
 		exampleData.listField.add("beta");
+		exampleData.nestedExampleData = new ExampleData();
 		System.out.println(helloService.exampleMethod(exampleData));
 	}
 }
