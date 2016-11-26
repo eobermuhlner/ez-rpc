@@ -51,7 +51,11 @@ public class ServiceFactory {
 					String serviceName = serviceType.getName();
 					String methodName = async ? withoutAsyncSuffix(method.getName()) : method.getName();
 
-					CompletableFuture<Object> future = clientTransport.send(new Request(serviceName, methodName, args))
+					Request request = new Request();
+					request.serviceName = serviceName;
+					request.methodName = methodName;
+					request.arguments = args;
+					CompletableFuture<Object> future = clientTransport.send(request)
 							.thenApply(response -> response.result);
 					if (async) {
 						return future;

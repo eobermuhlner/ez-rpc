@@ -96,17 +96,24 @@ public class StructureProtocol<T> implements Protocol<T> {
 			fieldDefinition.name = field.getName();
 			try {
 				fieldDefinition.value = field.get(element);
-				write(writer, fieldDefinition);
+				writeField(writer, fieldDefinition);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RpcServiceException(e);
 			}
 		}
 		
+		writer.writeFieldStop();
 		writer.writeStructEnd();
 	}
 
+	private void writeField(StructureWriter writer, FieldDefinition fieldDefinition) {
+		writer.writeFieldBegin(fieldDefinition.name);
+		write(writer, fieldDefinition.value);
+		writer.writeFieldEnd();
+	}
+
 	private String getStructName(Class<?> type) {
-		return type.getSimpleName();
+		return type.getName();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -204,26 +211,43 @@ public class StructureProtocol<T> implements Protocol<T> {
 
 	private Object createStruct(String name) {
 		try {
-			Object struct = Class.forName(name, false, classLoader);
-			return struct;
-		} catch (ClassNotFoundException e) {
+			Class<?> type = Class.forName(name, false, classLoader);
+			return type.newInstance();
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			throw new RpcServiceException(e);
 		}
 	}
 
 	private void addField(Object struct, FieldDefinition fieldDefinition) {
 		try {
-			Method method = findSetterMethod(struct.getClass(), fieldDefinition);
+			Class<?> type = struct.getClass();
+
+			Method method = findSetterMethod(type, fieldDefinition);
 			if (method != null) {
-					method.invoke(struct, fieldDefinition.value);
+				Object value = autoConvert(fieldDefinition.value, method.getParameters()[0].getType());
+				method.invoke(struct, value);
 			}
 			
-			Field field = struct.getClass().getField(fieldDefinition.name);
+			Field field = type.getField(fieldDefinition.name);
 			field.setAccessible(true);
-			field.set(struct, fieldDefinition.value);
+			Object value = autoConvert(fieldDefinition.value, field.getType());
+			field.set(struct, value);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException | SecurityException e) {
 			throw new RpcServiceException(e);
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Object autoConvert(Object value, Class<?> type) {
+		if (value == null) {
+			return null;
+		}
+		
+		if (value instanceof List && type == Object[].class) {
+			return ((List) value).toArray();
+		}
+		
+		return value;
 	}
 
 	private Method findSetterMethod(Class<?> type, FieldDefinition field) {
@@ -232,9 +256,10 @@ public class StructureProtocol<T> implements Protocol<T> {
 
 		if (field.value != null) {
 			try {
-				type.getMethod(methodName, field.value.getClass());
+				Method method = type.getMethod(methodName, field.value.getClass());
+				return method;
 			} catch (NoSuchMethodException | SecurityException e) {
-				throw new RpcServiceException(e);
+				// ignore
 			}
 		}
 		
@@ -267,5 +292,10 @@ public class StructureProtocol<T> implements Protocol<T> {
 	private static class FieldDefinition {
 		public String name;
 		public Object value;
+		
+		@Override
+		public String toString() {
+			return "FieldDefinition [name=" + name + ", value=" + value + "]";
+		}
 	}
 }

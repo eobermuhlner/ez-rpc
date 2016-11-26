@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ch.obermuhlner.rpc.RpcServiceException;
+
 public class BinaryStructureReader implements StructureReader {
 
 	private final DataInputStream in;
@@ -35,6 +37,8 @@ public class BinaryStructureReader implements StructureReader {
 				return Type.SET;
 			case BinaryStructureWriter.FIELD:
 				return Type.FIELD;
+			case BinaryStructureWriter.FIELD_STOP:
+				return Type.FIELD_STOP;
 			case BinaryStructureWriter.INT:
 				return Type.INT;
 			case BinaryStructureWriter.LONG:
@@ -43,12 +47,16 @@ public class BinaryStructureReader implements StructureReader {
 				return Type.DOUBLE;
 			case BinaryStructureWriter.STRING:
 				return Type.STRING;
+			case BinaryStructureWriter.NULL:
+				return Type.NULL;
 			}
+			
+			throw new RpcServiceException("Unknown type: " + type);
 		} catch (IOException e) {
 			// ignore
 		}
 		
-		throw new IllegalArgumentException();
+		throw new RpcServiceException();
 	}
 
 	@Override
