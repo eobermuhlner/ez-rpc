@@ -4,7 +4,7 @@ import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.api.HelloServiceAsync;
 import ch.obermuhlner.rpc.example.client.HelloServiceClient;
 import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
-import ch.obermuhlner.rpc.meta.ServiceMetaData;
+import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
 import ch.obermuhlner.rpc.service.ProtocolFactory;
 import ch.obermuhlner.rpc.service.ServiceFactory;
@@ -21,7 +21,7 @@ public class HelloServiceSocketClientApp {
 	private static HelloServiceClient setupHelloServiceClient() {
 		HelloServiceClient helloServiceClient = new HelloServiceClient();
 	
-		ServiceMetaData serviceMetaData = new ServiceMetaData();
+		MetaDataService serviceMetaData = new MetaDataService();
 		
 		int port = 5924;
 		//Protocol<Object> protocol = new SerializableProtocol(HelloServiceImpl.class.getClassLoader());

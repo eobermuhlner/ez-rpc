@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import ch.obermuhlner.rpc.RpcServiceException;
-import ch.obermuhlner.rpc.meta.ServiceMetaData;
+import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.meta.StructDefinition;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.service.Request;
@@ -27,9 +27,9 @@ public class StructureProtocol<T> implements Protocol<T> {
 	private final Function<InputStream, StructureReader> readerProvider;
 	private final Function<OutputStream, StructureWriter> writerProvider;
 	private final ClassLoader classLoader;
-	private ServiceMetaData serviceMetaData;
+	private MetaDataService serviceMetaData;
 	
-	public StructureProtocol(ServiceMetaData serviceMetaData, Function<InputStream, StructureReader> readerProvider, Function<OutputStream, StructureWriter> writerProvider, ClassLoader classLoader) {
+	public StructureProtocol(MetaDataService serviceMetaData, Function<InputStream, StructureReader> readerProvider, Function<OutputStream, StructureWriter> writerProvider, ClassLoader classLoader) {
 		this.serviceMetaData = serviceMetaData;
 		this.readerProvider = readerProvider;
 		this.writerProvider = writerProvider;

@@ -4,7 +4,7 @@ import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.api.HelloServiceAsync;
 import ch.obermuhlner.rpc.example.client.HelloServiceClient;
 import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
-import ch.obermuhlner.rpc.meta.ServiceMetaData;
+import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
 import ch.obermuhlner.rpc.service.ProtocolFactory;
 import ch.obermuhlner.rpc.service.ServiceFactory;
@@ -23,7 +23,7 @@ public class HelloServiceLocalTransportApp {
 	
 		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		
-		ServiceMetaData serviceMetaData = new ServiceMetaData();
+		MetaDataService serviceMetaData = new MetaDataService();
 		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(serviceMetaData, HelloServiceImpl.class.getClassLoader());
 
 		LocalTransport transport = new LocalTransport(protocol);

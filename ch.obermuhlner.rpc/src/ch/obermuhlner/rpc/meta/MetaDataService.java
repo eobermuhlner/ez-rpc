@@ -6,7 +6,7 @@ import java.util.Map;
 import ch.obermuhlner.rpc.RpcServiceException;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 
-public class ServiceMetaData {
+public class MetaDataService {
 
 	private final Map<String, StructDefinition> mapNameToStructDefinition = new HashMap<>();
 	private final Map<Class<?>, StructDefinition> mapTypeToStructDefinition = new HashMap<>();

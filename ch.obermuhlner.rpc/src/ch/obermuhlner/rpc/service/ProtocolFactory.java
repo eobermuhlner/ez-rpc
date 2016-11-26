@@ -1,6 +1,6 @@
 package ch.obermuhlner.rpc.service;
 
-import ch.obermuhlner.rpc.meta.ServiceMetaData;
+import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.protocol.JavaSerializableProtocol;
 import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
 import ch.obermuhlner.rpc.protocol.structure.binary.BinaryStructureReader;
@@ -12,7 +12,7 @@ public class ProtocolFactory {
 		return new JavaSerializableProtocol(classLoader);
 	}
 	
-	public static StructureProtocol<Object> binaryProtocol(ServiceMetaData serviceMetaData, ClassLoader classLoader) {
+	public static StructureProtocol<Object> binaryProtocol(MetaDataService serviceMetaData, ClassLoader classLoader) {
 		return new StructureProtocol<Object>(
 				serviceMetaData,
 				(in) -> new BinaryStructureReader(in),
