@@ -8,9 +8,9 @@ import java.io.OutputStream;
  *
  * @param <T> the type of the object to convert
  */
-public interface Protocol {
+public interface Protocol<T> {
 
-	void serialize(OutputStream out, Object element);
+	void serialize(OutputStream out, T element);
 	
-	Object deserialize(InputStream in);
+	T deserialize(InputStream in);
 }

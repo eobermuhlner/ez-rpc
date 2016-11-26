@@ -17,7 +17,7 @@ import ch.obermuhlner.rpc.service.Response;
 
 public class SocketServerTransport extends ServerTransportImpl {
 
-	private Protocol protocol;
+	private Protocol<Object> protocol;
 	
 	private int port;
 
@@ -25,11 +25,11 @@ public class SocketServerTransport extends ServerTransportImpl {
 
 	private ExecutorService executorService;
 
-	public SocketServerTransport(Protocol protocol, int port) {
+	public SocketServerTransport(Protocol<Object> protocol, int port) {
 		this(protocol, port, Executors.newCachedThreadPool());
 	}
 	
-	public SocketServerTransport(Protocol protocol, int port, ExecutorService executorService) {
+	public SocketServerTransport(Protocol<Object> protocol, int port, ExecutorService executorService) {
 		this.protocol = protocol;
 		this.port = port;
 		this.executorService = executorService;

@@ -12,7 +12,7 @@ import java.io.Serializable;
  *
  * @param <T> the type of the object to convert
  */
-public class SerializableProtocol implements Protocol {
+public class SerializableProtocol implements Protocol<Object> {
 
 	private final ClassLoader classLoader;
 

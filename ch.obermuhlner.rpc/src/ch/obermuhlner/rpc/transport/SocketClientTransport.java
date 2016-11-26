@@ -15,11 +15,11 @@ import ch.obermuhlner.rpc.service.Response;
 
 public class SocketClientTransport implements ClientTransport {
 
-	private Protocol protocol;
+	private Protocol<Object> protocol;
 	private String host;
 	private int port;
 
-	public SocketClientTransport(Protocol protocol, String host, int port) {
+	public SocketClientTransport(Protocol<Object> protocol, String host, int port) {
 		this.protocol = protocol;
 		this.host = host;
 		this.port = port;
