@@ -22,7 +22,7 @@ public class ByteUtils {
 		
 		return byteArrayOutputStream.toByteArray();
 	}
-
+	
 	public static int toInt(byte[] data) {
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
 		DataInputStream in = new DataInputStream(byteArrayInputStream);

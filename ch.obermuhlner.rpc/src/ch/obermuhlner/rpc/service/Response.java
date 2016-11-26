@@ -8,4 +8,9 @@ public class Response implements Serializable {
 
 	public Object result;
 	public Exception exception;
+	
+	@Override
+	public String toString() {
+		return "Response [result=" + result + ", exception=" + exception + "]";
+	}
 }

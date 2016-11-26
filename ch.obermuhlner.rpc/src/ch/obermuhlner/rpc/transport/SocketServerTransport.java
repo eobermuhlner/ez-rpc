@@ -1,5 +1,7 @@
 package ch.obermuhlner.rpc.transport;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -63,9 +65,12 @@ public class SocketServerTransport extends ServerTransportImpl {
 				byte[] requestData = new byte[requestSize];
 				in.read(requestData);
 				
-				Request request = (Request) protocol.deserialize(requestData);
+				Request request = (Request) protocol.deserialize(new ByteArrayInputStream(requestData));
 				Response response = receive(request);
-				byte[] responseData = protocol.serialize(response);
+				
+				ByteArrayOutputStream responseByteArrayOutputStream = new ByteArrayOutputStream();
+				protocol.serialize(responseByteArrayOutputStream, response);
+				byte[] responseData = responseByteArrayOutputStream.toByteArray();
 				
 				OutputStream out = socket.getOutputStream();
 				out.write(ByteUtils.toBytes(responseData.length));

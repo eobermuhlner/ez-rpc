@@ -1,6 +1,7 @@
 package ch.obermuhlner.rpc.service;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class Request implements Serializable {
 
@@ -15,4 +16,10 @@ public class Request implements Serializable {
 		this.methodName = methodName;
 		this.arguments = arguments;
 	}
+
+	@Override
+	public String toString() {
+		return "Request [serviceName=" + serviceName + ", methodName=" + methodName + ", arguments=" + Arrays.toString(arguments) + "]";
+	}
+
 }

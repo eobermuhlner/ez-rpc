@@ -1,5 +1,7 @@
 package ch.obermuhlner.rpc.transport;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,7 +31,9 @@ public class SocketClientTransport implements ClientTransport {
 			try (Socket socket = new Socket(host, port)) {
 				OutputStream out = socket.getOutputStream();
 				
-				byte[] requestData = protocol.serialize(request);
+				ByteArrayOutputStream requestByteArrayOutputStream = new ByteArrayOutputStream();
+				protocol.serialize(requestByteArrayOutputStream, request);
+				byte[] requestData = requestByteArrayOutputStream.toByteArray();
 				byte[] sizeData = ByteUtils.toBytes(requestData.length);
 				out.write(sizeData);
 				out.write(requestData);
@@ -42,7 +46,7 @@ public class SocketClientTransport implements ClientTransport {
 				byte[] responseData = new byte[responseSize];
 				in.read(responseData);
 				
-				Response response = (Response) protocol.deserialize(responseData);
+				Response response = (Response) protocol.deserialize(new ByteArrayInputStream(responseData));
 				return response;
 			} catch (IOException e) {
 				throw new RpcServiceException(e);

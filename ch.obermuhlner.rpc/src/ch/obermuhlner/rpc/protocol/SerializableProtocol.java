@@ -1,7 +1,5 @@
 package ch.obermuhlner.rpc.protocol;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -28,25 +26,13 @@ public class SerializableProtocol implements Protocol {
 	}
 	
 	@Override
-	public byte[] serialize(Object source) {
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream(512);
-		serialize(source, byteStream);
-		return byteStream.toByteArray();
+	public void serialize(OutputStream out, Object source) {
+		serialize(source, out);
 	}
 
 	@Override
-	public Object deserialize(byte[] source) {
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(source);
-		return deserialize(inputStream, classLoader);
-	}
-	
-	/**
-	 * Returns the {@link ClassLoader}.
-	 * 
-	 * @return the {@link ClassLoader} or <code>null</code> if none
-	 */
-	protected ClassLoader getClassLoader() {
-		return classLoader;
+	public Object deserialize(InputStream in) {
+		return deserialize(in, classLoader);
 	}
 	
 	/**
