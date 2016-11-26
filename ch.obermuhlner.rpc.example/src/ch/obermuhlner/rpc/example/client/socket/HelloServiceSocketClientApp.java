@@ -12,6 +12,12 @@ import ch.obermuhlner.rpc.transport.SocketClientTransport;
 public class HelloServiceSocketClientApp {
 
 	public static void main(String[] args) {
+		HelloServiceClient helloServiceClient = setupHelloServiceClient();
+		
+		helloServiceClient.runExample();
+	}
+
+	private static HelloServiceClient setupHelloServiceClient() {
 		HelloServiceClient helloServiceClient = new HelloServiceClient();
 	
 		int port = 5924;
@@ -22,8 +28,7 @@ public class HelloServiceSocketClientApp {
 		
 		helloServiceClient.setHelloService(proxyService);
 		helloServiceClient.setHelloServiceAsync((HelloServiceAsync) proxyService);
-		
-		helloServiceClient.runExample();
+		return helloServiceClient;
 	}
 
 }

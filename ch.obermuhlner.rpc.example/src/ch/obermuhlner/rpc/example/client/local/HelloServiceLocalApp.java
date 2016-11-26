@@ -8,8 +8,13 @@ import ch.obermuhlner.rpc.service.ServiceFactory;
 
 public class HelloServiceLocalApp {
 
-
 	public static void main(String[] args) {
+		HelloServiceClient helloServiceClient = setupHelloServiceClient();
+		
+		helloServiceClient.runExample();
+	}
+
+	private static HelloServiceClient setupHelloServiceClient() {
 		HelloServiceClient helloServiceClient = new HelloServiceClient();
 	
 		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
@@ -19,7 +24,7 @@ public class HelloServiceLocalApp {
 		helloServiceClient.setHelloService(proxyService);
 		helloServiceClient.setHelloServiceAsync((HelloServiceAsync) proxyService);
 		
-		helloServiceClient.runExample();
+		return helloServiceClient;
 	}
 
 }
