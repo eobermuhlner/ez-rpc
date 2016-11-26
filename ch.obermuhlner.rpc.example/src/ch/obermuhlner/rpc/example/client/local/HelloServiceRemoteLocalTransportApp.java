@@ -1,11 +1,13 @@
-package ch.obermuhlner.rpc.example.client;
+package ch.obermuhlner.rpc.example.client.local;
 
 import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.api.HelloServiceAsync;
+import ch.obermuhlner.rpc.example.client.HelloServiceClient;
 import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
 import ch.obermuhlner.rpc.service.ServiceFactory;
+import ch.obermuhlner.rpc.transport.LocalTransport;
 
-public class HelloServiceLocalApp {
+public class HelloServiceRemoteLocalTransportApp {
 
 
 	public static void main(String[] args) {
@@ -13,7 +15,10 @@ public class HelloServiceLocalApp {
 	
 		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		
-		HelloService proxyService = ServiceFactory.createLocalService(HelloService.class, HelloServiceAsync.class, helloServiceImpl);
+		LocalTransport transport = new LocalTransport();
+		
+		ServiceFactory.publishService(HelloService.class, helloServiceImpl, transport);
+		HelloService proxyService = ServiceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, transport);
 		
 		helloServiceClient.setHelloService(proxyService);
 		helloServiceClient.setHelloServiceAsync((HelloServiceAsync) proxyService);

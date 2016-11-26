@@ -1,8 +1,10 @@
-package ch.obermuhlner.rpc.example.client;
+package ch.obermuhlner.rpc.example.client.direct;
 
+import ch.obermuhlner.rpc.example.client.HelloServiceAsyncImpl;
+import ch.obermuhlner.rpc.example.client.HelloServiceClient;
 import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
 
-public class HelloServiceSimpleLocalApp {
+public class HelloServiceDirectApp {
 
 	public static void main(String[] args) {
 		HelloServiceClient helloServiceClient = new HelloServiceClient();
