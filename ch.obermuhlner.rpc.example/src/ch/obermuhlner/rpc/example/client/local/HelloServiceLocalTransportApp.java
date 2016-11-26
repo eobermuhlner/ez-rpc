@@ -1,4 +1,4 @@
-package ch.obermuhlner.rpc.example.client.socket;
+package ch.obermuhlner.rpc.example.client.local;
 
 import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.api.HelloServiceAsync;
@@ -8,9 +8,9 @@ import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
 import ch.obermuhlner.rpc.service.ProtocolFactory;
 import ch.obermuhlner.rpc.service.ServiceFactory;
 import ch.obermuhlner.rpc.service.ServiceMetaData;
-import ch.obermuhlner.rpc.transport.SocketClientTransport;
+import ch.obermuhlner.rpc.transport.LocalTransport;
 
-public class HelloServiceSocketClientApp {
+public class HelloServiceLocalTransportApp {
 
 	public static void main(String[] args) {
 		HelloServiceClient helloServiceClient = setupHelloServiceClient();
@@ -21,15 +21,16 @@ public class HelloServiceSocketClientApp {
 	private static HelloServiceClient setupHelloServiceClient() {
 		HelloServiceClient helloServiceClient = new HelloServiceClient();
 	
-		ServiceMetaData serviceMetaData = new ServiceMetaData();
+		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		
-		int port = 5924;
-		//Protocol<Object> protocol = new SerializableProtocol(HelloServiceImpl.class.getClassLoader());
+		ServiceMetaData serviceMetaData = new ServiceMetaData();
 		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(serviceMetaData, HelloServiceImpl.class.getClassLoader());
-		SocketClientTransport socketClientTransport = new SocketClientTransport(protocol, "localhost", port);
+
+		LocalTransport transport = new LocalTransport(protocol);
 		
 		ServiceFactory serviceFactory = new ServiceFactory();
-		HelloService proxyService = serviceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, socketClientTransport);
+		serviceFactory.publishService(HelloService.class, helloServiceImpl, transport);
+		HelloService proxyService = serviceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, transport);
 		
 		helloServiceClient.setHelloService(proxyService);
 		helloServiceClient.setHelloServiceAsync((HelloServiceAsync) proxyService);
