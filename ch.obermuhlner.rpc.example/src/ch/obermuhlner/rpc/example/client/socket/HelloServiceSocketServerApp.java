@@ -18,7 +18,7 @@ public class HelloServiceSocketServerApp {
 		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		
 		int port = 5924;
-		Protocol protocol = new SerializableProtocol(HelloServiceImpl.class.getClassLoader());
+		Protocol<Object> protocol = new SerializableProtocol(HelloServiceImpl.class.getClassLoader());
 		SocketServerTransport socketServerTransport = new SocketServerTransport(protocol, port);
 
 		ServiceFactory.publishService(HelloService.class, helloServiceImpl, socketServerTransport);

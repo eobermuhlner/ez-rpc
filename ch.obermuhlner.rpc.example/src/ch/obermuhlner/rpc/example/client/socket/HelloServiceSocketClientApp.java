@@ -21,7 +21,7 @@ public class HelloServiceSocketClientApp {
 		HelloServiceClient helloServiceClient = new HelloServiceClient();
 	
 		int port = 5924;
-		Protocol protocol = new SerializableProtocol(HelloServiceImpl.class.getClassLoader());
+		Protocol<Object> protocol = new SerializableProtocol(HelloServiceImpl.class.getClassLoader());
 		SocketClientTransport socketClientTransport = new SocketClientTransport(protocol, "localhost", port);
 		
 		HelloService proxyService = ServiceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, socketClientTransport);
