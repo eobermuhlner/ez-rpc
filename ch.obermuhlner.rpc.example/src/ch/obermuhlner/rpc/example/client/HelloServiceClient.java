@@ -1,7 +1,9 @@
 package ch.obermuhlner.rpc.example.client;
 
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
+import ch.obermuhlner.rpc.example.api.ExampleData;
 import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.api.HelloServiceAsync;
 
@@ -27,5 +29,14 @@ public class HelloServiceClient {
 		calculateSquareAsync.thenAccept((result) -> {
 			System.out.println("async square(4) = " + result);	
 		});
+		
+		ExampleData exampleData = new ExampleData();
+		exampleData.intField = 1;
+		exampleData.longField = 1000;
+		exampleData.stringField = "Hello";
+		exampleData.listField = new ArrayList<>();
+		exampleData.listField.add("alpha");
+		exampleData.listField.add("beta");
+		System.out.println(helloService.exampleMethod(exampleData));
 	}
 }

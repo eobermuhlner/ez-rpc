@@ -6,4 +6,5 @@ public interface HelloService {
 	
 	double calculateSquare(double value);
 	
+	ExampleData exampleMethod(ExampleData exampleData);
 }
