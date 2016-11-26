@@ -12,16 +12,16 @@ import java.io.Serializable;
  *
  * @param <T> the type of the object to convert
  */
-public class SerializableProtocol implements Protocol<Object> {
+public class JavaSerializableProtocol implements Protocol<Object> {
 
 	private final ClassLoader classLoader;
 
 	/**
-	 * Constructs a {@link SerializableProtocol} that uses the specified {@link ClassLoader} to deserialize the object.
+	 * Constructs a {@link JavaSerializableProtocol} that uses the specified {@link ClassLoader} to deserialize the object.
 	 * 
 	 * @param classLoader the {@link ClassLoader} to create deserialized object instances, or <code>null</code> to use the standard Java class loader.
 	 */
-	public SerializableProtocol(ClassLoader classLoader) {
+	public JavaSerializableProtocol(ClassLoader classLoader) {
 		this.classLoader = classLoader;
 	}
 	
