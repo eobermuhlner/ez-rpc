@@ -9,6 +9,7 @@ import ch.obermuhlner.rpc.protocol.structure.BinaryStructureReader;
 import ch.obermuhlner.rpc.protocol.structure.BinaryStructureWriter;
 import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
 import ch.obermuhlner.rpc.service.ServiceFactory;
+import ch.obermuhlner.rpc.service.ServiceMetaData;
 import ch.obermuhlner.rpc.transport.SocketServerTransport;
 
 public class HelloServiceSocketServerApp {
@@ -18,9 +19,12 @@ public class HelloServiceSocketServerApp {
 	public static void main(String[] args) {
 		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		
+		ServiceMetaData serviceMetaData = new ServiceMetaData();
+
 		int port = 5924;
 		//Protocol<Object> protocol = new SerializableProtocol(HelloServiceImpl.class.getClassLoader());
 		StructureProtocol<Object> protocol = new StructureProtocol<Object>(
+				serviceMetaData,
 				(in) -> new BinaryStructureReader(in),
 				(out) -> new BinaryStructureWriter(out),
 				HelloServiceImpl.class.getClassLoader());

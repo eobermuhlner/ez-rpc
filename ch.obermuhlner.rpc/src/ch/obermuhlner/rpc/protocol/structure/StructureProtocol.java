@@ -13,50 +13,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import ch.obermuhlner.rpc.RpcServiceException;
-import ch.obermuhlner.rpc.annotation.RpcStruct;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
+import ch.obermuhlner.rpc.service.ServiceMetaData;
 
 public class StructureProtocol<T> implements Protocol<T> {
 
 	private final Function<InputStream, StructureReader> readerProvider;
 	private final Function<OutputStream, StructureWriter> writerProvider;
 	private final ClassLoader classLoader;
+	private ServiceMetaData serviceMetaData;
 	
-	private final Map<String, StructDefinition> mapNameToStructDefinition = new ConcurrentHashMap<>();
-	private final Map<Class<?>, StructDefinition> mapTypeToStructDefinition = new ConcurrentHashMap<>();
-
-	public StructureProtocol(Function<InputStream, StructureReader> readerProvider, Function<OutputStream, StructureWriter> writerProvider, ClassLoader classLoader) {
+	public StructureProtocol(ServiceMetaData serviceMetaData, Function<InputStream, StructureReader> readerProvider, Function<OutputStream, StructureWriter> writerProvider, ClassLoader classLoader) {
+		this.serviceMetaData = serviceMetaData;
 		this.readerProvider = readerProvider;
 		this.writerProvider = writerProvider;
 		this.classLoader = classLoader;
 		
-		registerStruct(Request.class);
-		registerStruct(Response.class);
-	}
-	
-	public void registerStruct(Class<?> type) {
-		String name = type.getName();
-		
-		RpcStruct annotation = type.getAnnotation(RpcStruct.class);
-		if (annotation != null) {
-			if (annotation.name() != null && !annotation.name().equals("")) {
-				name = annotation.name();
-			}
-		}
-		registerStruct(type, name);
-	}
-	
-	public void registerStruct(Class<?> type, String name) {
-		StructDefinition structDefinition = new StructDefinition(name, type);
-		
-		mapNameToStructDefinition.put(name, structDefinition);
-		mapTypeToStructDefinition.put(type, structDefinition);
+		serviceMetaData.registerStruct(Request.class);
+		serviceMetaData.registerStruct(Response.class);
 	}
 	
 	@Override
@@ -142,11 +121,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 	}
 
 	private String getStructName(Class<?> type) {
-		if (!mapTypeToStructDefinition.containsKey(type)) {
-			registerStruct(type);
-		}
-		
-		return mapTypeToStructDefinition.get(type).name;
+		return serviceMetaData.getStructDefinition(type).name;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -244,14 +219,9 @@ public class StructureProtocol<T> implements Protocol<T> {
 
 	private Object createStruct(String name) {
 		try {
-			Class<?> type = null;
-			if (mapNameToStructDefinition.containsKey(name)) {
-				type = mapNameToStructDefinition.get(name).type;
-			} else {
-				type = Class.forName(name, false, classLoader);
-			}
+			Class<?> type = serviceMetaData.getStructDefinition(name, classLoader).type;
 			return type.newInstance();
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RpcServiceException(e);
 		}
 	}
