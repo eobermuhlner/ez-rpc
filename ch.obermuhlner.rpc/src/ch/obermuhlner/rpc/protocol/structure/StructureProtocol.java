@@ -17,6 +17,7 @@ import java.util.function.Function;
 
 import ch.obermuhlner.rpc.RpcServiceException;
 import ch.obermuhlner.rpc.meta.ServiceMetaData;
+import ch.obermuhlner.rpc.meta.StructDefinition;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
@@ -223,9 +224,11 @@ public class StructureProtocol<T> implements Protocol<T> {
 
 	private Object createStruct(String name) {
 		try {
-			Class<?> type = serviceMetaData.getStructDefinition(name, classLoader).type;
+			StructDefinition structDefinition = serviceMetaData.getStructDefinition(name, classLoader);
+			Class<?> type = Class.forName(structDefinition.javaTypeName, true, classLoader);
+
 			return type.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			throw new RpcServiceException(e);
 		}
 	}

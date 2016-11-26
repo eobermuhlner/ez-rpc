@@ -25,7 +25,7 @@ public class ServiceMetaData {
 	}
 	
 	public synchronized StructDefinition registerStruct(Class<?> type, String name) {
-		StructDefinition structDefinition = new StructDefinition(name, type);
+		StructDefinition structDefinition = new StructDefinition(name, type.getName());
 		
 		mapNameToStructDefinition.put(name, structDefinition);
 		mapTypeToStructDefinition.put(type, structDefinition);
