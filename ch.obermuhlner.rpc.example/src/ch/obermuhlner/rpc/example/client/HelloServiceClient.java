@@ -1,10 +1,12 @@
 package ch.obermuhlner.rpc.example.client;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 
+import ch.obermuhlner.rpc.example.api.AdapterExampleData;
 import ch.obermuhlner.rpc.example.api.ExampleData;
 import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.api.HelloServiceAsync;
@@ -50,5 +52,9 @@ public class HelloServiceClient {
 		exampleData.mapField.put("three", "STRING three");
 		exampleData.nestedExampleData = new ExampleData();
 		System.out.println(helloService.exampleMethod(exampleData));
+		
+		AdapterExampleData adapterExampleData = new AdapterExampleData();
+		adapterExampleData.bigDecimalField = BigDecimal.valueOf(1.234);
+		System.out.println(helloService.adapterExampleMethod(adapterExampleData));
 	}
 }

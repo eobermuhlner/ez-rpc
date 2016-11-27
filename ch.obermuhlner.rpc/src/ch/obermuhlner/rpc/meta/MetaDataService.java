@@ -232,6 +232,20 @@ public class MetaDataService implements AutoCloseable {
 		return structDefinition;
 	}
 
+	public Adapter<?, ?> findAdapterByLocalType(Class<?> localType) {
+		return adapters.stream()
+			.filter(adapter -> adapter.getLocalType() == localType)
+			.findFirst()
+			.orElse(null);
+	}
+	
+	public Adapter<?, ?> findAdapterByRemoteType(Class<?> remoteType) {
+		return adapters.stream()
+			.filter(adapter -> adapter.getRemoteType() == remoteType)
+			.findFirst()
+			.orElse(null);
+	}
+	
 	private ServiceDefinition findServiceDefinitionByType(String javaTypeName) {
 		return metaData.getServiceDefinitions().findByType(javaTypeName);
 	}

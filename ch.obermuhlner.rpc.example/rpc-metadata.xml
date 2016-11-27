@@ -2,12 +2,15 @@
 <metaData>
     <services>
         <service name="HelloService" javaTypeName="ch.obermuhlner.rpc.example.api.HelloService">
-            <method name="calculateSquare">
-                <parameter name="arg0"/>
+            <method name="adapterExample" returnType="STRUCT" returnStructName="AdapterExampleData">
+                <parameter name="data" type="STRUCT" structName="AdapterExampleData"/>
             </method>
             <method name="ping"/>
             <method name="enrichExample" returnType="STRUCT" returnStructName="ExampleData">
                 <parameter name="poor" type="STRUCT" structName="ExampleData"/>
+            </method>
+            <method name="calculateSquare">
+                <parameter name="arg0"/>
             </method>
         </service>
     </services>
@@ -21,6 +24,9 @@
             <field name="setField" type="SET"/>
             <field name="mapField" type="MAP"/>
             <field name="nestedExampleData" type="STRUCT" structName="ExampleData"/>
+        </struct>
+        <struct name="AdapterExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.AdapterExampleData">
+            <field name="bigDecimalField"/>
         </struct>
     </structs>
 </metaData>

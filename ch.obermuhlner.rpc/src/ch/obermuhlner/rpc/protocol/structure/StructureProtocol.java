@@ -18,6 +18,7 @@ import java.util.function.Function;
 import ch.obermuhlner.rpc.RpcServiceException;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.meta.StructDefinition;
+import ch.obermuhlner.rpc.meta.adapter.Adapter;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
@@ -94,6 +95,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 		} else if (element instanceof String) {
 			writer.writeString((String) element);
 		} else {
+			element = convertToRemote(element);
 			writeStruct(writer, element);
 		}
 	}
@@ -105,11 +107,11 @@ public class StructureProtocol<T> implements Protocol<T> {
 		
 		for (Field field : type.getFields()) {
 			field.setAccessible(true);
-			FieldDefinition fieldDefinition = new FieldDefinition();
-			fieldDefinition.name = field.getName();
+			FieldData fieldData = new FieldData();
+			fieldData.name = field.getName();
 			try {
-				fieldDefinition.value = field.get(element);
-				writeField(writer, fieldDefinition);
+				fieldData.value = field.get(element);
+				writeField(writer, fieldData);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RpcServiceException(e);
 			}
@@ -119,9 +121,9 @@ public class StructureProtocol<T> implements Protocol<T> {
 		writer.writeStructEnd();
 	}
 
-	private void writeField(StructureWriter writer, FieldDefinition fieldDefinition) {
-		writer.writeFieldBegin(fieldDefinition.name);
-		write(writer, fieldDefinition.value);
+	private void writeField(StructureWriter writer, FieldData fieldData) {
+		writer.writeFieldBegin(fieldData.name);
+		write(writer, fieldData.value);
 		writer.writeFieldEnd();
 	}
 
@@ -215,7 +217,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 				throw new RpcServiceException("Type must be FIELD or FIELD_STOP: " + type);
 			}
 			
-			FieldDefinition field = readField(reader);
+			FieldData field = readField(reader);
 			addField(struct, field);
 			
 			type = reader.readType();
@@ -237,39 +239,67 @@ public class StructureProtocol<T> implements Protocol<T> {
 		}
 	}
 
-	private void addField(Object struct, FieldDefinition fieldDefinition) {
+	private void addField(Object struct, FieldData fieldDefinition) {
 		try {
 			Class<?> type = struct.getClass();
 
 			Method method = findSetterMethod(type, fieldDefinition);
 			if (method != null) {
-				Object value = autoConvert(fieldDefinition.value, method.getParameters()[0].getType());
+				Object value = convertToLocal(fieldDefinition.value, method.getParameters()[0].getType());
 				method.invoke(struct, value);
 			}
 			
 			Field field = type.getField(fieldDefinition.name);
 			field.setAccessible(true);
-			Object value = autoConvert(fieldDefinition.value, field.getType());
+			Object value = convertToLocal(fieldDefinition.value, field.getType());
 			field.set(struct, value);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException | SecurityException e) {
 			throw new RpcServiceException(e);
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	private Object autoConvert(Object value, Class<?> type) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private Object convertToRemote(Object value) {
+		if (value == null) {
+			return null;
+		}
+
+		Class<? extends Object> localType = value.getClass();
+		Adapter adapter = metaDataService.findAdapterByLocalType(localType);
+		if (adapter != null) {
+			value = adapter.convertLocalToRemote(value);
+		}
+
+		return value;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private Object convertToLocal(Object value, Class<?> targetType) {
 		if (value == null) {
 			return null;
 		}
 		
-		if (value instanceof List && type == Object[].class) {
+		value = autoConvert(value, targetType);
+		
+		Class<? extends Object> remoteType = value.getClass();
+		Adapter adapter = metaDataService.findAdapterByRemoteType(remoteType);
+		if (adapter != null) {
+			value = adapter.convertRemoteToLocal(value);
+		}
+		
+		return value;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Object autoConvert(Object value, Class<?> targetType) {
+		if (value instanceof List && targetType == Object[].class) {
 			return ((List) value).toArray();
 		}
 		
 		return value;
 	}
 
-	private Method findSetterMethod(Class<?> type, FieldDefinition field) {
+	private Method findSetterMethod(Class<?> type, FieldData field) {
 		String propertyName = toPropertyName(field.name);
 		String methodName = "set" + propertyName;
 
@@ -299,8 +329,8 @@ public class StructureProtocol<T> implements Protocol<T> {
 		}
 	}
 
-	private FieldDefinition readField(StructureReader reader) {
-		FieldDefinition field = new FieldDefinition();
+	private FieldData readField(StructureReader reader) {
+		FieldData field = new FieldData();
 		
 		field.name = reader.readString();
 		field.value = read(reader);
@@ -308,7 +338,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 		return field;
 	}
 	
-	private static class FieldDefinition {
+	private static class FieldData {
 		public String name;
 		public Object value;
 		

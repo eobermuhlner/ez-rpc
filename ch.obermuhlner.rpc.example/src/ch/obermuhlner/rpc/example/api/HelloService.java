@@ -15,4 +15,10 @@ public interface HelloService {
 	ExampleData exampleMethod(
 			@RpcParameter(name = "poor")
 			ExampleData exampleData);
+
+	
+	@RpcMethod(name = "adapterExample")
+	AdapterExampleData adapterExampleMethod(
+			@RpcParameter(name = "data")
+			AdapterExampleData adapterExampleData);
 }

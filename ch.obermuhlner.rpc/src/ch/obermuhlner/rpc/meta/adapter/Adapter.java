@@ -6,7 +6,7 @@ public interface Adapter<LocalType, RemoteType> {
 	
 	Class<RemoteType> getRemoteType();
 
-	RemoteType convertLocalToRemote(LocalType localType);
+	RemoteType convertLocalToRemote(LocalType local);
 	
-	LocalType convertStructToType(RemoteType remoteType);
+	LocalType convertRemoteToLocal(RemoteType remote);
 }

@@ -22,15 +22,15 @@ public class BigDecimalAdapter implements Adapter<BigDecimal, BigDecimalAdapter.
 	}
 
 	@Override
-	public BigDecimalStruct convertLocalToRemote(BigDecimal localType) {
-		BigDecimalStruct remoteType = new BigDecimalStruct();
-		remoteType.value = localType.toString();
-		return remoteType;
+	public BigDecimalStruct convertLocalToRemote(BigDecimal local) {
+		BigDecimalStruct remote = new BigDecimalStruct();
+		remote.value = local.toString();
+		return remote;
 	}
 
 	@Override
-	public BigDecimal convertStructToType(BigDecimalStruct remoteType) {
-		BigDecimal localType = new BigDecimal(remoteType.value);
+	public BigDecimal convertRemoteToLocal(BigDecimalStruct remote) {
+		BigDecimal localType = new BigDecimal(remote.value);
 		return localType;
 	}
 }

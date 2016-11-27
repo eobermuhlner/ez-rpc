@@ -1,5 +1,6 @@
 package ch.obermuhlner.rpc.example.server;
 
+import ch.obermuhlner.rpc.example.api.AdapterExampleData;
 import ch.obermuhlner.rpc.example.api.ExampleData;
 import ch.obermuhlner.rpc.example.api.HelloService;
 
@@ -18,6 +19,11 @@ public class HelloServiceImpl implements HelloService {
 	@Override
 	public ExampleData exampleMethod(ExampleData exampleData) {
 		return exampleData;
+	}
+
+	@Override
+	public AdapterExampleData adapterExampleMethod(AdapterExampleData adapterExampleData) {
+		return adapterExampleData;
 	}
 
 }
