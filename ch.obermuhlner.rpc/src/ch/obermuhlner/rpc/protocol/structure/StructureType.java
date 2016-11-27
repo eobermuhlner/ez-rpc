@@ -7,6 +7,7 @@ public enum StructureType {
 	MAP,
 	FIELD,
 	FIELD_STOP,
+	BOOL,
 	INT,
 	LONG,
 	DOUBLE,

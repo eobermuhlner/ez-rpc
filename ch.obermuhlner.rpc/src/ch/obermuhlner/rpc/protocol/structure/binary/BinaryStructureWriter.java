@@ -15,10 +15,11 @@ public class BinaryStructureWriter implements StructureWriter {
 	public static final int MAP = 4;
 	public static final int FIELD = 5;
 	public static final int FIELD_STOP = 6;
-	public static final int INT = 7;
-	public static final int LONG = 8;
-	public static final int DOUBLE = 9;
-	public static final int STRING = 10;
+	public static final int BOOL = 7;
+	public static final int INT = 8;
+	public static final int LONG = 9;
+	public static final int DOUBLE = 10;
+	public static final int STRING = 11;
 
 	private final DataOutputStream out;
 
@@ -125,6 +126,16 @@ public class BinaryStructureWriter implements StructureWriter {
 	public void writeFieldStop() {
 		try {
 			out.writeByte(FIELD_STOP);
+		} catch (IOException e) {
+			// ignore
+		}
+	}
+
+	@Override
+	public void writeBoolean(boolean value) {
+		try {
+			out.writeByte(BOOL);
+			out.writeBoolean(value);
 		} catch (IOException e) {
 			// ignore
 		}

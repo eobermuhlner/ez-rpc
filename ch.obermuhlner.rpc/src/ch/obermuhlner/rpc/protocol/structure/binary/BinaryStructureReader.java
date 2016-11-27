@@ -41,6 +41,8 @@ public class BinaryStructureReader implements StructureReader {
 				return StructureType.FIELD;
 			case BinaryStructureWriter.FIELD_STOP:
 				return StructureType.FIELD_STOP;
+			case BinaryStructureWriter.BOOL:
+				return StructureType.BOOL;
 			case BinaryStructureWriter.INT:
 				return StructureType.INT;
 			case BinaryStructureWriter.LONG:
@@ -137,6 +139,15 @@ public class BinaryStructureReader implements StructureReader {
 	public void readFieldEnd() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean readBoolean() {
+		try {
+			return in.readBoolean();
+		} catch (IOException e) {
+			throw new IllegalStateException();
+		}
 	}
 
 	@Override

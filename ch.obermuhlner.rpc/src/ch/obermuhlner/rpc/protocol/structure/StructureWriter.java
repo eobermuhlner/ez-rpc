@@ -24,6 +24,7 @@ public interface StructureWriter {
 	void writeFieldEnd();
 	void writeFieldStop();
 	
+	void writeBoolean(boolean value);
 	void writeInt(int value);
 	void writeLong(long value);
 	void writeDouble(double value);

@@ -93,6 +93,13 @@ public class XmlStructureWriter implements StructureWriter {
 	}
 
 	@Override
+	public void writeBoolean(boolean value) {
+		out.print("<bool>");
+		out.print(value);
+		out.print("</bool>");
+	}
+
+	@Override
 	public void writeInt(int value) {
 		out.print("<int>");
 		out.print(value);

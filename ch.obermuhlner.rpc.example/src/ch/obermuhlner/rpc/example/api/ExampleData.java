@@ -6,15 +6,17 @@ import ch.obermuhlner.rpc.annotation.RpcStruct;
 
 @RpcStruct(name = "ExampleData")
 public class ExampleData {
+	public boolean booleanField;
 	public int intField;
 	public long longField;
 	public String stringField;
 	public List<String> listField;
 	public ExampleData nestedExampleData;
-	
+
 	@Override
 	public String toString() {
-		return "ExampleData [intField=" + intField + ", longField=" + longField + ", stringField=" + stringField
-				+ ", listField=" + listField + ", nestedExampleData=" + nestedExampleData + "]";
+		return "ExampleData [booleanField=" + booleanField + ", intField=" + intField + ", longField=" + longField
+				+ ", stringField=" + stringField + ", listField=" + listField + ", nestedExampleData="
+				+ nestedExampleData + "]";
 	}
 }

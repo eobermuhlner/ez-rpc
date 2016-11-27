@@ -83,12 +83,14 @@ public class StructureProtocol<T> implements Protocol<T> {
 				writer.writeMapEntryEnd();
 			}
 			writer.writeSetEnd();
-		} else if (element instanceof Double) {
-			writer.writeDouble((Double) element);
+		} else if (element instanceof Boolean) {
+			writer.writeBoolean((Boolean) element);
 		} else if (element instanceof Integer) {
 			writer.writeInt((Integer) element);
 		} else if (element instanceof Long) {
 			writer.writeLong((Long) element);
+		} else if (element instanceof Double) {
+			writer.writeDouble((Double) element);
 		} else if (element instanceof String) {
 			writer.writeString((String) element);
 		} else {
@@ -143,6 +145,8 @@ public class StructureProtocol<T> implements Protocol<T> {
 			return null;
 		case DOUBLE:
 			return reader.readDouble();
+		case BOOL:
+			return reader.readBoolean();
 		case INT:
 			return reader.readInt();
 		case LONG:

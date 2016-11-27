@@ -1,9 +1,10 @@
 package ch.obermuhlner.rpc.meta;
 
 public enum Type {
-	STRUCT,
+	BOOL,
 	INT,
 	LONG,
 	DOUBLE,
-	STRING
+	STRING,
+	STRUCT,
 }

@@ -31,6 +31,7 @@ public class HelloServiceClient {
 		});
 		
 		ExampleData exampleData = new ExampleData();
+		exampleData.booleanField = true;
 		exampleData.intField = 1;
 		exampleData.longField = 1000;
 		exampleData.stringField = "Hello";

@@ -25,6 +25,7 @@ public interface StructureReader {
 	String readFieldBegin();
 	void readFieldEnd();
 	
+	boolean readBoolean();
 	int readInt();
 	long readLong();
 	Double readDouble();
