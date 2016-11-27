@@ -27,16 +27,16 @@ public class StructureProtocol<T> implements Protocol<T> {
 	private final Function<InputStream, StructureReader> readerProvider;
 	private final Function<OutputStream, StructureWriter> writerProvider;
 	private final ClassLoader classLoader;
-	private MetaDataService serviceMetaData;
+	private MetaDataService metaDataService;
 	
-	public StructureProtocol(MetaDataService serviceMetaData, Function<InputStream, StructureReader> readerProvider, Function<OutputStream, StructureWriter> writerProvider, ClassLoader classLoader) {
-		this.serviceMetaData = serviceMetaData;
+	public StructureProtocol(MetaDataService metaDataService, Function<InputStream, StructureReader> readerProvider, Function<OutputStream, StructureWriter> writerProvider, ClassLoader classLoader) {
+		this.metaDataService = metaDataService;
 		this.readerProvider = readerProvider;
 		this.writerProvider = writerProvider;
 		this.classLoader = classLoader;
 		
-		serviceMetaData.registerStruct(Request.class);
-		serviceMetaData.registerStruct(Response.class);
+		metaDataService.registerStruct(Request.class);
+		metaDataService.registerStruct(Response.class);
 	}
 	
 	@Override
@@ -126,7 +126,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 	}
 
 	private String getStructName(Class<?> type) {
-		return serviceMetaData.registerStruct(type).name;
+		return metaDataService.registerStruct(type).name;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -228,7 +228,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 
 	private Object createStruct(String name) {
 		try {
-			StructDefinition structDefinition = serviceMetaData.getStructDefinition(name, classLoader);
+			StructDefinition structDefinition = metaDataService.getStructDefinition(name, classLoader);
 			Class<?> type = Class.forName(structDefinition.javaTypeName, true, classLoader);
 
 			return type.newInstance();

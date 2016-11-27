@@ -12,9 +12,9 @@ public class ProtocolFactory {
 		return new JavaSerializableProtocol(classLoader);
 	}
 	
-	public static StructureProtocol<Object> binaryProtocol(MetaDataService serviceMetaData, ClassLoader classLoader) {
+	public static StructureProtocol<Object> binaryProtocol(MetaDataService metaDataService, ClassLoader classLoader) {
 		return new StructureProtocol<Object>(
-				serviceMetaData,
+				metaDataService,
 				(in) -> new BinaryStructureReader(in),
 				(out) -> new BinaryStructureWriter(out),
 				classLoader);
