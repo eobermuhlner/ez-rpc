@@ -152,7 +152,6 @@ public class MetaDataService {
 				}
 
 				FieldDefinition fieldDefinition = new FieldDefinition(field.getName(), fieldType, structName);
-				System.out.println(fieldDefinition);
 				structDefinition.fieldDefinitions.add(fieldDefinition);
 			}
 		}

@@ -1,5 +1,7 @@
 package ch.obermuhlner.rpc.example.client.socket;
 
+import java.io.File;
+
 import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.api.HelloServiceAsync;
 import ch.obermuhlner.rpc.example.client.HelloServiceClient;
@@ -22,9 +24,11 @@ public class HelloServiceSocketClientApp {
 		HelloServiceClient helloServiceClient = new HelloServiceClient();
 	
 		MetaDataService serviceMetaData = new MetaDataService();
+		serviceMetaData.load(new File("rpc-metadata.xml"));
+		serviceMetaData.registerService(HelloService.class);
+		serviceMetaData.save(new File("rpc-metadata.xml"));
 		
 		int port = 5924;
-		//Protocol<Object> protocol = new SerializableProtocol(HelloServiceImpl.class.getClassLoader());
 		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(serviceMetaData, HelloServiceImpl.class.getClassLoader());
 		SocketClientTransport socketClientTransport = new SocketClientTransport(protocol, "localhost", port);
 		

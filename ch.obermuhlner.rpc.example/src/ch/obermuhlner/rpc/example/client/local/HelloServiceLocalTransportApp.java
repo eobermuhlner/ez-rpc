@@ -2,7 +2,6 @@ package ch.obermuhlner.rpc.example.client.local;
 
 import java.io.File;
 
-import ch.obermuhlner.rpc.example.api.ExampleData;
 import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.api.HelloServiceAsync;
 import ch.obermuhlner.rpc.example.client.HelloServiceClient;
@@ -29,7 +28,6 @@ public class HelloServiceLocalTransportApp {
 		MetaDataService serviceMetaData = new MetaDataService();
 		serviceMetaData.load(new File("rpc-metadata.xml"));
 		serviceMetaData.registerService(HelloService.class);
-		serviceMetaData.registerStruct(ExampleData.class);
 		serviceMetaData.save(new File("rpc-metadata.xml"));
 
 		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(serviceMetaData, HelloServiceImpl.class.getClassLoader());

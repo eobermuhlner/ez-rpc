@@ -1,5 +1,6 @@
 package ch.obermuhlner.rpc.example.client.socket;
 
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,9 +20,11 @@ public class HelloServiceSocketServerApp {
 		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		
 		MetaDataService serviceMetaData = new MetaDataService();
+		serviceMetaData.load(new File("rpc-metadata.xml"));
+		serviceMetaData.registerService(HelloService.class);
+		serviceMetaData.save(new File("rpc-metadata.xml"));
 
 		int port = 5924;
-		//Protocol<Object> protocol = new SerializableProtocol(HelloServiceImpl.class.getClassLoader());
 		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(serviceMetaData, HelloServiceImpl.class.getClassLoader());
 		
 		SocketServerTransport socketServerTransport = new SocketServerTransport(protocol, port);
