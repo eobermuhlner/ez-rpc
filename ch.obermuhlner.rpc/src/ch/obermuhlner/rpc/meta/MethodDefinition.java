@@ -17,8 +17,8 @@ public class MethodDefinition {
 	@XmlAttribute
 	public String returnStructName; // only set if returnType == Type.STRUCT
 
-	@XmlElement(name = "argument")
-	public List<ArgumentDefinition> argumentDefinitions = new ArrayList<>();
+	@XmlElement(name = "parameter")
+	public List<ParameterDefinition> parameterDefinitions = new ArrayList<>();
 	
 	public MethodDefinition() {
 		// for Jaxb

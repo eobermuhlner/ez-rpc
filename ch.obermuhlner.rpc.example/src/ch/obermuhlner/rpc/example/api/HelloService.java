@@ -1,6 +1,6 @@
 package ch.obermuhlner.rpc.example.api;
 
-import ch.obermuhlner.rpc.annotation.RpcArgument;
+import ch.obermuhlner.rpc.annotation.RpcParameter;
 import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcService;
 
@@ -13,6 +13,6 @@ public interface HelloService {
 	
 	@RpcMethod(name = "enrichExample")
 	ExampleData exampleMethod(
-			@RpcArgument(name = "poor")
+			@RpcParameter(name = "poor")
 			ExampleData exampleData);
 }

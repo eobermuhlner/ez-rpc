@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 @Target({PARAMETER})
 @Retention(RUNTIME)
-public @interface RpcArgument {
+public @interface RpcParameter {
 
 	String name() default "";
 	

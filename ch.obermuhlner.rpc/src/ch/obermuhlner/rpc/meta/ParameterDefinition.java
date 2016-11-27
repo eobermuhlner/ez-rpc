@@ -2,7 +2,7 @@ package ch.obermuhlner.rpc.meta;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
-public class ArgumentDefinition {
+public class ParameterDefinition {
 
 	@XmlAttribute
 	public String name;
@@ -13,11 +13,11 @@ public class ArgumentDefinition {
 	@XmlAttribute
 	public String structName; // only set if type == Type.STRUCT
 	
-	public ArgumentDefinition() {
+	public ParameterDefinition() {
 		// for Jaxb
 	}
 
-	public ArgumentDefinition(String name, Type type, String structName) {
+	public ParameterDefinition(String name, Type type, String structName) {
 		this.name = name;
 		this.type = type;
 		this.structName = structName;
@@ -25,6 +25,6 @@ public class ArgumentDefinition {
 
 	@Override
 	public String toString() {
-		return "ArgumentDefinition [name=" + name + ", type=" + type + ", structName=" + structName + "]";
+		return "ParameterDefinition [name=" + name + ", type=" + type + ", structName=" + structName + "]";
 	}
 }

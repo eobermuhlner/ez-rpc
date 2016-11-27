@@ -14,7 +14,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import ch.obermuhlner.rpc.RpcServiceException;
-import ch.obermuhlner.rpc.annotation.RpcArgument;
+import ch.obermuhlner.rpc.annotation.RpcParameter;
 import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcService;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
@@ -113,31 +113,31 @@ public class MetaDataService {
 		}
 		
 		for (Parameter parameter : method.getParameters()) {
-			ArgumentDefinition argumentDefinition = toArgumentDefinition(parameter);
-			methodDefinition.argumentDefinitions.add(argumentDefinition);
+			ParameterDefinition parameterDefinition = toParameterDefinition(parameter);
+			methodDefinition.parameterDefinitions.add(parameterDefinition);
 		}
 		
 		return methodDefinition;
 	}
 
-	private ArgumentDefinition toArgumentDefinition(Parameter parameter) {
-		ArgumentDefinition argumentDefinition = new ArgumentDefinition();
+	private ParameterDefinition toParameterDefinition(Parameter parameter) {
+		ParameterDefinition parameterDefinition = new ParameterDefinition();
 		
-		argumentDefinition.name = parameter.getName();
-		RpcArgument annotation = parameter.getAnnotation(RpcArgument.class);
+		parameterDefinition.name = parameter.getName();
+		RpcParameter annotation = parameter.getAnnotation(RpcParameter.class);
 		if (annotation != null) {
 			if (annotation.name() != null && !annotation.name().equals("")) {
-				argumentDefinition.name = annotation.name();
+				parameterDefinition.name = annotation.name();
 			}			
 		}
 
-		argumentDefinition.type = toType(parameter.getType());
-		if (argumentDefinition.type == Type.STRUCT) {
+		parameterDefinition.type = toType(parameter.getType());
+		if (parameterDefinition.type == Type.STRUCT) {
 			StructDefinition referencedStructDefinition = registerStruct(parameter.getType());
-			argumentDefinition.structName = referencedStructDefinition.name;
+			parameterDefinition.structName = referencedStructDefinition.name;
 		}
 		
-		return argumentDefinition;
+		return parameterDefinition;
 	}
 
 	private void fillStructureDefinition(StructDefinition structDefinition, Class<?> type) {
