@@ -1,6 +1,6 @@
 # ez-rpc
 
-Easy RPC between Java, C++.
+Easy RPC between Java and other languages.
 
 The goal of this project is to provide straightforward RPC (remote procedure calls) between applications independent of the programming language or transport layer.
 
@@ -16,16 +16,27 @@ Supported transport layers:
 
 Supported protocols:
 * Java serialization (only between Java applications)
-* binary protocol
+* Binary protocol
 * XML (currently under development)
+* ...
 
 ## Approach
 
-The framework is designed to be easy to start developing, specifying the complex meta data later in the development process.
+The framework is designed so that the services can be written directly in your favorite programming language (for example Java)
+and will work immediately as soon as they are implemented.
 
-## Service Interface used over RPC
+The specification of the services is then generated from the running services and can now be published between the different languages.
 
-Interfaces can optionally be annotated to provide additional information for the RPC framework.
+## Service used over RPC
+
+Services consist of method specification that can be executed remotely.
+
+### Java Service Interface
+
+Service interfaces can optionally be annotated to provide additional information for the RPC framework.
+
+The name in the annotation specifies the the standard name which will be used by other programming languages.
+For each programming language a specific overriding name may be chosen (for example in Java a fully qualified name with package specification).
 
 ```java
 @RpcService(name = "HelloService")
@@ -43,6 +54,7 @@ public interface HelloService {
 
 Additionally it is possible to provide a companion interface that specifies the asynchronous methods.
 These methods are only available on the client side.
+The implementation of the asynchronous methods will automatically be provided by the ez-rpc framework.
 
 ```java
 public interface HelloServiceAsync {
@@ -63,6 +75,8 @@ Data structures over RPC are limited to the most important data types.
 * Map
 * other data structures
 
+### Java Data structure
+
 ```java
 @RpcStruct(name = "ExampleData")
 public class ExampleData {
@@ -77,11 +91,20 @@ public class ExampleData {
 }
 ```
 
+Java data structures may have methods, implement interfaces or use inheritance but none of these informations is transmitted over RPC.
+
 ## Configuration
 
 The configuration API is designed to be easy to use in injection frameworks (for example Spring).
 
 ### TCP Client Configuration
+
+A typical client configuration needs to specify:
+* *MetaDataService* knows about the services and data structures
+* *Protocol* specifies how the data is serialized and deserialized
+* *Transport* specifies where the server is and how to communicate with it
+
+The ez-rpc framework will then provide proxy implementations for the services that will send the calls to the remote server.
 
 ```java
 		MetaDataService serviceMetaData = new MetaDataService();
@@ -99,6 +122,11 @@ The configuration API is designed to be easy to use in injection frameworks (for
 
 ### TCP Server Configuration
 
+A typical server configuration needs to specify:
+* *MetaDataService* knows about the services and data structures
+* *Protocol* specifies how the data is serialized and deserialized
+* *Transport* specifies where the remote client is and how to communicate with it
+
 ```java
 		MetaDataService serviceMetaData = new MetaDataService();
 		serviceMetaData.load(new File("rpc-metadata.xml"));
@@ -113,6 +141,8 @@ The configuration API is designed to be easy to use in injection frameworks (for
 		ServiceFactory serviceFactory = new ServiceFactory();
 		serviceFactory.publishService(HelloService.class, helloServiceImpl, socketServerTransport);
 ```
+
+The ez-rpc framework will then provide proxy implementations for the services that will receive the remote calls and delegate them to your implementation.
 
 ## Meta Data
 
