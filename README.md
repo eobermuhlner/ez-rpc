@@ -29,7 +29,6 @@ Interfaces can optionally be annotated to provide additional information for the
 ```java
 @RpcService(name = "HelloService")
 public interface HelloService {
-
 	void ping();
 	
 	double calculateSquare(double value);
@@ -41,7 +40,16 @@ public interface HelloService {
 }
 ```
 
-## Data structures used ove RPC
+Additionally it is possible to provide a companion interface that specifies the asynchronous methods.
+These methods are only available on the client side.
+
+```java
+public interface HelloServiceAsync {
+	CompletableFuture<Double> calculateSquareAsync(double value);
+}
+```
+
+## Data structures used over RPC
 
 Data structures over RPC are limited to the most important data types.
 
