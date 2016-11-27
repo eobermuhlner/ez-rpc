@@ -14,6 +14,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.annotation.RpcArgument;
+import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcService;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 
@@ -97,6 +99,13 @@ public class MetaDataService {
 		MethodDefinition methodDefinition = new MethodDefinition();
 		
 		methodDefinition.name = method.getName();
+		RpcMethod annotation = method.getAnnotation(RpcMethod.class);
+		if (annotation != null) {
+			if (annotation.name() != null && !annotation.name().equals("")) {
+				methodDefinition.name = annotation.name();
+			}			
+		}
+		
 		methodDefinition.returnType = toType(method.getReturnType());
 		if (methodDefinition.returnType == Type.STRUCT) {
 			StructDefinition referencedStructDefinition = registerStruct(method.getReturnType());
@@ -115,6 +124,13 @@ public class MetaDataService {
 		ArgumentDefinition argumentDefinition = new ArgumentDefinition();
 		
 		argumentDefinition.name = parameter.getName();
+		RpcArgument annotation = parameter.getAnnotation(RpcArgument.class);
+		if (annotation != null) {
+			if (annotation.name() != null && !annotation.name().equals("")) {
+				argumentDefinition.name = annotation.name();
+			}			
+		}
+
 		argumentDefinition.type = toType(parameter.getType());
 		if (argumentDefinition.type == Type.STRUCT) {
 			StructDefinition referencedStructDefinition = registerStruct(parameter.getType());

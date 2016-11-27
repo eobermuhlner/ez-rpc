@@ -1,5 +1,7 @@
 package ch.obermuhlner.rpc.example.api;
 
+import ch.obermuhlner.rpc.annotation.RpcArgument;
+import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcService;
 
 @RpcService(name = "HelloService")
@@ -9,5 +11,8 @@ public interface HelloService {
 	
 	double calculateSquare(double value);
 	
-	ExampleData exampleMethod(ExampleData exampleData);
+	@RpcMethod(name = "enrichExample")
+	ExampleData exampleMethod(
+			@RpcArgument(name = "poor")
+			ExampleData exampleData);
 }
