@@ -56,11 +56,12 @@ public class ExampleData {
 	public Set<String> setField;
 	public Map<Object, Object> mapField;
 	public ExampleData nestedExampleData;
+}
 ```
 
 ## Configuration
 
-The configuration API is designed to be used in injection framework (for example Spring).
+The configuration API is designed to be easy to use in injection frameworks (for example Spring).
 
 ### Client Configuration
 
