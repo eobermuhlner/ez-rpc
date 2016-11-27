@@ -37,6 +37,8 @@ public class BinaryStructureReader implements StructureReader {
 				return StructureType.LIST;
 			case BinaryStructureWriter.SET:
 				return StructureType.SET;
+			case BinaryStructureWriter.MAP:
+				return StructureType.MAP;
 			case BinaryStructureWriter.FIELD:
 				return StructureType.FIELD;
 			case BinaryStructureWriter.FIELD_STOP:

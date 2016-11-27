@@ -1,6 +1,7 @@
 package ch.obermuhlner.rpc.example.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 
@@ -42,11 +43,11 @@ public class HelloServiceClient {
 		exampleData.setField = new HashSet<>();
 		exampleData.setField.add("one");
 		exampleData.setField.add("two");
-//		exampleData.mapField = new HashMap<>();
-//		exampleData.mapField.put(null, "NULL");
-//		exampleData.mapField.put(1, "INT one");
-//		exampleData.mapField.put(2L, "LONG two");
-//		exampleData.mapField.put("three", "STRING three");
+		exampleData.mapField = new HashMap<>();
+		exampleData.mapField.put(null, "NULL");
+		exampleData.mapField.put(1, "INT one");
+		exampleData.mapField.put(Long.MAX_VALUE, "LONG max");
+		exampleData.mapField.put("three", "STRING three");
 		exampleData.nestedExampleData = new ExampleData();
 		System.out.println(helloService.exampleMethod(exampleData));
 	}
