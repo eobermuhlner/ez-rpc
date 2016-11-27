@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,12 +19,15 @@ import ch.obermuhlner.rpc.annotation.RpcParameter;
 import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcService;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
+import ch.obermuhlner.rpc.meta.adapter.Adapter;
 
 public class MetaDataService implements AutoCloseable {
 
 	private File metaDataFile;
 
 	private final MetaData metaData = new MetaData();
+	
+	private final List<Adapter<?, ?>> adapters = new ArrayList<Adapter<?, ?>>();
 
 	public MetaDataService() {
 		this(null);
@@ -58,6 +62,12 @@ public class MetaDataService implements AutoCloseable {
 
 	public synchronized void save(File file) {
 		saveMetaData(metaData, file);
+	}
+	
+	public void addAdapter(Adapter<?, ?> adapter) {
+		adapters.add(adapter);
+		
+		registerStruct(adapter.getRemoteType());
 	}
 
 	public synchronized ServiceDefinition registerService(Class<?> type) {
