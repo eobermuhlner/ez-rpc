@@ -32,7 +32,12 @@ public class MetaDataService {
 
 	public synchronized StructDefinition registerStruct(Class<?> type) {
 		String name = type.getName();
-		
+
+		StructDefinition structDefinition = findStructDefinitionByType(name);
+		if (structDefinition != null) {
+			return structDefinition;
+		}
+
 		RpcStruct annotation = type.getAnnotation(RpcStruct.class);
 		if (annotation != null) {
 			if (annotation.name() != null && !annotation.name().equals("")) {
@@ -53,21 +58,12 @@ public class MetaDataService {
 		metaData.addStructDefinition(structDefinition);
 	}
 	
-	public synchronized StructDefinition getStructDefinition(Class<?> type) {
-		StructDefinition structDefinition = findStructDefinitionByType(type.getName());
-		if (structDefinition != null) {
-			return structDefinition;
-		}
-		
-		return registerStruct(type);
-	}
-
 	public synchronized StructDefinition getStructDefinition(String name, ClassLoader classLoader) {
 		StructDefinition structDefinition = findStructDefinitionByName(name);
 		if (structDefinition == null) {
 			try {
 				Class<?> type = Class.forName(name, false, classLoader);
-				structDefinition = registerStruct(type, name);
+				structDefinition = registerStruct(type);
 			} catch (ClassNotFoundException e) {
 				throw new RpcServiceException(e);
 			}
@@ -76,18 +72,14 @@ public class MetaDataService {
 		return structDefinition;
 	}
 
-	public StructDefinition findStructDefinitionByName(String name) {
+	private StructDefinition findStructDefinitionByName(String name) {
 		return metaData.getStructDefinitions().findByName(name);
 	}
 	
-	public StructDefinition findStructDefinitionByType(String javaTypeName) {
-		return metaData.getStructDefinitions().findByName(javaTypeName);
+	private StructDefinition findStructDefinitionByType(String javaTypeName) {
+		return metaData.getStructDefinitions().findByType(javaTypeName);
 	}
 	
-	public StructDefinition findStructDefinitionMatching(StructDefinition template) {
-		return metaData.getStructDefinitions().findByTemplate(template);
-	}
-
 	public static void saveMetaData(MetaData metaData, File file) {
 		try {
 			JAXBContext context = JAXBContext.newInstance(MetaData.class);

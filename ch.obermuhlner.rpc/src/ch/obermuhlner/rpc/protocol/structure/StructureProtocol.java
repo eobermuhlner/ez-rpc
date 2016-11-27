@@ -124,7 +124,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 	}
 
 	private String getStructName(Class<?> type) {
-		return serviceMetaData.getStructDefinition(type).name;
+		return serviceMetaData.registerStruct(type).name;
 	}
 
 	@SuppressWarnings("unchecked")
