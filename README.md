@@ -14,13 +14,14 @@ Supported transport layers:
 * TCP Sockets
 * ... (currently under development)
 
-Suppoerted protocols:
+Supported protocols:
 * Java serialization (only between Java applications)
 * binary protocol
 * XML (currently under development)
 
 ## Approach
 
+The framework is designed to be easy to start developing, specifying the complex meta data later in the development process.
 
 ## Service Interface used over RPC
 
@@ -110,7 +111,7 @@ The meta data describes the services and data structures.
 
 The meta data file is optional and can be generated automatically from the Java interfaces (with annotations).
 
-Once the meta data file is created it becomes the master and the application will validate itself against it on startup.
+Once the meta data file is created it becomes the master specification and the application will validate itself against it on startup.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
