@@ -1,11 +1,19 @@
 package ch.obermuhlner.rpc.meta;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
+
 public class StructDefinition {
 
 	public String name;
 	
 	public String javaTypeName;
 
+	@XmlElement(name = "field")
+	public List<FieldDefinition> fieldDefinitions = new ArrayList<>();
+	
 	@SuppressWarnings("unused")
 	private StructDefinition() {
 		// for Jaxb
@@ -18,6 +26,6 @@ public class StructDefinition {
 
 	@Override
 	public String toString() {
-		return "StructDefinition [name=" + name + ", javaTypeName=" + javaTypeName + "]";
+		return "StructDefinition [name=" + name + ", javaTypeName=" + javaTypeName + ", fieldDefinitions=" + fieldDefinitions + "]";
 	}
 }
