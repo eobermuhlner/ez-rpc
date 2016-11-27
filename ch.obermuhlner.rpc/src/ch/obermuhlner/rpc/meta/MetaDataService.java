@@ -2,6 +2,8 @@ package ch.obermuhlner.rpc.meta;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +14,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.annotation.RpcService;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 
 public class MetaDataService {
@@ -26,7 +29,7 @@ public class MetaDataService {
 		MetaData loading = loadMetaData(file);
 		
 		for (StructDefinition structDefinition : loading.getStructDefinitions().get()) {
-			registerStruct(structDefinition);
+			metaData.addStructDefinition(structDefinition);
 		}
 	}
 
@@ -34,6 +37,30 @@ public class MetaDataService {
 		saveMetaData(metaData, file);
 	}
 
+	public synchronized ServiceDefinition registerService(Class<?> type) {
+		String name = type.getName();
+
+		ServiceDefinition serviceDefinition = findServiceDefinitionByType(name);
+		if (serviceDefinition != null) {
+			return serviceDefinition;
+		}
+
+		RpcService annotation = type.getAnnotation(RpcService.class);
+		if (annotation != null) {
+			if (annotation.name() != null && !annotation.name().equals("")) {
+				name = annotation.name();
+			}
+		}
+		
+		serviceDefinition = new ServiceDefinition(name, type.getName());
+
+		fillServiceDefinition(serviceDefinition, type);
+
+		metaData.addServiceDefinition(serviceDefinition);
+
+		return serviceDefinition;
+	}
+	
 	public synchronized StructDefinition registerStruct(Class<?> type) {
 		String name = type.getName();
 
@@ -51,14 +78,52 @@ public class MetaDataService {
 		
 		structDefinition = new StructDefinition(name, type.getName());
 
-		registerStruct(structDefinition); // HACK - register incomplete to avoid recursive registration if type references it self
+		metaData.addStructDefinition(structDefinition); // HACK - register incomplete to avoid recursive registration if type references itself
 		fillStructureDefinition(structDefinition, type);
 
-		registerStruct(structDefinition);
+		metaData.addStructDefinition(structDefinition);
 
 		return structDefinition;
 	}
 	
+	private void fillServiceDefinition(ServiceDefinition serviceDefinition, Class<?> type) {
+		for (Method method : type.getMethods()) {
+			MethodDefinition methodDefinition = toMethodDefinition(method);
+			serviceDefinition.methodDefinitions.add(methodDefinition);
+		}
+	}
+	
+	private MethodDefinition toMethodDefinition(Method method) {
+		MethodDefinition methodDefinition = new MethodDefinition();
+		
+		methodDefinition.name = method.getName();
+		methodDefinition.returnType = toType(method.getReturnType());
+		if (methodDefinition.returnType == Type.STRUCT) {
+			StructDefinition referencedStructDefinition = registerStruct(method.getReturnType());
+			methodDefinition.returnStructName = referencedStructDefinition.name;
+		}
+		
+		for (Parameter parameter : method.getParameters()) {
+			ArgumentDefinition argumentDefinition = toArgumentDefinition(parameter);
+			methodDefinition.argumentDefinitions.add(argumentDefinition);
+		}
+		
+		return methodDefinition;
+	}
+
+	private ArgumentDefinition toArgumentDefinition(Parameter parameter) {
+		ArgumentDefinition argumentDefinition = new ArgumentDefinition();
+		
+		argumentDefinition.name = parameter.getName();
+		argumentDefinition.type = toType(parameter.getType());
+		if (argumentDefinition.type == Type.STRUCT) {
+			StructDefinition referencedStructDefinition = registerStruct(parameter.getType());
+			argumentDefinition.structName = referencedStructDefinition.name;
+		}
+		
+		return argumentDefinition;
+	}
+
 	private void fillStructureDefinition(StructDefinition structDefinition, Class<?> type) {
 		for (Field field : type.getFields()) {
 			Type fieldType = toType(field.getType());
@@ -107,10 +172,6 @@ public class MetaDataService {
 		return null;
 	}
 
-	private void registerStruct(StructDefinition structDefinition) {
-		metaData.addStructDefinition(structDefinition);
-	}
-	
 	public synchronized StructDefinition getStructDefinition(String name, ClassLoader classLoader) {
 		StructDefinition structDefinition = findStructDefinitionByName(name);
 		if (structDefinition == null) {
@@ -125,6 +186,10 @@ public class MetaDataService {
 		return structDefinition;
 	}
 
+	private ServiceDefinition findServiceDefinitionByType(String javaTypeName) {
+		return metaData.getServiceDefinitions().findByType(javaTypeName);
+	}
+	
 	private StructDefinition findStructDefinitionByName(String name) {
 		return metaData.getStructDefinitions().findByName(name);
 	}

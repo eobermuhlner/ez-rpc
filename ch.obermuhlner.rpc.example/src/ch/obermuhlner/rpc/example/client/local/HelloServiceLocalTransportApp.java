@@ -28,7 +28,7 @@ public class HelloServiceLocalTransportApp {
 		
 		MetaDataService serviceMetaData = new MetaDataService();
 		serviceMetaData.load(new File("rpc-metadata.xml"));
-		serviceMetaData.registerStruct(HelloService.class);
+		serviceMetaData.registerService(HelloService.class);
 		serviceMetaData.registerStruct(ExampleData.class);
 		serviceMetaData.save(new File("rpc-metadata.xml"));
 

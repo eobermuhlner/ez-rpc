@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 public class MethodDefinition {
 
@@ -15,7 +16,8 @@ public class MethodDefinition {
 	
 	@XmlAttribute
 	public String returnStructName; // only set if returnType == Type.STRUCT
-	
+
+	@XmlElement(name = "argument")
 	public List<ArgumentDefinition> argumentDefinitions = new ArrayList<>();
 	
 	public MethodDefinition() {
