@@ -21,7 +21,81 @@ Suppoerted protocols:
 
 ## Approach
 
-## Meta Data about services and data structures
+
+## Service Interface used over RPC
+
+Interfaces can optionally be annotated to provide additional information for the RPC framework.
+
+```java
+@RpcService(name = "HelloService")
+public interface HelloService {
+
+	void ping();
+	
+	double calculateSquare(double value);
+	
+	@RpcMethod(name = "enrichExample")
+	ExampleData exampleMethod(
+			@RpcParameter(name = "poor")
+			ExampleData exampleData);
+}
+```
+
+## Data structures used ove RPC
+
+Data structures over RPC are limited to the most important data types.
+
+```java
+@RpcStruct(name = "ExampleData")
+public class ExampleData {
+	public boolean booleanField;
+	public int intField;
+	public long longField;
+	public String stringField;
+	public List<String> listField;
+	public Set<String> setField;
+	public Map<Object, Object> mapField;
+	public ExampleData nestedExampleData;
+```
+
+## Configuration
+
+The configuration API is designed to be used in injection framework (for example Spring).
+
+### Client Configuration
+
+```java
+		MetaDataService serviceMetaData = new MetaDataService();
+		serviceMetaData.load(new File("rpc-metadata.xml"));
+		serviceMetaData.registerService(HelloService.class);
+		serviceMetaData.save(new File("rpc-metadata.xml"));
+		
+		int port = 5924;
+		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(serviceMetaData, HelloServiceImpl.class.getClassLoader());
+		SocketClientTransport socketClientTransport = new SocketClientTransport(protocol, "localhost", port);
+		
+		ServiceFactory serviceFactory = new ServiceFactory();
+		HelloService proxyService = serviceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, socketClientTransport);
+```
+
+### Server Configuration
+
+```java
+		MetaDataService serviceMetaData = new MetaDataService();
+		serviceMetaData.load(new File("rpc-metadata.xml"));
+		serviceMetaData.registerService(HelloService.class);
+		serviceMetaData.save(new File("rpc-metadata.xml"));
+
+		int port = 5924;
+		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(serviceMetaData, HelloServiceImpl.class.getClassLoader());
+		
+		SocketServerTransport socketServerTransport = new SocketServerTransport(protocol, port);
+
+		ServiceFactory serviceFactory = new ServiceFactory();
+		serviceFactory.publishService(HelloService.class, helloServiceImpl, socketServerTransport);
+```
+
+## Meta Data
 
 The meta data describes the services and data structures.
 
