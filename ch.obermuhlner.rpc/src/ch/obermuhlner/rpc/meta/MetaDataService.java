@@ -1,8 +1,6 @@
 package ch.obermuhlner.rpc.meta;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -16,9 +14,6 @@ public class MetaDataService {
 
 	private final MetaData metaData = new MetaData();
 	
-	private final Map<String, StructDefinition> mapNameToStructDefinition = new HashMap<>();
-	private final Map<String, StructDefinition> mapTypeToStructDefinition = new HashMap<>();
-
 	public synchronized void load(File file) {
 		if (!file.exists()) {
 			return;
@@ -26,7 +21,7 @@ public class MetaDataService {
 		
 		MetaData loading = loadMetaData(file);
 		
-		for (StructDefinition structDefinition : loading.getStructDefinitions()) {
+		for (StructDefinition structDefinition : loading.getStructDefinitions().get()) {
 			registerStruct(structDefinition);
 		}
 	}
@@ -56,25 +51,19 @@ public class MetaDataService {
 
 	private void registerStruct(StructDefinition structDefinition) {
 		metaData.addStructDefinition(structDefinition);
-
-		mapNameToStructDefinition.put(structDefinition.name, structDefinition);
-		mapTypeToStructDefinition.put(structDefinition.javaTypeName, structDefinition);
 	}
 	
-	public StructDefinition getStructDefinition(String name) {
-		return mapNameToStructDefinition.get(name);
-	}
-
 	public synchronized StructDefinition getStructDefinition(Class<?> type) {
-		if (!mapTypeToStructDefinition.containsKey(type.getName())) {
-			registerStruct(type);
+		StructDefinition structDefinition = findStructDefinitionByType(type.getName());
+		if (structDefinition != null) {
+			return structDefinition;
 		}
 		
-		return mapTypeToStructDefinition.get(type.getName());
+		return registerStruct(type);
 	}
 
 	public synchronized StructDefinition getStructDefinition(String name, ClassLoader classLoader) {
-		StructDefinition structDefinition = getStructDefinition(name);
+		StructDefinition structDefinition = findStructDefinitionByName(name);
 		if (structDefinition == null) {
 			try {
 				Class<?> type = Class.forName(name, false, classLoader);
@@ -85,6 +74,18 @@ public class MetaDataService {
 		}
 		
 		return structDefinition;
+	}
+
+	public StructDefinition findStructDefinitionByName(String name) {
+		return metaData.getStructDefinitions().findByName(name);
+	}
+	
+	public StructDefinition findStructDefinitionByType(String javaTypeName) {
+		return metaData.getStructDefinitions().findByName(javaTypeName);
+	}
+	
+	public StructDefinition findStructDefinitionMatching(StructDefinition template) {
+		return metaData.getStructDefinitions().findByTemplate(template);
 	}
 
 	public static void saveMetaData(MetaData metaData, File file) {
