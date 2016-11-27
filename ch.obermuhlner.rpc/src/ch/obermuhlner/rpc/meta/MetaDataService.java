@@ -19,9 +19,30 @@ import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcService;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 
-public class MetaDataService {
+public class MetaDataService implements AutoCloseable {
+
+	private File metaDataFile;
 
 	private final MetaData metaData = new MetaData();
+
+	public MetaDataService() {
+		this(null);
+	}
+
+	public MetaDataService(File metaDataFile) {
+		this.metaDataFile = metaDataFile;
+		
+		if (metaDataFile != null) {
+			load(metaDataFile);
+		}
+	}
+	
+	@Override
+	public void close() {
+		if (metaDataFile != null) {
+			save(metaDataFile);
+		}
+	}
 	
 	public synchronized void load(File file) {
 		if (!file.exists()) {
