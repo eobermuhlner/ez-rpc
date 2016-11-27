@@ -4,7 +4,7 @@ Easy RPC between Java, C++.
 
 The goal of this project is to provide straightforward RPC (remote procedure calls) between applications independent of the programming language or transport layer.
 
-The client and server code can be developed completely unaware of the ez-rpc framework.
+The client and server code can be developed completely unaware of the ez-rpc framework, you only have to be aware of some limitations in the supported data types (a common subset for all languages).
 
 Supported languages:
 * Java
@@ -53,6 +53,15 @@ public interface HelloServiceAsync {
 ## Data structures used over RPC
 
 Data structures over RPC are limited to the most important data types.
+* boolean
+* int
+* long
+* double
+* String
+* List
+* Set
+* Map
+* other data structures
 
 ```java
 @RpcStruct(name = "ExampleData")
@@ -72,7 +81,7 @@ public class ExampleData {
 
 The configuration API is designed to be easy to use in injection frameworks (for example Spring).
 
-### Client Configuration
+### TCP Client Configuration
 
 ```java
 		MetaDataService serviceMetaData = new MetaDataService();
@@ -88,7 +97,7 @@ The configuration API is designed to be easy to use in injection frameworks (for
 		HelloService proxyService = serviceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, socketClientTransport);
 ```
 
-### Server Configuration
+### TCP Server Configuration
 
 ```java
 		MetaDataService serviceMetaData = new MetaDataService();
@@ -107,7 +116,7 @@ The configuration API is designed to be easy to use in injection frameworks (for
 
 ## Meta Data
 
-The meta data describes the services and data structures.
+The meta data describes the services and data structures used by the RPC framework.
 
 The meta data file is optional and can be generated automatically from the Java interfaces (with annotations).
 
