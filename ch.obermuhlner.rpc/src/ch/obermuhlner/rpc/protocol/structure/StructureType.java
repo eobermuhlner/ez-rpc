@@ -1,6 +1,6 @@
 package ch.obermuhlner.rpc.protocol.structure;
 
-public enum Type {
+public enum StructureType {
 	NULL,
 	LIST,
 	SET,

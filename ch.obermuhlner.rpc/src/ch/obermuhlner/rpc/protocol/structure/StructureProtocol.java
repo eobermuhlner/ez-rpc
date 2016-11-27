@@ -136,7 +136,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 	}
 
 	private Object read(StructureReader reader) {
-		Type type = reader.readType();
+		StructureType type = reader.readType();
 		
 		switch (type) {
 		case NULL:
@@ -205,9 +205,9 @@ public class StructureProtocol<T> implements Protocol<T> {
 		String name = reader.readStructBegin();
 
 		Object struct = createStruct(name);
-		Type type = reader.readType();
-		while (type != Type.FIELD_STOP) {
-			if (type != Type.FIELD) {
+		StructureType type = reader.readType();
+		while (type != StructureType.FIELD_STOP) {
+			if (type != StructureType.FIELD) {
 				throw new RpcServiceException("Type must be FIELD or FIELD_STOP: " + type);
 			}
 			

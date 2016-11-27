@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 import ch.obermuhlner.rpc.RpcServiceException;
 import ch.obermuhlner.rpc.protocol.structure.StructureReader;
-import ch.obermuhlner.rpc.protocol.structure.Type;
+import ch.obermuhlner.rpc.protocol.structure.StructureType;
 
 public class BinaryStructureReader implements StructureReader {
 
@@ -26,31 +26,31 @@ public class BinaryStructureReader implements StructureReader {
 	}
 	
 	@Override
-	public Type readType() {
+	public StructureType readType() {
 		try {
 			int type = in.readByte();
 
 			switch(type) {
 			case BinaryStructureWriter.STRUCT:
-				return Type.STRUCT;
+				return StructureType.STRUCT;
 			case BinaryStructureWriter.LIST:
-				return Type.LIST;
+				return StructureType.LIST;
 			case BinaryStructureWriter.SET:
-				return Type.SET;
+				return StructureType.SET;
 			case BinaryStructureWriter.FIELD:
-				return Type.FIELD;
+				return StructureType.FIELD;
 			case BinaryStructureWriter.FIELD_STOP:
-				return Type.FIELD_STOP;
+				return StructureType.FIELD_STOP;
 			case BinaryStructureWriter.INT:
-				return Type.INT;
+				return StructureType.INT;
 			case BinaryStructureWriter.LONG:
-				return Type.LONG;
+				return StructureType.LONG;
 			case BinaryStructureWriter.DOUBLE:
-				return Type.DOUBLE;
+				return StructureType.DOUBLE;
 			case BinaryStructureWriter.STRING:
-				return Type.STRING;
+				return StructureType.STRING;
 			case BinaryStructureWriter.NULL:
-				return Type.NULL;
+				return StructureType.NULL;
 			}
 			
 			throw new RpcServiceException("Unknown type: " + type);

@@ -2,7 +2,7 @@ package ch.obermuhlner.rpc.protocol.structure;
 
 public interface StructureReader {
 
-	Type readType();
+	StructureType readType();
 
 	void readMessageBegin();
 	void readMessageEnd();
@@ -30,8 +30,8 @@ public interface StructureReader {
 	Double readDouble();
 	String readString();
 	
-	default void expectType(Type expectedType) {
-		Type type = readType();
+	default void expectType(StructureType expectedType) {
+		StructureType type = readType();
 		if (type != expectedType) {
 			throw new IllegalArgumentException();
 		}
