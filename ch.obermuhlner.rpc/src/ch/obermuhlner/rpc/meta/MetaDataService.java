@@ -1,6 +1,10 @@
 package ch.obermuhlner.rpc.meta;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -45,13 +49,62 @@ public class MetaDataService {
 			}
 		}
 		
-		return registerStruct(type, name);
+		structDefinition = new StructDefinition(name, type.getName());
+
+		registerStruct(structDefinition); // HACK - register incomplete to avoid recursive registration if type references it self
+		fillStructureDefinition(structDefinition, type);
+
+		registerStruct(structDefinition);
+
+		return structDefinition;
 	}
 	
-	public synchronized StructDefinition registerStruct(Class<?> type, String name) {
-		StructDefinition structDefinition = new StructDefinition(name, type.getName());
-		registerStruct(structDefinition);
-		return structDefinition;
+	private void fillStructureDefinition(StructDefinition structDefinition, Class<?> type) {
+		for (Field field : type.getFields()) {
+			Type fieldType = toType(field.getType());
+			if (type != null) {
+				String structName = null;
+				
+				if (fieldType == Type.STRUCT) {
+					StructDefinition referencedStructDefinition = registerStruct(field.getType());
+					structName = referencedStructDefinition.name;
+				}
+
+				FieldDefinition fieldDefinition = new FieldDefinition(field.getName(), fieldType, structName);
+				System.out.println(fieldDefinition);
+				structDefinition.fieldDefinitions.add(fieldDefinition);
+			}
+		}
+	}
+
+	private Type toType(Class<?> type) {
+		if (type == Boolean.class || type == boolean.class) {
+			return Type.BOOL;
+		}
+		if (type == Integer.class || type == int.class) {
+			return Type.INT;
+		}
+		if (type == Long.class || type == long.class) {
+			return Type.LONG;
+		}
+		if (type == String.class) {
+			return Type.STRING;
+		}
+		if (List.class.isAssignableFrom(type) || type == Object[].class) {
+			return Type.LIST;
+		}
+		if (Set.class.isAssignableFrom(type)) {
+			return Type.SET;
+		}
+		if (Map.class.isAssignableFrom(type)) {
+			return Type.MAP;
+		}
+
+		if (type.getAnnotation(RpcStruct.class) != null) {
+			return Type.STRUCT;
+		}
+
+		return null;
 	}
 
 	private void registerStruct(StructDefinition structDefinition) {

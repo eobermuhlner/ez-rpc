@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <metaData>
     <structs>
-        <struct>
-            <name>HelloService</name>
-            <javaTypeName>ch.obermuhlner.rpc.example.api.HelloService</javaTypeName>
-        </struct>
-        <struct>
-            <name>ExampleData</name>
-            <javaTypeName>ch.obermuhlner.rpc.example.api.ExampleData</javaTypeName>
+        <struct name="ch.obermuhlner.rpc.example.api.HelloService" javaTypeName="ch.obermuhlner.rpc.example.api.HelloService"/>
+        <struct name="ExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.ExampleData">
+            <field name="booleanField" type="BOOL"/>
+            <field name="intField" type="INT"/>
+            <field name="longField" type="LONG"/>
+            <field name="stringField" type="STRING"/>
+            <field name="listField" type="LIST"/>
+            <field name="setField" type="SET"/>
+            <field name="mapField" type="MAP"/>
+            <field name="nestedExampleData" type="STRUCT" structName="ExampleData"/>
         </struct>
     </structs>
 </metaData>

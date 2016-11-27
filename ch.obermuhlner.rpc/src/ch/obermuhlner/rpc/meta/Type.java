@@ -6,5 +6,8 @@ public enum Type {
 	LONG,
 	DOUBLE,
 	STRING,
+	LIST,
+	SET,
+	MAP,
 	STRUCT,
 }
