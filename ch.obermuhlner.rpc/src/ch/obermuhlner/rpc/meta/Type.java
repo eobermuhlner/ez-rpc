@@ -9,5 +9,9 @@ public enum Type {
 	LIST,
 	SET,
 	MAP,
-	STRUCT,
+	STRUCT;
+	
+	public String toTypeName() {
+		return name().toLowerCase();
+	}
 }

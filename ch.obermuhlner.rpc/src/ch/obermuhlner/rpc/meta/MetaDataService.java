@@ -15,8 +15,9 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import ch.obermuhlner.rpc.RpcServiceException;
-import ch.obermuhlner.rpc.annotation.RpcParameter;
+import ch.obermuhlner.rpc.annotation.RpcField;
 import ch.obermuhlner.rpc.annotation.RpcMethod;
+import ch.obermuhlner.rpc.annotation.RpcParameter;
 import ch.obermuhlner.rpc.annotation.RpcService;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 import ch.obermuhlner.rpc.meta.adapter.Adapter;
@@ -84,8 +85,8 @@ public class MetaDataService implements AutoCloseable {
 			if (annotation.name() != null && !annotation.name().equals("")) {
 				name = annotation.name();
 			}
-			if (annotation.sessionClass() != null && annotation.sessionClass() != Void.class) {
-				sessionJavaClass = annotation.sessionClass();
+			if (annotation.session() != null && annotation.session() != Void.class) {
+				sessionJavaClass = annotation.session();
 			}
 		}
 		
@@ -141,7 +142,7 @@ public class MetaDataService implements AutoCloseable {
 			}			
 		}
 		
-		methodDefinition.returnType = toTypeString(method.getReturnType());
+		methodDefinition.returns= toTypeString(method.getReturnType());
 		
 		for (Parameter parameter : method.getParameters()) {
 			ParameterDefinition parameterDefinition = toParameterDefinition(parameter);
@@ -169,7 +170,41 @@ public class MetaDataService implements AutoCloseable {
 
 	private void fillStructureDefinition(StructDefinition structDefinition, Class<?> type) {
 		for (Field field : type.getFields()) {
-			FieldDefinition fieldDefinition = new FieldDefinition(field.getName(), toTypeString(field.getType()));
+			String fieldName = field.getName();
+			String fieldType = toTypeString(field.getType());
+			String elementType = toTypeString(field.getType().getComponentType());
+			String keyType = null;
+			String valueType = null;
+			
+			RpcField annotation = field.getAnnotation(RpcField.class);
+			if (annotation != null) {
+				if (annotation.element() != null && annotation.element() != Void.class) {
+					elementType = toTypeString(annotation.element());
+				}
+				if (annotation.key() != null && annotation.key() != Void.class) {
+					keyType = toTypeString(annotation.key());
+				}
+				if (annotation.value() != null && annotation.value() != Void.class) {
+					valueType = toTypeString(annotation.value());
+				}
+			}
+			
+//			String neededType = null;
+//			if (fieldType.equals(Type.LIST.toTypeName()) && elementType == null) {
+//				neededType = "element";
+//			} else if (fieldType.equals(Type.SET.toTypeName()) && elementType == null) {
+//				neededType = "element";
+//			} else if (fieldType.equals(Type.MAP.toTypeName()) && keyType == null) {
+//				neededType = "key";
+//			} else if (fieldType.equals(Type.MAP.toTypeName()) && valueType == null) {
+//				neededType = "value";
+//			}
+//			
+//			if (neededType != null) {
+//				throw new RpcServiceException("Field '" + type.getName() + "." + field.getName() + "' of type '" + fieldType + "' must specify '" + neededType + "' type in @RpcField");
+//			}
+
+			FieldDefinition fieldDefinition = new FieldDefinition(fieldName, fieldType, elementType, keyType, valueType);
 			structDefinition.fieldDefinitions.add(fieldDefinition);
 		}
 	}
@@ -224,7 +259,7 @@ public class MetaDataService implements AutoCloseable {
 		if (type == Type.STRUCT) {
 			return registerStruct(javaClass).name;
 		} else {
-			return type.name().toLowerCase();
+			return type.toTypeName();
 		}
 	}
 

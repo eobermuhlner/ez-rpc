@@ -12,5 +12,11 @@ import java.lang.annotation.Target;
 public @interface RpcField {
 
 	String name() default "";
+
+	Class<?> element() default Void.class;
+	
+	Class<?> key() default Void.class;
+	
+	Class<?> value() default Void.class;
 	
 }

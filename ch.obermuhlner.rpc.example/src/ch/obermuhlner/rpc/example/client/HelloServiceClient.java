@@ -50,10 +50,8 @@ public class HelloServiceClient {
 		exampleData.setField.add("one");
 		exampleData.setField.add("two");
 		exampleData.mapField = new HashMap<>();
-		exampleData.mapField.put(null, "NULL");
-		exampleData.mapField.put(1, "INT one");
-		exampleData.mapField.put(Long.MAX_VALUE, "LONG max");
-		exampleData.mapField.put("three", "STRING three");
+		exampleData.mapField.put(1, "one");
+		exampleData.mapField.put(2, "two");
 		exampleData.nestedExampleData = new ExampleData();
 		System.out.println(helloService.exampleMethod(exampleData));
 		

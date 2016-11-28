@@ -11,8 +11,8 @@ public class MethodDefinition {
 	@XmlAttribute
 	public String name;
 	
-	@XmlAttribute
-	public String returnType;
+	@XmlElement
+	public String returns;
 	
 	@XmlElement(name = "parameter")
 	public List<ParameterDefinition> parameterDefinitions = new ArrayList<>();
@@ -23,6 +23,11 @@ public class MethodDefinition {
 
 	public MethodDefinition(String name, String returnType) {
 		this.name = name;
-		this.returnType = returnType;
+		this.returns = returnType;
+	}
+
+	@Override
+	public String toString() {
+		return "MethodDefinition [name=" + name + ", returns=" + returns + ", parameterDefinitions=" + parameterDefinitions + "]";
 	}
 }

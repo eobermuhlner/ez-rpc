@@ -12,5 +12,5 @@ public @interface RpcService {
 
 	String name() default "";
 
-	Class<?> sessionClass() default Void.class;
+	Class<?> session() default Void.class;
 }
