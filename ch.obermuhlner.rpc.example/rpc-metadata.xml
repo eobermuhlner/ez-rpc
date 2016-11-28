@@ -2,15 +2,15 @@
 <metaData>
     <services>
         <service name="HelloService" javaTypeName="ch.obermuhlner.rpc.example.api.HelloService">
-            <method name="adapterExample" returnType="STRUCT" returnStructName="AdapterExampleData">
-                <parameter name="data" type="STRUCT" structName="AdapterExampleData"/>
-            </method>
             <method name="calculateSquare">
                 <parameter name="arg0"/>
             </method>
-            <method name="ping"/>
             <method name="enrichExample" returnType="STRUCT" returnStructName="ExampleData">
                 <parameter name="poor" type="STRUCT" structName="ExampleData"/>
+            </method>
+            <method name="ping"/>
+            <method name="adapterExample" returnType="STRUCT" returnStructName="AdapterExampleData">
+                <parameter name="data" type="STRUCT" structName="AdapterExampleData"/>
             </method>
         </service>
     </services>
@@ -24,11 +24,10 @@
         <struct name="EpochDay" javaTypeName="ch.obermuhlner.rpc.meta.adapter.time.EpochDayStruct">
             <field name="days" type="LONG"/>
         </struct>
-        <struct name="AdapterExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.AdapterExampleData">
-            <field name="bigDecimalField" type="STRUCT" structName="BigDecimal"/>
-            <field name="dateField" type="STRUCT" structName="EpochMillisecond"/>
-            <field name="localDateTimeField" type="STRUCT" structName="EpochMillisecond"/>
-            <field name="localDateField" type="STRUCT" structName="EpochDay"/>
+        <struct name="ch.obermuhlner.rpc.meta.adapter.time.PeriodStruct" javaTypeName="ch.obermuhlner.rpc.meta.adapter.time.PeriodStruct">
+            <field name="years" type="INT"/>
+            <field name="months" type="INT"/>
+            <field name="days" type="INT"/>
         </struct>
         <struct name="ExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.ExampleData">
             <field name="booleanField" type="BOOL"/>
@@ -39,6 +38,13 @@
             <field name="setField" type="SET"/>
             <field name="mapField" type="MAP"/>
             <field name="nestedExampleData" type="STRUCT" structName="ExampleData"/>
+        </struct>
+        <struct name="AdapterExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.AdapterExampleData">
+            <field name="bigDecimalField" type="STRUCT" structName="BigDecimal"/>
+            <field name="dateField" type="STRUCT" structName="EpochMillisecond"/>
+            <field name="localDateTimeField" type="STRUCT" structName="EpochMillisecond"/>
+            <field name="localDateField" type="STRUCT" structName="EpochDay"/>
+            <field name="periodField"/>
         </struct>
     </structs>
 </metaData>

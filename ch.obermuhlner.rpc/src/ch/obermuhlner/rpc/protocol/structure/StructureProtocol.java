@@ -117,6 +117,9 @@ public class StructureProtocol<T> implements Protocol<T> {
 			try {
 				Object value = field.get(element); 
 				FieldDefinition fieldDefinition = metaDataService.findFieldDefinition(type.getName(), fieldData.name);
+				if (fieldDefinition == null) {
+					throw new RpcServiceException("Unknown field: " + type.getName() + "." + fieldData.name);
+				}
 				Class<?> fieldType = metaDataService.getClass(type, fieldDefinition);
 				value = convertToRemote(value, fieldType);
 				fieldData.value = value;
