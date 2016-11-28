@@ -12,11 +12,8 @@ public class MethodDefinition {
 	public String name;
 	
 	@XmlAttribute
-	public Type returnType;
+	public String returnType;
 	
-	@XmlAttribute
-	public String returnStructName; // only set if returnType == Type.STRUCT
-
 	@XmlElement(name = "parameter")
 	public List<ParameterDefinition> parameterDefinitions = new ArrayList<>();
 	
@@ -24,9 +21,8 @@ public class MethodDefinition {
 		// for Jaxb
 	}
 
-	public MethodDefinition(String name, Type returnType, String returnStructName) {
+	public MethodDefinition(String name, String returnType) {
 		this.name = name;
 		this.returnType = returnType;
-		this.returnStructName = returnStructName;
 	}
 }

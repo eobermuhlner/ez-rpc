@@ -72,8 +72,7 @@ public class MetaDataService implements AutoCloseable {
 
 	public synchronized ServiceDefinition registerService(Class<?> type) {
 		String name = type.getName();
-		Type sessionType = null;
-		String sessionStruct = null;
+		Class<?> sessionJavaClass = null;
 
 		ServiceDefinition serviceDefinition = findServiceDefinitionByType(name);
 		if (serviceDefinition != null) {
@@ -86,14 +85,11 @@ public class MetaDataService implements AutoCloseable {
 				name = annotation.name();
 			}
 			if (annotation.sessionClass() != null && annotation.sessionClass() != Void.class) {
-				sessionType = toType(annotation.sessionClass());
-				if (sessionType == Type.STRUCT) {
-					findServiceDefinitionByType(annotation.sessionClass().getName());
-				}
+				sessionJavaClass = annotation.sessionClass();
 			}
 		}
 		
-		serviceDefinition = new ServiceDefinition(name, type.getName(), sessionType, sessionStruct);
+		serviceDefinition = new ServiceDefinition(name, type.getName(), toTypeString(sessionJavaClass));
 
 		fillServiceDefinition(serviceDefinition, type);
 
@@ -145,11 +141,7 @@ public class MetaDataService implements AutoCloseable {
 			}			
 		}
 		
-		methodDefinition.returnType = toType(method.getReturnType());
-		if (methodDefinition.returnType == Type.STRUCT) {
-			StructDefinition referencedStructDefinition = registerStruct(method.getReturnType());
-			methodDefinition.returnStructName = referencedStructDefinition.name;
-		}
+		methodDefinition.returnType = toTypeString(method.getReturnType());
 		
 		for (Parameter parameter : method.getParameters()) {
 			ParameterDefinition parameterDefinition = toParameterDefinition(parameter);
@@ -170,40 +162,22 @@ public class MetaDataService implements AutoCloseable {
 			}			
 		}
 
-		parameterDefinition.type = toType(parameter.getType());
-		if (parameterDefinition.type == Type.STRUCT) {
-			StructDefinition referencedStructDefinition = registerStruct(parameter.getType());
-			parameterDefinition.structName = referencedStructDefinition.name;
-		}
+		parameterDefinition.type = toTypeString(parameter.getType());
 		
 		return parameterDefinition;
 	}
 
 	private void fillStructureDefinition(StructDefinition structDefinition, Class<?> type) {
 		for (Field field : type.getFields()) {
-			Class<?> fieldType = field.getType();
-			@SuppressWarnings("rawtypes")
-			Adapter adapter = findAdapterByLocalType(fieldType);
-			if (adapter != null) {
-				fieldType = adapter.getRemoteType();
-			}
-			
-			Type structFieldType = toType(fieldType);
-			if (type != null) {
-				String structName = null;
-				
-				if (structFieldType == Type.STRUCT) {
-					StructDefinition referencedStructDefinition = registerStruct(fieldType);
-					structName = referencedStructDefinition.name;
-				}
-
-				FieldDefinition fieldDefinition = new FieldDefinition(field.getName(), structFieldType, structName);
-				structDefinition.fieldDefinitions.add(fieldDefinition);
-			}
+			FieldDefinition fieldDefinition = new FieldDefinition(field.getName(), toTypeString(field.getType()));
+			structDefinition.fieldDefinitions.add(fieldDefinition);
 		}
 	}
 
 	private Type toType(Class<?> type) {
+		if (type == null) {
+			return null;
+		}
 		if (type == Boolean.class || type == boolean.class) {
 			return Type.BOOL;
 		}
@@ -212,6 +186,9 @@ public class MetaDataService implements AutoCloseable {
 		}
 		if (type == Long.class || type == long.class) {
 			return Type.LONG;
+		}
+		if (type == Double.class || type == double.class) {
+			return Type.DOUBLE;
 		}
 		if (type == String.class) {
 			return Type.STRING;
@@ -231,6 +208,24 @@ public class MetaDataService implements AutoCloseable {
 		}
 
 		return null;
+	}
+	
+	public String toTypeString(Class<?> javaClass) {
+		@SuppressWarnings("rawtypes")
+		Adapter adapter = findAdapterByLocalType(javaClass);
+		if (adapter != null) {
+			javaClass = adapter.getRemoteType();
+		}
+
+		Type type = toType(javaClass);
+		if (type == null) {
+			return null;
+		}
+		if (type == Type.STRUCT) {
+			return registerStruct(javaClass).name;
+		} else {
+			return type.name().toLowerCase();
+		}
 	}
 
 	public synchronized StructDefinition getStructDefinition(String name, ClassLoader classLoader) {

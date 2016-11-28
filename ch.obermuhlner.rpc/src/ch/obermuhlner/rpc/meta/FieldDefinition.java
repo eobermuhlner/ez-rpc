@@ -8,23 +8,19 @@ public class FieldDefinition {
 	public String name;
 	
 	@XmlAttribute
-	public Type type;
-	
-	@XmlAttribute
-	public String structName; // only set if type == Type.STRUCT
+	public String type;
 	
 	public FieldDefinition() {
 		// for Jaxb
 	}
 
-	public FieldDefinition(String name, Type type, String structName) {
+	public FieldDefinition(String name, String type) {
 		this.name = name;
 		this.type = type;
-		this.structName = structName;
 	}
 
 	@Override
 	public String toString() {
-		return "FieldDefinition [name=" + name + ", type=" + type + ", structName=" + structName + "]";
+		return "FieldDefinition [name=" + name + ", type=" + type + "]";
 	}
 }

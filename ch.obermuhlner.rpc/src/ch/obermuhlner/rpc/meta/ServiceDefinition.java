@@ -15,10 +15,7 @@ public class ServiceDefinition {
 	public String javaClass;
 	
 	@XmlAttribute
-	public Type sessionType;
-	
-	@XmlAttribute
-	public String sessionStruct;
+	public String sessionType;
 	
 	@XmlElement(name = "method")
 	public List<MethodDefinition> methodDefinitions = new ArrayList<>();
@@ -28,11 +25,10 @@ public class ServiceDefinition {
 		// for Jaxb
 	}
 	
-	public ServiceDefinition(String name, String javaClass, Type sessionType, String sessionStruct) {
+	public ServiceDefinition(String name, String javaClass, String sessionType) {
 		this.name = name;
 		this.javaClass = javaClass;
 		this.sessionType = sessionType;
-		this.sessionStruct = sessionStruct;
 	}
 
 	@Override

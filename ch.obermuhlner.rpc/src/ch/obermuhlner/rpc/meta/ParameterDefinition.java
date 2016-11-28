@@ -8,23 +8,19 @@ public class ParameterDefinition {
 	public String name;
 	
 	@XmlAttribute
-	public Type type;
-	
-	@XmlAttribute
-	public String structName; // only set if type == Type.STRUCT
+	public String type;
 	
 	public ParameterDefinition() {
 		// for Jaxb
 	}
 
-	public ParameterDefinition(String name, Type type, String structName) {
+	public ParameterDefinition(String name, String type) {
 		this.name = name;
 		this.type = type;
-		this.structName = structName;
 	}
 
 	@Override
 	public String toString() {
-		return "ParameterDefinition [name=" + name + ", type=" + type + ", structName=" + structName + "]";
+		return "ParameterDefinition [name=" + name + ", type=" + type + "]";
 	}
 }

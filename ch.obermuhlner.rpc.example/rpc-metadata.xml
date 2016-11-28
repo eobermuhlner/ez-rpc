@@ -2,49 +2,49 @@
 <metaData>
     <services>
         <service name="HelloService" javaClass="ch.obermuhlner.rpc.example.api.HelloService">
-            <method name="adapterExample" returnType="STRUCT" returnStructName="AdapterExampleData">
-                <parameter name="data" type="STRUCT" structName="AdapterExampleData"/>
-            </method>
-            <method name="enrichExample" returnType="STRUCT" returnStructName="ExampleData">
-                <parameter name="poor" type="STRUCT" structName="ExampleData"/>
-            </method>
-            <method name="calculateSquare">
-                <parameter name="arg0"/>
-            </method>
             <method name="ping"/>
+            <method name="calculateSquare" returnType="double">
+                <parameter name="arg0" type="double"/>
+            </method>
+            <method name="enrichExample" returnType="ExampleData">
+                <parameter name="poor" type="ExampleData"/>
+            </method>
+            <method name="adapterExample" returnType="AdapterExampleData">
+                <parameter name="data" type="AdapterExampleData"/>
+            </method>
         </service>
     </services>
     <structs>
-        <struct name="BigDecimal" javaTypeName="ch.obermuhlner.rpc.meta.adapter.bigdecimal.BigDecimalStruct">
-            <field name="value" type="STRING"/>
+        <struct name="BigDecimal" javaClass="ch.obermuhlner.rpc.meta.adapter.bigdecimal.BigDecimalStruct">
+            <field name="value" type="string"/>
         </struct>
-        <struct name="EpochMillisecond" javaTypeName="ch.obermuhlner.rpc.meta.adapter.time.EpochMillisecondStruct">
-            <field name="milliseconds" type="LONG"/>
+        <struct name="EpochMillisecond" javaClass="ch.obermuhlner.rpc.meta.adapter.time.EpochMillisecondStruct">
+            <field name="milliseconds" type="long"/>
         </struct>
-        <struct name="EpochDay" javaTypeName="ch.obermuhlner.rpc.meta.adapter.time.EpochDayStruct">
-            <field name="days" type="LONG"/>
+        <struct name="EpochDay" javaClass="ch.obermuhlner.rpc.meta.adapter.time.EpochDayStruct">
+            <field name="days" type="long"/>
         </struct>
-        <struct name="Period" javaTypeName="ch.obermuhlner.rpc.meta.adapter.time.PeriodStruct">
-            <field name="years" type="INT"/>
-            <field name="months" type="INT"/>
-            <field name="days" type="INT"/>
+        <struct name="Period" javaClass="ch.obermuhlner.rpc.meta.adapter.time.PeriodStruct">
+            <field name="years" type="int"/>
+            <field name="months" type="int"/>
+            <field name="days" type="int"/>
         </struct>
-        <struct name="AdapterExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.AdapterExampleData">
-            <field name="bigDecimalField" type="STRUCT" structName="BigDecimal"/>
-            <field name="dateField" type="STRUCT" structName="EpochMillisecond"/>
-            <field name="localDateTimeField" type="STRUCT" structName="EpochMillisecond"/>
-            <field name="localDateField" type="STRUCT" structName="EpochDay"/>
-            <field name="periodField" type="STRUCT" structName="Period"/>
+        <struct name="ExampleData" javaClass="ch.obermuhlner.rpc.example.api.ExampleData">
+            <field name="booleanField" type="bool"/>
+            <field name="intField" type="int"/>
+            <field name="longField" type="long"/>
+            <field name="stringField" type="string"/>
+            <field name="listField" type="list"/>
+            <field name="setField" type="set"/>
+            <field name="mapField" type="map"/>
+            <field name="nestedExampleData" type="ExampleData"/>
         </struct>
-        <struct name="ExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.ExampleData">
-            <field name="booleanField" type="BOOL"/>
-            <field name="intField" type="INT"/>
-            <field name="longField" type="LONG"/>
-            <field name="stringField" type="STRING"/>
-            <field name="listField" type="LIST"/>
-            <field name="setField" type="SET"/>
-            <field name="mapField" type="MAP"/>
-            <field name="nestedExampleData" type="STRUCT" structName="ExampleData"/>
+        <struct name="AdapterExampleData" javaClass="ch.obermuhlner.rpc.example.api.AdapterExampleData">
+            <field name="bigDecimalField" type="BigDecimal"/>
+            <field name="dateField" type="EpochMillisecond"/>
+            <field name="localDateTimeField" type="EpochMillisecond"/>
+            <field name="localDateField" type="EpochDay"/>
+            <field name="periodField" type="Period"/>
         </struct>
     </structs>
 </metaData>
