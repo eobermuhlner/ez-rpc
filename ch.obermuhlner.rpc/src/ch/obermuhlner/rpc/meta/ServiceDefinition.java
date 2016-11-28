@@ -12,7 +12,7 @@ public class ServiceDefinition {
 	public String name;
 	
 	@XmlAttribute
-	public String javaTypeName;
+	public String javaType;
 
 	@XmlElement(name = "method")
 	public List<MethodDefinition> methodDefinitions = new ArrayList<>();
@@ -22,13 +22,13 @@ public class ServiceDefinition {
 		// for Jaxb
 	}
 	
-	public ServiceDefinition(String name, String javaTypeName) {
+	public ServiceDefinition(String name, String javaType) {
 		this.name = name;
-		this.javaTypeName = javaTypeName;
+		this.javaType = javaType;
 	}
 
 	@Override
 	public String toString() {
-		return "StructDefinition [name=" + name + ", javaTypeName=" + javaTypeName + ", methodDefinitions=" + methodDefinitions + "]";
+		return "StructDefinition [name=" + name + ", javaType=" + javaType + ", methodDefinitions=" + methodDefinitions + "]";
 	}
 }

@@ -35,7 +35,7 @@ public class ServiceDefinitionList {
 	
 	public ServiceDefinition findByType(String javaTypeName) {
 		return serviceDefinitions.stream()
-				.filter(serviceDefinition -> serviceDefinition.javaTypeName.equals(javaTypeName))
+				.filter(serviceDefinition -> serviceDefinition.javaType.equals(javaTypeName))
 				.findFirst()
 				.orElse(null);
 	}
@@ -43,7 +43,7 @@ public class ServiceDefinitionList {
 	public ServiceDefinition findByTemplate(ServiceDefinition template) {
 		return serviceDefinitions.stream()
 				.filter(serviceDefinition -> serviceDefinition.name.equals(template.name))
-				.filter(serviceDefinition -> serviceDefinition.javaTypeName.equals(template.javaTypeName))
+				.filter(serviceDefinition -> serviceDefinition.javaType.equals(template.javaType))
 				.findFirst()
 				.orElse(null);
 	}
