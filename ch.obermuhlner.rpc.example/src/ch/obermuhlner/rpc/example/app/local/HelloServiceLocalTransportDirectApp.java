@@ -1,20 +1,13 @@
-package ch.obermuhlner.rpc.example.client.local;
-
-import java.io.File;
+package ch.obermuhlner.rpc.example.app.local;
 
 import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.api.HelloServiceAsync;
 import ch.obermuhlner.rpc.example.client.HelloServiceClient;
 import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
-import ch.obermuhlner.rpc.meta.MetaDataService;
-import ch.obermuhlner.rpc.meta.adapter.BigDecimalAdapter;
-import ch.obermuhlner.rpc.meta.adapter.DateAdapter;
-import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
-import ch.obermuhlner.rpc.service.ProtocolFactory;
 import ch.obermuhlner.rpc.service.ServiceFactory;
-import ch.obermuhlner.rpc.transport.LocalTransport;
+import ch.obermuhlner.rpc.transport.LocalTransportDirect;
 
-public class HelloServiceLocalTransportApp {
+public class HelloServiceLocalTransportDirectApp {
 
 	public static void main(String[] args) {
 		HelloServiceClient helloServiceClient = setupHelloServiceClient();
@@ -27,19 +20,9 @@ public class HelloServiceLocalTransportApp {
 	
 		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		
-		MetaDataService serviceMetaData = new MetaDataService();
-		serviceMetaData.addAdapter(new BigDecimalAdapter());
-		serviceMetaData.addAdapter(new DateAdapter());
-
-		serviceMetaData.load(new File("rpc-metadata.xml"));
-		serviceMetaData.registerService(HelloService.class);
-		serviceMetaData.save(new File("rpc-metadata.xml"));
-
-		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(serviceMetaData, HelloServiceImpl.class.getClassLoader());
-
-		LocalTransport transport = new LocalTransport(protocol);
-		
+		LocalTransportDirect transport = new LocalTransportDirect();
 		ServiceFactory serviceFactory = new ServiceFactory();
+		
 		serviceFactory.publishService(HelloService.class, helloServiceImpl, transport);
 		HelloService proxyService = serviceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, transport);
 		
@@ -47,5 +30,4 @@ public class HelloServiceLocalTransportApp {
 		helloServiceClient.setHelloServiceAsync((HelloServiceAsync) proxyService);
 		return helloServiceClient;
 	}
-
 }

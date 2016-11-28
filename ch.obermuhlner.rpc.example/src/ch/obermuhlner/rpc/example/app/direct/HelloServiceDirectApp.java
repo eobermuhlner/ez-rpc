@@ -1,4 +1,4 @@
-package ch.obermuhlner.rpc.example.client.direct;
+package ch.obermuhlner.rpc.example.app.direct;
 
 import ch.obermuhlner.rpc.example.client.HelloServiceAsyncImpl;
 import ch.obermuhlner.rpc.example.client.HelloServiceClient;
