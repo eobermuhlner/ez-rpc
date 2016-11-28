@@ -26,6 +26,13 @@ public class StructDefinition {
 		this.name = name;
 		this.javaTypeName = javaTypeName;
 	}
+	
+	public FieldDefinition findFieldDefinition(String name) {
+		return fieldDefinitions.stream()
+			.filter(fieldDefinition -> fieldDefinition.name.equals(name))
+			.findFirst()
+			.orElse(null);
+	}
 
 	@Override
 	public String toString() {

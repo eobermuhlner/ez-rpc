@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.annotation.RpcStruct;
+import ch.obermuhlner.rpc.meta.FieldDefinition;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.meta.StructDefinition;
 import ch.obermuhlner.rpc.meta.adapter.Adapter;
@@ -95,8 +97,11 @@ public class StructureProtocol<T> implements Protocol<T> {
 		} else if (element instanceof String) {
 			writer.writeString((String) element);
 		} else {
-			element = convertToRemote(element);
-			writeStruct(writer, element);
+			if (element.getClass().getAnnotation(RpcStruct.class) != null) {
+				writeStruct(writer, element);
+			} else {
+				throw new RpcServiceException("Class not marked as @RpcStruct and no matching Adapter found: " + element.getClass().getName());
+			}
 		}
 	}
 
@@ -110,7 +115,12 @@ public class StructureProtocol<T> implements Protocol<T> {
 			FieldData fieldData = new FieldData();
 			fieldData.name = field.getName();
 			try {
-				fieldData.value = field.get(element);
+				Object value = field.get(element); 
+				FieldDefinition fieldDefinition = metaDataService.findFieldDefinition(type.getName(), fieldData.name);
+				Class<?> fieldType = metaDataService.getClass(type, fieldDefinition);
+				value = convertToRemote(value, fieldType);
+				fieldData.value = value;
+
 				writeField(writer, fieldData);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RpcServiceException(e);
@@ -239,19 +249,19 @@ public class StructureProtocol<T> implements Protocol<T> {
 		}
 	}
 
-	private void addField(Object struct, FieldData fieldDefinition) {
+	private void addField(Object struct, FieldData fieldData) {
 		try {
 			Class<?> type = struct.getClass();
 
-			Method method = findSetterMethod(type, fieldDefinition);
+			Method method = findSetterMethod(type, fieldData);
 			if (method != null) {
-				Object value = convertToLocal(fieldDefinition.value, method.getParameters()[0].getType());
+				Object value = convertToLocal(fieldData.value, method.getParameters()[0].getType());
 				method.invoke(struct, value);
 			}
 			
-			Field field = type.getField(fieldDefinition.name);
+			Field field = type.getField(fieldData.name);
 			field.setAccessible(true);
-			Object value = convertToLocal(fieldDefinition.value, field.getType());
+			Object value = convertToLocal(fieldData.value, field.getType());
 			field.set(struct, value);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException | SecurityException e) {
 			throw new RpcServiceException(e);
@@ -259,7 +269,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Object convertToRemote(Object value) {
+	private Object convertToRemote(Object value, Class<?> remoteType) {
 		if (value == null) {
 			return null;
 		}
@@ -274,15 +284,14 @@ public class StructureProtocol<T> implements Protocol<T> {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Object convertToLocal(Object value, Class<?> targetType) {
+	private Object convertToLocal(Object value, Class<?> localType) {
 		if (value == null) {
 			return null;
 		}
 		
-		value = autoConvert(value, targetType);
+		value = autoConvert(value, localType);
 		
-		Class<? extends Object> remoteType = value.getClass();
-		Adapter adapter = metaDataService.findAdapterByRemoteType(remoteType);
+		Adapter adapter = metaDataService.findAdapterByLocalType(localType);
 		if (adapter != null) {
 			value = adapter.convertRemoteToLocal(value);
 		}

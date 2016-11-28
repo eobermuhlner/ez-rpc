@@ -238,6 +238,14 @@ public class MetaDataService implements AutoCloseable {
 		
 		return structDefinition;
 	}
+	
+	public Class<?> getClass(Class<?> type, FieldDefinition fieldDefinition) {
+		try {
+			return type.getField(fieldDefinition.name).getType();
+		} catch (NoSuchFieldException | SecurityException e) {
+			throw new RpcServiceException(e);
+		}
+	}
 
 	public Adapter<?, ?> findAdapterByLocalType(Class<?> localType) {
 		return adapters.stream()
@@ -251,6 +259,14 @@ public class MetaDataService implements AutoCloseable {
 			.filter(adapter -> adapter.getRemoteType() == remoteType)
 			.findFirst()
 			.orElse(null);
+	}
+	
+	public FieldDefinition findFieldDefinition(String remoteTypeName, String fieldName) {
+		StructDefinition structDefinition = findStructDefinitionByType(remoteTypeName);
+		if (structDefinition == null) {
+			return null;
+		}
+		return structDefinition.findFieldDefinition(fieldName);
 	}
 	
 	private ServiceDefinition findServiceDefinitionByType(String javaTypeName) {

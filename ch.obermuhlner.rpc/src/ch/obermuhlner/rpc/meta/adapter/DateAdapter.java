@@ -2,15 +2,7 @@ package ch.obermuhlner.rpc.meta.adapter;
 
 import java.util.Date;
 
-import ch.obermuhlner.rpc.annotation.RpcStruct;
-import ch.obermuhlner.rpc.meta.adapter.DateAdapter.DateStruct;
-
 public class DateAdapter implements Adapter<Date, DateStruct> {
-
-	@RpcStruct(name = "Date")
-	public static class DateStruct {
-		public long milliseconds;
-	}
 
 	@Override
 	public Class<Date> getLocalType() {

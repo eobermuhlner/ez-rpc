@@ -2,14 +2,7 @@ package ch.obermuhlner.rpc.meta.adapter;
 
 import java.math.BigDecimal;
 
-import ch.obermuhlner.rpc.annotation.RpcStruct;
-
-public class BigDecimalAdapter implements Adapter<BigDecimal, BigDecimalAdapter.BigDecimalStruct> {
-
-	@RpcStruct(name = "BigDecimal")
-	public static class BigDecimalStruct {
-		public String value;
-	}
+public class BigDecimalAdapter implements Adapter<BigDecimal, BigDecimalStruct> {
 
 	@Override
 	public Class<BigDecimal> getLocalType() {
