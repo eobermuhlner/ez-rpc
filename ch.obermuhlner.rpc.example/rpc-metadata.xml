@@ -15,14 +15,20 @@
         </service>
     </services>
     <structs>
-        <struct name="BigDecimal" javaTypeName="ch.obermuhlner.rpc.meta.adapter.BigDecimalStruct">
+        <struct name="BigDecimal" javaTypeName="ch.obermuhlner.rpc.meta.adapter.bigdecimal.BigDecimalStruct">
             <field name="value" type="STRING"/>
         </struct>
-        <struct name="EpochMillisecond" javaTypeName="ch.obermuhlner.rpc.meta.adapter.EpochMillisecondStruct">
+        <struct name="EpochMillisecond" javaTypeName="ch.obermuhlner.rpc.meta.adapter.time.EpochMillisecondStruct">
             <field name="milliseconds" type="LONG"/>
         </struct>
-        <struct name="EpochDay" javaTypeName="ch.obermuhlner.rpc.meta.adapter.EpochDayStruct">
+        <struct name="EpochDay" javaTypeName="ch.obermuhlner.rpc.meta.adapter.time.EpochDayStruct">
             <field name="days" type="LONG"/>
+        </struct>
+        <struct name="AdapterExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.AdapterExampleData">
+            <field name="bigDecimalField" type="STRUCT" structName="BigDecimal"/>
+            <field name="dateField" type="STRUCT" structName="EpochMillisecond"/>
+            <field name="localDateTimeField" type="STRUCT" structName="EpochMillisecond"/>
+            <field name="localDateField" type="STRUCT" structName="EpochDay"/>
         </struct>
         <struct name="ExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.ExampleData">
             <field name="booleanField" type="BOOL"/>
@@ -33,12 +39,6 @@
             <field name="setField" type="SET"/>
             <field name="mapField" type="MAP"/>
             <field name="nestedExampleData" type="STRUCT" structName="ExampleData"/>
-        </struct>
-        <struct name="AdapterExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.AdapterExampleData">
-            <field name="bigDecimalField" type="STRUCT" structName="BigDecimal"/>
-            <field name="dateField" type="STRUCT" structName="EpochMillisecond"/>
-            <field name="localDateTimeField" type="STRUCT" structName="EpochMillisecond"/>
-            <field name="localDateField" type="STRUCT" structName="EpochDay"/>
         </struct>
     </structs>
 </metaData>

@@ -4,10 +4,10 @@ import java.io.File;
 
 import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.meta.MetaDataService;
-import ch.obermuhlner.rpc.meta.adapter.BigDecimalAdapter;
-import ch.obermuhlner.rpc.meta.adapter.DateAdapter;
-import ch.obermuhlner.rpc.meta.adapter.LocalDateAdapter;
-import ch.obermuhlner.rpc.meta.adapter.LocalDateTimeAdapter;
+import ch.obermuhlner.rpc.meta.adapter.bigdecimal.BigDecimalAdapter;
+import ch.obermuhlner.rpc.meta.adapter.time.DateAdapter;
+import ch.obermuhlner.rpc.meta.adapter.time.LocalDateAdapter;
+import ch.obermuhlner.rpc.meta.adapter.time.LocalDateTimeAdapter;
 
 public class HelloMetaData {
 

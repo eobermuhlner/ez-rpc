@@ -1,6 +1,8 @@
-package ch.obermuhlner.rpc.meta.adapter;
+package ch.obermuhlner.rpc.meta.adapter.time;
 
 import java.util.Date;
+
+import ch.obermuhlner.rpc.meta.adapter.Adapter;
 
 public class DateAdapter implements Adapter<Date, EpochMillisecondStruct> {
 

@@ -1,6 +1,8 @@
-package ch.obermuhlner.rpc.meta.adapter;
+package ch.obermuhlner.rpc.meta.adapter.bigdecimal;
 
 import java.math.BigDecimal;
+
+import ch.obermuhlner.rpc.meta.adapter.Adapter;
 
 public class BigDecimalAdapter implements Adapter<BigDecimal, BigDecimalStruct> {
 

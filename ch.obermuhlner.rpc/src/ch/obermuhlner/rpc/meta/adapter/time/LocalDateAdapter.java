@@ -1,6 +1,8 @@
-package ch.obermuhlner.rpc.meta.adapter;
+package ch.obermuhlner.rpc.meta.adapter.time;
 
 import java.time.LocalDate;
+
+import ch.obermuhlner.rpc.meta.adapter.Adapter;
 
 public class LocalDateAdapter implements Adapter<LocalDate, EpochDayStruct> {
 

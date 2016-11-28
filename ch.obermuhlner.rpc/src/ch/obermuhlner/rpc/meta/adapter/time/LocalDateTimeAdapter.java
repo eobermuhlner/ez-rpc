@@ -1,8 +1,10 @@
-package ch.obermuhlner.rpc.meta.adapter;
+package ch.obermuhlner.rpc.meta.adapter.time;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+
+import ch.obermuhlner.rpc.meta.adapter.Adapter;
 
 public class LocalDateTimeAdapter implements Adapter<LocalDateTime, EpochMillisecondStruct> {
 

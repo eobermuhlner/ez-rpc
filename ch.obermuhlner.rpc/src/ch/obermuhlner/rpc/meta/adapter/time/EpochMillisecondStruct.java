@@ -1,4 +1,4 @@
-package ch.obermuhlner.rpc.meta.adapter;
+package ch.obermuhlner.rpc.meta.adapter.time;
 
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 
