@@ -1,6 +1,7 @@
 package ch.obermuhlner.rpc.example.client;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,6 +60,7 @@ public class HelloServiceClient {
 		adapterExampleData.bigDecimalField = BigDecimal.valueOf(1.234);
 		adapterExampleData.dateField = new Date();
 		adapterExampleData.localDateTimeField = LocalDateTime.now();
+		adapterExampleData.localDateField = LocalDate.now();
 		System.out.println(helloService.adapterExampleMethod(adapterExampleData));
 	}
 }

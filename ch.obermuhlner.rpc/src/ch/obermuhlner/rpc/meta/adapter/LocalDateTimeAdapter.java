@@ -1,9 +1,10 @@
 package ch.obermuhlner.rpc.meta.adapter;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class LocalDateTimeAdapter implements Adapter<LocalDateTime, DateStruct> {
+public class LocalDateTimeAdapter implements Adapter<LocalDateTime, EpochMillisecondStruct> {
 
 	@Override
 	public Class<LocalDateTime> getLocalType() {
@@ -11,20 +12,20 @@ public class LocalDateTimeAdapter implements Adapter<LocalDateTime, DateStruct> 
 	}
 
 	@Override
-	public Class<DateStruct> getRemoteType() {
-		return DateStruct.class;
+	public Class<EpochMillisecondStruct> getRemoteType() {
+		return EpochMillisecondStruct.class;
 	}
 
 	@Override
-	public DateStruct convertLocalToRemote(LocalDateTime local) {
-		DateStruct remote = new DateStruct();
+	public EpochMillisecondStruct convertLocalToRemote(LocalDateTime local) {
+		EpochMillisecondStruct remote = new EpochMillisecondStruct();
 		remote.milliseconds = local.toInstant(ZoneOffset.UTC).toEpochMilli();
 		return remote;
 	}
 
 	@Override
-	public LocalDateTime convertRemoteToLocal(DateStruct remote) {
-		return null;
+	public LocalDateTime convertRemoteToLocal(EpochMillisecondStruct remote) {
+		return LocalDateTime.ofInstant(Instant.ofEpochMilli(remote.milliseconds), ZoneOffset.UTC);
 	}
 
 }

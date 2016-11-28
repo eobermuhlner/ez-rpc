@@ -2,7 +2,7 @@ package ch.obermuhlner.rpc.meta.adapter;
 
 import java.util.Date;
 
-public class DateAdapter implements Adapter<Date, DateStruct> {
+public class DateAdapter implements Adapter<Date, EpochMillisecondStruct> {
 
 	@Override
 	public Class<Date> getLocalType() {
@@ -10,19 +10,19 @@ public class DateAdapter implements Adapter<Date, DateStruct> {
 	}
 
 	@Override
-	public Class<DateStruct> getRemoteType() {
-		return DateStruct.class;
+	public Class<EpochMillisecondStruct> getRemoteType() {
+		return EpochMillisecondStruct.class;
 	}
 
 	@Override
-	public DateStruct convertLocalToRemote(Date local) {
-		DateStruct remote = new DateStruct();
+	public EpochMillisecondStruct convertLocalToRemote(Date local) {
+		EpochMillisecondStruct remote = new EpochMillisecondStruct();
 		remote.milliseconds = local.toInstant().toEpochMilli();
 		return remote;
 	}
 
 	@Override
-	public Date convertRemoteToLocal(DateStruct remote) {
+	public Date convertRemoteToLocal(EpochMillisecondStruct remote) {
 		Date local = new Date(remote.milliseconds);
 		return local;
 	}

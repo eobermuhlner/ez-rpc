@@ -6,6 +6,7 @@ import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.meta.adapter.BigDecimalAdapter;
 import ch.obermuhlner.rpc.meta.adapter.DateAdapter;
+import ch.obermuhlner.rpc.meta.adapter.LocalDateAdapter;
 import ch.obermuhlner.rpc.meta.adapter.LocalDateTimeAdapter;
 
 public class HelloMetaData {
@@ -17,6 +18,7 @@ public class HelloMetaData {
 		metaDataService.addAdapter(new BigDecimalAdapter());
 		metaDataService.addAdapter(new DateAdapter());
 		metaDataService.addAdapter(new LocalDateTimeAdapter());
+		metaDataService.addAdapter(new LocalDateAdapter());
 
 		metaDataService.registerService(HelloService.class);
 		
