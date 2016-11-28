@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import ch.obermuhlner.rpc.RpcServiceException;
 import ch.obermuhlner.rpc.transport.ClientTransport;
@@ -14,6 +16,10 @@ public class ServiceFactory {
 	private static final String ASYNC_SUFFIX = "Async";
 
 	public <Service, AsyncService, ServiceImpl extends Service> Service createLocalService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ServiceImpl serviceImpl) {
+		return createLocalService(serviceType, asyncServiceType, serviceImpl, () -> null, (session) -> {});
+	}
+	
+	public <Service, AsyncService, ServiceImpl extends Service, Session> Service createLocalService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ServiceImpl serviceImpl, Supplier<Session> sessionSupplier, Consumer<Session> sessionConsumer) {
 		Object proxyObject = Proxy.newProxyInstance(
 				serviceType.getClassLoader(),
 				new Class<?>[] { serviceType, asyncServiceType },
@@ -23,6 +29,7 @@ public class ServiceFactory {
 							String syncMethodName = withoutAsyncSuffix(method.getName());
 							Method implMethod;
 							try {
+								sessionConsumer.accept(sessionSupplier.get());
 								implMethod = serviceImpl.getClass().getMethod(syncMethodName, method.getParameterTypes());
 								return implMethod.invoke(serviceImpl, args);
 							} catch (Exception e) {
@@ -42,6 +49,10 @@ public class ServiceFactory {
 	}
 
 	public <Service, AsyncService> Service createRemoteService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ClientTransport clientTransport) {
+		return createRemoteService(serviceType, asyncServiceType, clientTransport, () -> null);
+	}
+	
+	public <Service, AsyncService, Session> Service createRemoteService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ClientTransport clientTransport, Supplier<Session> sessionSupplier) {
 		Object proxyObject = Proxy.newProxyInstance(
 				serviceType.getClassLoader(),
 				new Class<?>[] { serviceType, asyncServiceType },
@@ -55,6 +66,7 @@ public class ServiceFactory {
 					request.serviceName = serviceName;
 					request.methodName = methodName;
 					request.arguments = args;
+					request.session = sessionSupplier.get();
 					CompletableFuture<Object> future = clientTransport.send(request)
 							.thenApply(response -> response.result);
 					if (async) {
@@ -69,9 +81,13 @@ public class ServiceFactory {
 		
 		return proxyService;
 	}
-	
+
 	public <Service, ServiceImpl extends Service> void publishService(Class<Service> serviceType, ServiceImpl serviceImpl, ServerTransport serverTransport) {
-		serverTransport.register(serviceType, serviceImpl);
+		publishService(serviceType, serviceImpl, serverTransport, (session) -> {});
+	}
+	
+	public <Service, ServiceImpl extends Service, Session> void publishService(Class<Service> serviceType, ServiceImpl serviceImpl, ServerTransport serverTransport, Consumer<Session> sessionConsumer) {
+		serverTransport.register(serviceType, serviceImpl, sessionConsumer);
 	}
 
 	private String withoutAsyncSuffix(String name) {

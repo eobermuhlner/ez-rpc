@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import ch.obermuhlner.rpc.RpcServiceException;
 import ch.obermuhlner.rpc.service.Request;
@@ -13,12 +14,14 @@ public class ServerTransportImpl implements ServerTransport {
 
 	private final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
 	private final Map<String, Method> methodMap = new ConcurrentHashMap<>();
+	private final Map<String, Consumer<?>> serviceToSessionConsumerMap = new ConcurrentHashMap<>();
 	
 	@Override
-	public <Service> void register(Class<Service> serviceType, Service service) {
+	public <Service, Session> void register(Class<Service> serviceType, Service service, Consumer<Session> sessionConsumer) {
 		String serviceName = serviceType.getName();
 		
 		serviceMap.put(serviceName, service);
+		serviceToSessionConsumerMap.put(serviceName, sessionConsumer);
 		
 		for (Method method : serviceType.getMethods()) {
 			String methodName = method.getName();
@@ -35,7 +38,9 @@ public class ServerTransportImpl implements ServerTransport {
 		}
 
 		Object service = serviceMap.get(request.serviceName);
-		
+
+		Consumer<Object> sessionConsumer = (Consumer<Object>) serviceToSessionConsumerMap.get(request.serviceName);
+
 		String key = request.serviceName + "#" + request.methodName;
 		if (!methodMap.containsKey(key)) {
 			throw new RpcServiceException("No registered service method: " + key);
@@ -45,7 +50,9 @@ public class ServerTransportImpl implements ServerTransport {
 		
 		Response response = new Response();
 		try {
+			sessionConsumer.accept(request.session);
 			response.result = method.invoke(service, request.arguments);
+			sessionConsumer.accept(null);
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 			throw new RpcServiceException(e);
 		} catch (InvocationTargetException e) {

@@ -13,10 +13,10 @@ public class Request implements Serializable {
 	public String serviceName;
 	public String methodName;
 	public Object[] arguments;
-	
+	public Object session;
+
 	@Override
 	public String toString() {
-		return "Request [serviceName=" + serviceName + ", methodName=" + methodName + ", arguments=" + Arrays.toString(arguments) + "]";
+		return "Request [serviceName=" + serviceName + ", methodName=" + methodName + ", arguments=" + Arrays.toString(arguments) + ", session=" + session + "]";
 	}
-
 }

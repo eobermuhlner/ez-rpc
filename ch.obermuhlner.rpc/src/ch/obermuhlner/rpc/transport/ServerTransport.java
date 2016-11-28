@@ -1,11 +1,13 @@
 package ch.obermuhlner.rpc.transport;
 
+import java.util.function.Consumer;
+
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
 
 public interface ServerTransport {
 
-	<Service> void register(Class<Service> serviceType, Service service);
+	<Service, Session> void register(Class<Service> serviceType, Service service, Consumer<Session> sessionConsumer);
 
 	Response receive(Request request);
 	
