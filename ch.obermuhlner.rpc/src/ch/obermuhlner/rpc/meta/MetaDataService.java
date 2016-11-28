@@ -173,16 +173,23 @@ public class MetaDataService implements AutoCloseable {
 
 	private void fillStructureDefinition(StructDefinition structDefinition, Class<?> type) {
 		for (Field field : type.getFields()) {
-			Type fieldType = toType(field.getType());
+			Class<?> fieldType = field.getType();
+			@SuppressWarnings("rawtypes")
+			Adapter adapter = findAdapterByLocalType(fieldType);
+			if (adapter != null) {
+				fieldType = adapter.getRemoteType();
+			}
+			
+			Type structFieldType = toType(fieldType);
 			if (type != null) {
 				String structName = null;
 				
-				if (fieldType == Type.STRUCT) {
-					StructDefinition referencedStructDefinition = registerStruct(field.getType());
+				if (structFieldType == Type.STRUCT) {
+					StructDefinition referencedStructDefinition = registerStruct(fieldType);
 					structName = referencedStructDefinition.name;
 				}
 
-				FieldDefinition fieldDefinition = new FieldDefinition(field.getName(), fieldType, structName);
+				FieldDefinition fieldDefinition = new FieldDefinition(field.getName(), structFieldType, structName);
 				structDefinition.fieldDefinitions.add(fieldDefinition);
 			}
 		}

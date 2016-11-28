@@ -27,10 +27,11 @@ public class HelloServiceLocalTransportApp {
 		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		
 		MetaDataService serviceMetaData = new MetaDataService();
+		serviceMetaData.addAdapter(new BigDecimalAdapter());
+
 		serviceMetaData.load(new File("rpc-metadata.xml"));
 		serviceMetaData.registerService(HelloService.class);
 		serviceMetaData.save(new File("rpc-metadata.xml"));
-		serviceMetaData.addAdapter(new BigDecimalAdapter());
 
 		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(serviceMetaData, HelloServiceImpl.class.getClassLoader());
 
