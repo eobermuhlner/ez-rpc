@@ -8,6 +8,7 @@ import ch.obermuhlner.rpc.example.client.HelloServiceClient;
 import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.meta.adapter.BigDecimalAdapter;
+import ch.obermuhlner.rpc.meta.adapter.DateAdapter;
 import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
 import ch.obermuhlner.rpc.service.ProtocolFactory;
 import ch.obermuhlner.rpc.service.ServiceFactory;
@@ -28,6 +29,7 @@ public class HelloServiceLocalTransportApp {
 		
 		MetaDataService serviceMetaData = new MetaDataService();
 		serviceMetaData.addAdapter(new BigDecimalAdapter());
+		serviceMetaData.addAdapter(new DateAdapter());
 
 		serviceMetaData.load(new File("rpc-metadata.xml"));
 		serviceMetaData.registerService(HelloService.class);

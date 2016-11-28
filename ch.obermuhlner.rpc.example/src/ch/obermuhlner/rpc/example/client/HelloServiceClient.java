@@ -2,6 +2,7 @@ package ch.obermuhlner.rpc.example.client;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
@@ -55,6 +56,7 @@ public class HelloServiceClient {
 		
 		AdapterExampleData adapterExampleData = new AdapterExampleData();
 		adapterExampleData.bigDecimalField = BigDecimal.valueOf(1.234);
+		adapterExampleData.dateField = new Date();
 		System.out.println(helloService.adapterExampleMethod(adapterExampleData));
 	}
 }

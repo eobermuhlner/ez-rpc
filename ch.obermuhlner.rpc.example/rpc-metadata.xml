@@ -5,12 +5,12 @@
             <method name="adapterExample" returnType="STRUCT" returnStructName="AdapterExampleData">
                 <parameter name="data" type="STRUCT" structName="AdapterExampleData"/>
             </method>
+            <method name="calculateSquare">
+                <parameter name="arg0"/>
+            </method>
             <method name="ping"/>
             <method name="enrichExample" returnType="STRUCT" returnStructName="ExampleData">
                 <parameter name="poor" type="STRUCT" structName="ExampleData"/>
-            </method>
-            <method name="calculateSquare">
-                <parameter name="arg0"/>
             </method>
         </service>
     </services>
@@ -18,8 +18,12 @@
         <struct name="BigDecimal" javaTypeName="ch.obermuhlner.rpc.meta.adapter.BigDecimalAdapter$BigDecimalStruct">
             <field name="value" type="STRING"/>
         </struct>
+        <struct name="Date" javaTypeName="ch.obermuhlner.rpc.meta.adapter.DateAdapter$DateStruct">
+            <field name="milliseconds" type="LONG"/>
+        </struct>
         <struct name="AdapterExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.AdapterExampleData">
             <field name="bigDecimalField" type="STRUCT" structName="BigDecimal"/>
+            <field name="dateField" type="STRUCT" structName="Date"/>
         </struct>
         <struct name="ExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.ExampleData">
             <field name="booleanField" type="BOOL"/>
