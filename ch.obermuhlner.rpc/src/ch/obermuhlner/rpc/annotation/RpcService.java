@@ -11,5 +11,6 @@ import java.lang.annotation.Target;
 public @interface RpcService {
 
 	String name() default "";
-	
+
+	Class<?> sessionClass() default Void.class;
 }

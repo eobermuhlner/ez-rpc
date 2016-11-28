@@ -34,7 +34,7 @@ public class StructDefinitionList {
 	
 	public StructDefinition findByType(String javaTypeName) {
 		return structDefinitions.stream()
-				.filter(structDefinition -> structDefinition.javaTypeName.equals(javaTypeName))
+				.filter(structDefinition -> structDefinition.javaClass.equals(javaTypeName))
 				.findFirst()
 				.orElse(null);
 	}
@@ -42,7 +42,7 @@ public class StructDefinitionList {
 	public StructDefinition findByTemplate(StructDefinition template) {
 		return structDefinitions.stream()
 				.filter(structDefinition -> structDefinition.name.equals(template.name))
-				.filter(structDefinition -> structDefinition.javaTypeName.equals(template.javaTypeName))
+				.filter(structDefinition -> structDefinition.javaClass.equals(template.javaClass))
 				.findFirst()
 				.orElse(null);
 	}

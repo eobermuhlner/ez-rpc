@@ -48,12 +48,12 @@ public class MetaData {
 
 	private void checkMatch(ServiceDefinition existing, ServiceDefinition update) {
 		checkEqual("service.name", existing.name, update.name);
-		checkEqual("service.javaTypeName", existing.javaType, update.javaType);
+		checkEqual("service.javaClass", existing.javaClass, update.javaClass);
 	}
 
 	private void checkMatch(StructDefinition existing, StructDefinition update) {
 		checkEqual("struct.name", existing.name, update.name);
-		checkEqual("struct.javaTypeName", existing.javaTypeName, update.javaTypeName);
+		checkEqual("struct.javaClass", existing.javaClass, update.javaClass);
 	}
 
 	private void checkEqual(String name, Object existing, Object update) {

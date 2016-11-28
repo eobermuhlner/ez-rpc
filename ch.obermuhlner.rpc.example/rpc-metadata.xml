@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <metaData>
     <services>
-        <service name="HelloService" javaType="ch.obermuhlner.rpc.example.api.HelloService">
+        <service name="HelloService" javaClass="ch.obermuhlner.rpc.example.api.HelloService">
             <method name="adapterExample" returnType="STRUCT" returnStructName="AdapterExampleData">
                 <parameter name="data" type="STRUCT" structName="AdapterExampleData"/>
             </method>
-            <method name="ping"/>
             <method name="enrichExample" returnType="STRUCT" returnStructName="ExampleData">
                 <parameter name="poor" type="STRUCT" structName="ExampleData"/>
             </method>
             <method name="calculateSquare">
                 <parameter name="arg0"/>
             </method>
+            <method name="ping"/>
         </service>
     </services>
     <structs>

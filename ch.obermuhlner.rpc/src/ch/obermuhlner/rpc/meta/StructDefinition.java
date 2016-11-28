@@ -12,7 +12,7 @@ public class StructDefinition {
 	public String name;
 	
 	@XmlAttribute
-	public String javaTypeName;
+	public String javaClass;
 
 	@XmlElement(name = "field")
 	public List<FieldDefinition> fieldDefinitions = new ArrayList<>();
@@ -22,9 +22,9 @@ public class StructDefinition {
 		// for Jaxb
 	}
 	
-	public StructDefinition(String name, String javaTypeName) {
+	public StructDefinition(String name, String javaClass) {
 		this.name = name;
-		this.javaTypeName = javaTypeName;
+		this.javaClass = javaClass;
 	}
 	
 	public FieldDefinition findFieldDefinition(String name) {
@@ -36,6 +36,6 @@ public class StructDefinition {
 
 	@Override
 	public String toString() {
-		return "StructDefinition [name=" + name + ", javaTypeName=" + javaTypeName + ", fieldDefinitions=" + fieldDefinitions + "]";
+		return "StructDefinition [name=" + name + ", javaClass=" + javaClass + ", fieldDefinitions=" + fieldDefinitions + "]";
 	}
 }

@@ -244,7 +244,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 	private Object createStruct(String name) {
 		try {
 			StructDefinition structDefinition = metaDataService.getStructDefinition(name, classLoader);
-			Class<?> type = Class.forName(structDefinition.javaTypeName, true, classLoader);
+			Class<?> type = Class.forName(structDefinition.javaClass, true, classLoader);
 
 			return type.newInstance();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {

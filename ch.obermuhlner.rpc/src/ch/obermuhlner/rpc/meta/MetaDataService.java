@@ -72,6 +72,8 @@ public class MetaDataService implements AutoCloseable {
 
 	public synchronized ServiceDefinition registerService(Class<?> type) {
 		String name = type.getName();
+		Type sessionType = null;
+		String sessionStruct = null;
 
 		ServiceDefinition serviceDefinition = findServiceDefinitionByType(name);
 		if (serviceDefinition != null) {
@@ -83,9 +85,15 @@ public class MetaDataService implements AutoCloseable {
 			if (annotation.name() != null && !annotation.name().equals("")) {
 				name = annotation.name();
 			}
+			if (annotation.sessionClass() != null && annotation.sessionClass() != Void.class) {
+				sessionType = toType(annotation.sessionClass());
+				if (sessionType == Type.STRUCT) {
+					findServiceDefinitionByType(annotation.sessionClass().getName());
+				}
+			}
 		}
 		
-		serviceDefinition = new ServiceDefinition(name, type.getName());
+		serviceDefinition = new ServiceDefinition(name, type.getName(), sessionType, sessionStruct);
 
 		fillServiceDefinition(serviceDefinition, type);
 
