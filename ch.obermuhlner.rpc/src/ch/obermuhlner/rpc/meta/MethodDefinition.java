@@ -11,21 +11,15 @@ public class MethodDefinition {
 	@XmlAttribute
 	public String name;
 	
+	@XmlAttribute
+	public String javaName;
+	
 	@XmlElement
 	public String returns;
 	
 	@XmlElement(name = "parameter")
 	public List<ParameterDefinition> parameterDefinitions = new ArrayList<>();
 	
-	public MethodDefinition() {
-		// for Jaxb
-	}
-
-	public MethodDefinition(String name, String returnType) {
-		this.name = name;
-		this.returns = returnType;
-	}
-
 	@Override
 	public String toString() {
 		return "MethodDefinition [name=" + name + ", returns=" + returns + ", parameterDefinitions=" + parameterDefinitions + "]";

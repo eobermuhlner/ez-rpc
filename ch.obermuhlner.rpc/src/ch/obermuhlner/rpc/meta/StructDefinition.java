@@ -17,16 +17,6 @@ public class StructDefinition {
 	@XmlElement(name = "field")
 	public List<FieldDefinition> fieldDefinitions = new ArrayList<>();
 	
-	@SuppressWarnings("unused")
-	private StructDefinition() {
-		// for Jaxb
-	}
-	
-	public StructDefinition(String name, String javaClass) {
-		this.name = name;
-		this.javaClass = javaClass;
-	}
-	
 	public FieldDefinition findFieldDefinition(String name) {
 		return fieldDefinitions.stream()
 			.filter(fieldDefinition -> fieldDefinition.name.equals(name))
@@ -38,4 +28,5 @@ public class StructDefinition {
 	public String toString() {
 		return "StructDefinition [name=" + name + ", javaClass=" + javaClass + ", fieldDefinitions=" + fieldDefinitions + "]";
 	}
+
 }

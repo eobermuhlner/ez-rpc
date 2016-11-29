@@ -8,19 +8,13 @@ public class ParameterDefinition {
 	public String name;
 	
 	@XmlAttribute
-	public String type;
+	public String javaName;
 	
-	public ParameterDefinition() {
-		// for Jaxb
-	}
-
-	public ParameterDefinition(String name, String type) {
-		this.name = name;
-		this.type = type;
-	}
+	@XmlAttribute
+	public String type;
 
 	@Override
 	public String toString() {
-		return "ParameterDefinition [name=" + name + ", type=" + type + "]";
+		return "ParameterDefinition [name=" + name + ", javaName=" + javaName + ", type=" + type + "]";
 	}
 }

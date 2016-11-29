@@ -57,6 +57,10 @@ public class MetaDataService implements AutoCloseable {
 		
 		MetaData loading = loadMetaData(file);
 		
+		for (ServiceDefinition serviceDefinition : loading.getServiceDefinitions().get()) {
+			metaData.addServiceDefinition(serviceDefinition);
+		}
+		
 		for (StructDefinition structDefinition : loading.getStructDefinitions().get()) {
 			metaData.addStructDefinition(structDefinition);
 		}
@@ -123,7 +127,9 @@ public class MetaDataService implements AutoCloseable {
 			}
 		}
 		
-		structDefinition = new StructDefinition(name, type.getName());
+		structDefinition = new StructDefinition();
+		structDefinition.name = name;
+		structDefinition.javaClass = type.getName();
 
 		metaData.addStructDefinition(structDefinition); // HACK - register incomplete to avoid recursive registration if type references itself
 		fillStructureDefinition(structDefinition, type);
@@ -213,7 +219,13 @@ public class MetaDataService implements AutoCloseable {
 				throw new RpcServiceException("Field '" + type.getName() + "." + field.getName() + "' of type '" + fieldType + "' must specify '" + neededType + "' type in @RpcField");
 			}
 
-			FieldDefinition fieldDefinition = new FieldDefinition(fieldName, fieldType, elementType, keyType, valueType);
+			FieldDefinition fieldDefinition = new FieldDefinition();
+			fieldDefinition.name = fieldName;
+			fieldDefinition.type = fieldType;
+			fieldDefinition.element = elementType;
+			fieldDefinition.key = keyType;
+			fieldDefinition.value = valueType;
+			
 			structDefinition.fieldDefinitions.add(fieldDefinition);
 		}
 	}
@@ -313,6 +325,10 @@ public class MetaDataService implements AutoCloseable {
 	}
 
 	public String toJavaClassSignature(String typeString) {
+		if (typeString == null) {
+			return null;
+		}
+		
 		Type type = findTypeByName(typeString);
 
 		switch(type) {
