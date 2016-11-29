@@ -124,7 +124,7 @@ public class JavaRpcGenerator {
 	}
 
 	private void generate(ServiceDefinition serviceDefinition, boolean async) {
-		String javaClass = orDefault(serviceDefinition.javaClass, serviceDefinition.name) + (async ? ASYNC_SUFFIX : "");
+		String javaClass = orDefault(serviceDefinition.javaName, serviceDefinition.name) + (async ? ASYNC_SUFFIX : "");
 		try (PrintWriter out = new PrintWriter(toJavaFile(javaClass))) {
 			String packageName = toPackageName(javaClass);
 			String className = toClassName(javaClass);

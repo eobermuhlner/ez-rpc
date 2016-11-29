@@ -48,7 +48,7 @@ public class MetaData {
 
 	private void checkMatch(ServiceDefinition existing, ServiceDefinition update) {
 		checkEqual("service.name", existing.name, update.name);
-		checkEqual("service.javaClass", existing.javaClass, update.javaClass);
+		checkEqual("service.javaClass", existing.javaName, update.javaName);
 	}
 
 	private void checkMatch(StructDefinition existing, StructDefinition update) {

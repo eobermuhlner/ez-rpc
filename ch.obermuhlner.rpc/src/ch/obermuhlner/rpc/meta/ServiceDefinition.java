@@ -12,27 +12,17 @@ public class ServiceDefinition {
 	public String name;
 	
 	@XmlAttribute
-	public String javaClass;
+	public String javaName;
 	
 	@XmlAttribute
 	public String sessionType;
 	
 	@XmlElement(name = "method")
 	public List<MethodDefinition> methodDefinitions = new ArrayList<>();
-	
-	@SuppressWarnings("unused")
-	private ServiceDefinition() {
-		// for Jaxb
-	}
-	
-	public ServiceDefinition(String name, String javaClass, String sessionType) {
-		this.name = name;
-		this.javaClass = javaClass;
-		this.sessionType = sessionType;
-	}
 
 	@Override
 	public String toString() {
-		return "StructDefinition [name=" + name + ", javaClass=" + javaClass + ", methodDefinitions=" + methodDefinitions + "]";
+		return "ServiceDefinition [name=" + name + ", javaName=" + javaName + ", sessionType=" + sessionType + ", methodDefinitions=" + methodDefinitions + "]";
 	}
+	
 }

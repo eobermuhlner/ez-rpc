@@ -99,7 +99,10 @@ public class MetaDataService implements AutoCloseable {
 			}
 		}
 		
-		serviceDefinition = new ServiceDefinition(name, type.getName(), toTypeString(sessionJavaClass));
+		serviceDefinition = new ServiceDefinition();
+		serviceDefinition.name = name;
+		serviceDefinition.javaName = type.getName();
+		serviceDefinition.sessionType = toTypeString(sessionJavaClass);
 
 		fillServiceDefinition(serviceDefinition, type);
 
@@ -153,6 +156,7 @@ public class MetaDataService implements AutoCloseable {
 		RpcMethod annotation = method.getAnnotation(RpcMethod.class);
 		if (annotation != null) {
 			if (annotation.name() != null && !annotation.name().equals("")) {
+				methodDefinition.javaName = methodDefinition.name;
 				methodDefinition.name = annotation.name();
 			}			
 		}
@@ -174,6 +178,7 @@ public class MetaDataService implements AutoCloseable {
 		RpcParameter annotation = parameter.getAnnotation(RpcParameter.class);
 		if (annotation != null) {
 			if (annotation.name() != null && !annotation.name().equals("")) {
+				// do not use the original parameter.getName() as javaName, since it is something stupid like "arg0"
 				parameterDefinition.name = annotation.name();
 			}			
 		}
@@ -183,49 +188,45 @@ public class MetaDataService implements AutoCloseable {
 		return parameterDefinition;
 	}
 
-	private void fillStructureDefinition(StructDefinition structDefinition, Class<?> type) {
-		for (Field field : type.getFields()) {
-			String fieldName = field.getName();
-			String fieldType = toTypeString(field.getType());
-			String elementType = toTypeString(field.getType().getComponentType());
-			String keyType = null;
-			String valueType = null;
+	private void fillStructureDefinition(StructDefinition structDefinition, Class<?> structClass) {
+		for (Field field : structClass.getFields()) {
+			FieldDefinition fieldDefinition = new FieldDefinition();
+			fieldDefinition.name = field.getName();
+			fieldDefinition.type = toTypeString(field.getType());
+			fieldDefinition.element = toTypeString(field.getType().getComponentType());
 			
 			RpcField annotation = field.getAnnotation(RpcField.class);
 			if (annotation != null) {
+				if (annotation.name() != null && !annotation.name().equals("")) {
+					fieldDefinition.javaName = fieldDefinition.name;
+					fieldDefinition.name = annotation.name();
+				}
 				if (annotation.element() != null && annotation.element() != Void.class) {
-					elementType = toTypeString(annotation.element());
+					fieldDefinition.element = toTypeString(annotation.element());
 				}
 				if (annotation.key() != null && annotation.key() != Void.class) {
-					keyType = toTypeString(annotation.key());
+					fieldDefinition.key = toTypeString(annotation.key());
 				}
 				if (annotation.value() != null && annotation.value() != Void.class) {
-					valueType = toTypeString(annotation.value());
+					fieldDefinition.value = toTypeString(annotation.value());
 				}
 			}
 			
 			String neededType = null;
-			if (Type.LIST.toTypeName().equals(fieldType) && elementType == null) {
+			if (Type.LIST.toTypeName().equals(fieldDefinition.type) && fieldDefinition.element == null) {
 				neededType = "element";
-			} else if (Type.SET.toTypeName().equals(fieldType) && elementType == null) {
+			} else if (Type.SET.toTypeName().equals(fieldDefinition.type) && fieldDefinition.element == null) {
 				neededType = "element";
-			} else if (Type.MAP.toTypeName().equals(fieldType) && keyType == null) {
+			} else if (Type.MAP.toTypeName().equals(fieldDefinition.type) && fieldDefinition.key == null) {
 				neededType = "key";
-			} else if (Type.MAP.toTypeName().equals(fieldType) && valueType == null) {
+			} else if (Type.MAP.toTypeName().equals(fieldDefinition.type) && fieldDefinition.value == null) {
 				neededType = "value";
 			}
 			
 			if (neededType != null) {
-				throw new RpcServiceException("Field '" + type.getName() + "." + field.getName() + "' of type '" + fieldType + "' must specify '" + neededType + "' type in @RpcField");
+				throw new RpcServiceException("Field '" + structClass.getName() + "." + field.getName() + "' of type '" + fieldDefinition.type + "' must specify '" + neededType + "' type in @RpcField");
 			}
 
-			FieldDefinition fieldDefinition = new FieldDefinition();
-			fieldDefinition.name = fieldName;
-			fieldDefinition.type = fieldType;
-			fieldDefinition.element = elementType;
-			fieldDefinition.key = keyType;
-			fieldDefinition.value = valueType;
-			
 			structDefinition.fieldDefinitions.add(fieldDefinition);
 		}
 	}
