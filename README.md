@@ -157,17 +157,14 @@ A typical server configuration needs to specify:
 * *Transport* specifies where the remote client is and how to communicate with it
 
 ```java
-		MetaDataService serviceMetaData = new MetaDataService();
-		serviceMetaData.load(new File("rpc-metadata.xml"));
-		serviceMetaData.registerService(HelloService.class);
-		serviceMetaData.save(new File("rpc-metadata.xml"));
-
 		int port = 5924;
-		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(serviceMetaData, HelloServiceImpl.class.getClassLoader());
 		
-		SocketServerTransport socketServerTransport = new SocketServerTransport(protocol, port);
-
-		ServiceFactory serviceFactory = new ServiceFactory();
+		MetaDataService metaDataService = HelloMetaData.createMetaDataService();
+		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(metaDataService, HelloServiceImpl.class.getClassLoader());
+		SocketServerTransport socketServerTransport = new SocketServerTransport(metaDataService, protocol, port);
+		ServiceFactory serviceFactory = new ServiceFactory(metaDataService);
+		
+		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		serviceFactory.publishService(HelloService.class, helloServiceImpl, socketServerTransport);
 ```
 
@@ -184,27 +181,56 @@ Once the meta data file is created it becomes the master specification and the a
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <metaData>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<metaData>
     <services>
-        <service name="HelloService" javaTypeName="ch.obermuhlner.rpc.example.api.HelloService">
-            <method name="calculateSquare">
-                <parameter name="arg0"/>
+        <service name="HelloService" javaClass="ch.obermuhlner.rpc.example.api.HelloService">
+            <method name="adapterExample">
+                <returns>AdapterExampleData</returns>
+                <parameter name="data" type="AdapterExampleData"/>
             </method>
-            <method name="enrichExample" returnType="STRUCT" returnStructName="ExampleData">
-                <parameter name="poor" type="STRUCT" structName="ExampleData"/>
+            <method name="enrichExample">
+                <returns>ExampleData</returns>
+                <parameter name="poor" type="ExampleData"/>
+            </method>
+            <method name="calculateSquare">
+                <returns>double</returns>
+                <parameter name="arg0" type="double"/>
             </method>
             <method name="ping"/>
         </service>
     </services>
     <structs>
-        <struct name="ExampleData" javaTypeName="ch.obermuhlner.rpc.example.api.ExampleData">
-            <field name="booleanField" type="BOOL"/>
-            <field name="intField" type="INT"/>
-            <field name="longField" type="LONG"/>
-            <field name="stringField" type="STRING"/>
-            <field name="listField" type="LIST"/>
-            <field name="setField" type="SET"/>
-            <field name="mapField" type="MAP"/>
-            <field name="nestedExampleData" type="STRUCT" structName="ExampleData"/>
+        <struct name="BigDecimal" javaClass="ch.obermuhlner.rpc.meta.adapter.bigdecimal.BigDecimalStruct">
+            <field name="value" type="string"/>
+        </struct>
+        <struct name="EpochMillisecond" javaClass="ch.obermuhlner.rpc.meta.adapter.time.EpochMillisecondStruct">
+            <field name="milliseconds" type="long"/>
+        </struct>
+        <struct name="EpochDay" javaClass="ch.obermuhlner.rpc.meta.adapter.time.EpochDayStruct">
+            <field name="days" type="long"/>
+        </struct>
+        <struct name="Period" javaClass="ch.obermuhlner.rpc.meta.adapter.time.PeriodStruct">
+            <field name="years" type="int"/>
+            <field name="months" type="int"/>
+            <field name="days" type="int"/>
+        </struct>
+        <struct name="ExampleData" javaClass="ch.obermuhlner.rpc.example.api.ExampleData">
+            <field name="booleanField" type="bool"/>
+            <field name="intField" type="int"/>
+            <field name="longField" type="long"/>
+            <field name="stringField" type="string"/>
+            <field name="listField" type="list" element="string"/>
+            <field name="setField" type="set" element="string"/>
+            <field name="mapField" type="map" key="int" value="string"/>
+            <field name="nestedExampleData" type="ExampleData"/>
+        </struct>
+        <struct name="AdapterExampleData" javaClass="ch.obermuhlner.rpc.example.api.AdapterExampleData">
+            <field name="bigDecimalField" type="BigDecimal"/>
+            <field name="dateField" type="EpochMillisecond"/>
+            <field name="localDateTimeField" type="EpochMillisecond"/>
+            <field name="localDateField" type="EpochDay"/>
+            <field name="periodField" type="Period"/>
         </struct>
     </structs>
 </metaData>
