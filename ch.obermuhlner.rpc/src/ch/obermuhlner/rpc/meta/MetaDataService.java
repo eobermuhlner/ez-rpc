@@ -66,6 +66,10 @@ public class MetaDataService implements AutoCloseable {
 		saveMetaData(metaData, file);
 	}
 	
+	public MetaData getMetaData() {
+		return metaData;
+	}
+	
 	public void addAdapter(Adapter<?, ?> adapter) {
 		adapters.add(adapter);
 		
@@ -267,7 +271,7 @@ public class MetaDataService implements AutoCloseable {
 			return type.toTypeName();
 		}
 	}
-
+	
 	public StructDefinition getStructDefinition(String name, ClassLoader classLoader) {
 		StructDefinition structDefinition = findStructDefinitionByName(name);
 		if (structDefinition == null) {
@@ -290,6 +294,45 @@ public class MetaDataService implements AutoCloseable {
 		}
 	}
 	
+	public String toJavaSignature(FieldDefinition fieldDefinition) {
+		Type type = findTypeByName(fieldDefinition.type);
+
+		switch(type) {
+			case LIST:
+				return type.toJavaPrimitiveTypeName() + "<" + toJavaClassSignature(fieldDefinition.element) + ">";
+			case SET:
+				return type.toJavaPrimitiveTypeName() + "<" + toJavaClassSignature(fieldDefinition.element) + ">";
+			case MAP:
+				return type.toJavaPrimitiveTypeName() + "<" + toJavaClassSignature(fieldDefinition.key) 
+						+ ", " + toJavaClassSignature(fieldDefinition.value) + ">";
+			case STRUCT:
+				return findStructDefinitionByName(fieldDefinition.type).javaClass;
+			default:
+				return type.toJavaPrimitiveTypeName();
+		}
+	}
+
+	public String toJavaClassSignature(String typeString) {
+		Type type = findTypeByName(typeString);
+
+		switch(type) {
+			case STRUCT:
+				return findStructDefinitionByName(typeString).javaClass;
+			default:
+				return type.toJavaClassTypeName();
+		}
+	}
+
+	private Type findTypeByName(String typeName) {
+		for (Type type : Type.values()) {
+			if (type.toTypeName().equals(typeName)) {
+				return type;
+			}
+		}
+		
+		return Type.STRUCT;
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object adaptRemoteToLocal(Object remote) {
 		if (remote == null) {

@@ -11,13 +11,13 @@ public class FieldDefinition {
 	public String type;
 
 	@XmlAttribute
-	private String element;
+	public String element;
 
 	@XmlAttribute
-	private String key;
+	public String key;
 
 	@XmlAttribute
-	private String value;
+	public String value;
 	
 	public FieldDefinition() {
 		// for Jaxb
