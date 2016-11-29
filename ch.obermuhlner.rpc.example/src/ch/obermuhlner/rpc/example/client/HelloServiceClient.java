@@ -62,5 +62,11 @@ public class HelloServiceClient {
 		adapterExampleData.localDateField = LocalDate.now();
 		adapterExampleData.periodField = Period.ofDays(7);
 		System.out.println(helloService.adapterExampleMethod(adapterExampleData));
+
+		try {
+			helloService.exampleFailure();
+		} catch (IllegalArgumentException e) {
+			System.out.println("Expected: " + e);
+		}
 	}
 }

@@ -68,7 +68,7 @@ public class ServerTransportImpl implements ServerTransport {
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 			throw new RpcServiceException(e);
 		} catch (InvocationTargetException e) {
-			response.exception = e;
+			response.exception = e.getTargetException();
 		}
 		
 		return response;

@@ -11,7 +11,7 @@ public class Response implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public DynamicStruct result;
-	public Exception exception;
+	public Object exception;
 	
 	@Override
 	public String toString() {

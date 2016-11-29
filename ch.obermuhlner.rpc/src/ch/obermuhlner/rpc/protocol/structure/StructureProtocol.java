@@ -97,15 +97,18 @@ public class StructureProtocol<T> implements Protocol<T> {
 			writer.writeDouble((Double) element);
 		} else if (element instanceof String) {
 			writer.writeString((String) element);
-		} else if (element instanceof DynamicStruct) {
-			writeDynamicStruct(writer, (DynamicStruct) element);
 		} else {
-			if (element.getClass().getAnnotation(RpcStruct.class) != null) {
-				writeStruct(writer, element);
+			if (element instanceof DynamicStruct) {
+				writeDynamicStruct(writer, (DynamicStruct) element);
 			} else {
-				throw new RpcServiceException("Class not marked as @RpcStruct and no matching Adapter found: " + element.getClass().getName());
+				if (element.getClass().getAnnotation(RpcStruct.class) != null) {
+					writeStruct(writer, element);
+				} else {
+					throw new RpcServiceException("Class not marked as @RpcStruct and no matching Adapter found: " + element.getClass().getName());
+				}
 			}
 		}
+		
 	}
 
 	private void writeStruct(StructureWriter writer, Object element) {

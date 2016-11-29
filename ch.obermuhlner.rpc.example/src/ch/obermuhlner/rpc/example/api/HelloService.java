@@ -21,4 +21,6 @@ public interface HelloService {
 	AdapterExampleData adapterExampleMethod(
 			@RpcParameter(name = "data")
 			AdapterExampleData adapterExampleData);
+	
+	void exampleFailure() throws IllegalArgumentException;
 }

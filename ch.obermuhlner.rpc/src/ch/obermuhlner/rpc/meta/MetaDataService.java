@@ -50,7 +50,7 @@ public class MetaDataService implements AutoCloseable {
 		}
 	}
 	
-	public synchronized void load(File file) {
+	public void load(File file) {
 		if (!file.exists()) {
 			return;
 		}
@@ -62,7 +62,7 @@ public class MetaDataService implements AutoCloseable {
 		}
 	}
 
-	public synchronized void save(File file) {
+	public void save(File file) {
 		saveMetaData(metaData, file);
 	}
 	
@@ -72,7 +72,7 @@ public class MetaDataService implements AutoCloseable {
 		registerStruct(adapter.getRemoteType());
 	}
 
-	public synchronized ServiceDefinition registerService(Class<?> type) {
+	public ServiceDefinition registerService(Class<?> type) {
 		String name = type.getName();
 		Class<?> sessionJavaClass = null;
 
@@ -100,7 +100,7 @@ public class MetaDataService implements AutoCloseable {
 		return serviceDefinition;
 	}
 	
-	public synchronized StructDefinition registerStruct(Class<?> type) {
+	public StructDefinition registerStruct(Class<?> type) {
 		String name = type.getName();
 
 		StructDefinition structDefinition = findStructDefinitionByType(name);
@@ -264,7 +264,7 @@ public class MetaDataService implements AutoCloseable {
 		}
 	}
 
-	public synchronized StructDefinition getStructDefinition(String name, ClassLoader classLoader) {
+	public StructDefinition getStructDefinition(String name, ClassLoader classLoader) {
 		StructDefinition structDefinition = findStructDefinitionByName(name);
 		if (structDefinition == null) {
 			try {
@@ -284,6 +284,32 @@ public class MetaDataService implements AutoCloseable {
 		} catch (NoSuchFieldException | SecurityException e) {
 			throw new RpcServiceException(e);
 		}
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Object adaptRemoteToLocal(Object remote) {
+		if (remote == null) {
+			return null;
+		}
+		
+		Adapter adapter = findAdapterByRemoteType(remote.getClass());
+		if (adapter != null) {
+			return adapter.convertRemoteToLocal(remote);
+		}
+		return remote;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Object adaptLocalToRemote(Object local) {
+		if (local == null) {
+			return null;
+		}
+		
+		Adapter adapter = findAdapterByLocalType(local.getClass());
+		if (adapter != null) {
+			return adapter.convertLocalToRemote(local);
+		}
+		return local;
 	}
 
 	public Adapter<?, ?> findAdapterByLocalType(Class<?> localType) {

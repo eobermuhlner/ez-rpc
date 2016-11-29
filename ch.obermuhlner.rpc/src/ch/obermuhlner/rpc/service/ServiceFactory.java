@@ -1,8 +1,10 @@
 package ch.obermuhlner.rpc.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -31,21 +33,25 @@ public class ServiceFactory {
 				serviceType.getClassLoader(),
 				new Class<?>[] { serviceType, asyncServiceType },
 				(Object proxy, Method method, Object[] args) -> {
-					if (method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class) { 
-						return CompletableFuture.supplyAsync(() -> {
-							String syncMethodName = withoutAsyncSuffix(method.getName());
-							Method implMethod;
-							try {
-								sessionConsumer.accept(sessionSupplier.get());
-								implMethod = serviceImpl.getClass().getMethod(syncMethodName, method.getParameterTypes());
-								return implMethod.invoke(serviceImpl, args);
-							} catch (Exception e) {
-								throw new RpcServiceException(e);
-							}
-						});
-					} else {
-						Method implMethod = serviceImpl.getClass().getMethod(method.getName(), method.getParameterTypes());
-						return implMethod.invoke(serviceImpl, args);
+					try {
+						if (method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class) { 
+							return CompletableFuture.supplyAsync(() -> {
+								String syncMethodName = withoutAsyncSuffix(method.getName());
+								Method implMethod;
+								try {
+									sessionConsumer.accept(sessionSupplier.get());
+									implMethod = serviceImpl.getClass().getMethod(syncMethodName, method.getParameterTypes());
+									return implMethod.invoke(serviceImpl, args);
+								} catch (Exception e) {
+									throw new RpcServiceException(e);
+								}
+							});
+						} else {
+							Method implMethod = serviceImpl.getClass().getMethod(method.getName(), method.getParameterTypes());
+							return implMethod.invoke(serviceImpl, args);
+						}
+					} catch (InvocationTargetException e) {
+						throw e.getTargetException();
 					}
 				});
 		
@@ -64,24 +70,31 @@ public class ServiceFactory {
 				serviceType.getClassLoader(),
 				new Class<?>[] { serviceType, asyncServiceType },
 				(Object proxy, Method method, Object[] args) -> {
-					boolean async = method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class;
-					
-					String serviceName = serviceType.getName();
-					String methodName = async ? withoutAsyncSuffix(method.getName()) : method.getName();
-
-					Request request = new Request();
-					request.serviceName = serviceName;
-					request.methodName = methodName;
-					request.arguments = metaDataService.createDynamicStruct(method, args);
-					request.session = sessionSupplier.get();
-					CompletableFuture<Object> future = clientTransport.send(request)
-							.thenApply(response -> {
-								return response.result.fields.get("result");
-							});
-					if (async) {
-						return future;
-					} else {
-						return future.get();
+					try {
+						boolean async = method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class;
+						
+						String serviceName = serviceType.getName();
+						String methodName = async ? withoutAsyncSuffix(method.getName()) : method.getName();
+	
+						Request request = new Request();
+						request.serviceName = serviceName;
+						request.methodName = methodName;
+						request.arguments = metaDataService.createDynamicStruct(method, args);
+						request.session = sessionSupplier.get();
+						CompletableFuture<Object> future = clientTransport.send(request)
+								.thenApply(response -> {
+									if (response.exception != null) {
+										throwAsException(metaDataService.adaptRemoteToLocal(response.exception));
+									}
+									return response.result.fields.get("result");
+								});
+						if (async) {
+							return future;
+						} else {
+							return future.get();
+						}
+					} catch (ExecutionException e) {
+						throw e.getCause();
 					}
 				});
 		
@@ -89,6 +102,24 @@ public class ServiceFactory {
 		Service proxyService = (Service) proxyObject;
 		
 		return proxyService;
+	}
+
+	private void throwAsException(Object exception) {
+		if (exception == null) {
+			return;
+		}
+		
+		if (exception instanceof RuntimeException) {
+			throw (RuntimeException) exception;
+		}
+		
+		if (exception instanceof Error) {
+			throw (Error) exception;
+		}
+		
+		if (exception instanceof Exception) {
+			throw new RpcServiceException((Exception) exception);
+		}
 	}
 
 	public <Service, ServiceImpl extends Service> void publishService(Class<Service> serviceType, ServiceImpl serviceImpl, ServerTransport serverTransport) {

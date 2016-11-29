@@ -26,4 +26,8 @@ public class HelloServiceImpl implements HelloService {
 		return adapterExampleData;
 	}
 
+	@Override
+	public void exampleFailure() throws IllegalArgumentException {
+		throw new IllegalArgumentException("Example for an exception");
+	}
 }
