@@ -69,11 +69,11 @@ Data structures over RPC are limited to the most important data types.
 * int
 * long
 * double
-* String
-* List
-* Set
-* Map
-* other data structures
+* string
+* list
+* set
+* map
+* custom data structures
 
 ### Java Data structure
 
@@ -84,9 +84,16 @@ public class ExampleData {
 	public int intField;
 	public long longField;
 	public String stringField;
+
+	@RpcField(element=String.class)
 	public List<String> listField;
+
+	@RpcField(element=String.class)
 	public Set<String> setField;
-	public Map<Object, Object> mapField;
+
+	@RpcField(key=Integer.class, value=String.class)
+	public Map<Integer, String> mapField;
+
 	public ExampleData nestedExampleData;
 }
 ```
@@ -96,6 +103,30 @@ Java data structures may have methods, implement interfaces or use inheritance b
 ## Configuration
 
 The configuration API is designed to be easy to use in injection frameworks (for example Spring).
+
+### Meta Data Configuration
+
+The meta data is configured independently of the protocol or transport layer.
+It specifies the services and data structures used by the RPC.
+
+```java
+	public static MetaDataService createMetaDataService() {
+		MetaDataService metaDataService = new MetaDataService();
+		metaDataService.load(new File("rpc-metadata.xml"));
+
+		metaDataService.addAdapter(new BigDecimalAdapter());
+		metaDataService.addAdapter(new DateAdapter());
+		metaDataService.addAdapter(new LocalDateTimeAdapter());
+		metaDataService.addAdapter(new LocalDateAdapter());
+		metaDataService.addAdapter(new PeriodAdapter());
+
+		metaDataService.registerService(HelloService.class);
+		
+		metaDataService.save(new File("rpc-metadata.xml"));
+		
+		return metaDataService;
+	}
+```
 
 ### TCP Client Configuration
 
@@ -107,16 +138,14 @@ A typical client configuration needs to specify:
 The ez-rpc framework will then provide proxy implementations for the services that will send the calls to the remote server.
 
 ```java
-		MetaDataService serviceMetaData = new MetaDataService();
-		serviceMetaData.load(new File("rpc-metadata.xml"));
-		serviceMetaData.registerService(HelloService.class);
-		serviceMetaData.save(new File("rpc-metadata.xml"));
-		
 		int port = 5924;
-		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(serviceMetaData, HelloServiceImpl.class.getClassLoader());
-		SocketClientTransport socketClientTransport = new SocketClientTransport(protocol, "localhost", port);
+		String hostname = "localhost";
 		
-		ServiceFactory serviceFactory = new ServiceFactory();
+		MetaDataService metaDataService = HelloMetaData.createMetaDataService();
+		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(metaDataService, HelloServiceImpl.class.getClassLoader());
+		SocketClientTransport socketClientTransport = new SocketClientTransport(protocol, hostname, port);
+		ServiceFactory serviceFactory = new ServiceFactory(metaDataService);
+		
 		HelloService proxyService = serviceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, socketClientTransport);
 ```
 
