@@ -100,6 +100,44 @@ public class ExampleData {
 
 Java data structures may have methods, implement interfaces or use inheritance but none of these informations is transmitted over RPC.
 
+## Adapters
+
+Adapters allow automatic conversion between local types and remote structs.
+
+### Java Adapters
+
+```java
+public class BigDecimalAdapter implements Adapter<BigDecimal, BigDecimalStruct> {
+	@Override
+	public Class<BigDecimal> getLocalType() {
+		return BigDecimal.class;
+	}
+
+	@Override
+	public Class<BigDecimalStruct> getRemoteType() {
+		return BigDecimalStruct.class;
+	}
+
+	@Override
+	public BigDecimalStruct convertLocalToRemote(BigDecimal local) {
+		BigDecimalStruct remote = new BigDecimalStruct();
+		remote.value = local.toString();
+		return remote;
+	}
+
+	@Override
+	public BigDecimal convertRemoteToLocal(BigDecimalStruct remote) {
+		BigDecimal localType = new BigDecimal(remote.value);
+		return localType;
+	}
+}
+
+@RpcStruct(name = "BigDecimal")
+public class BigDecimalStruct {
+	public String value;
+}
+```
+
 ## Configuration
 
 The configuration API is designed to be easy to use in injection frameworks (for example Spring).
