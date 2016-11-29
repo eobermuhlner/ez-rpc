@@ -75,7 +75,9 @@ public class ServiceFactory {
 					request.arguments = metaDataService.createDynamicStruct(method, args);
 					request.session = sessionSupplier.get();
 					CompletableFuture<Object> future = clientTransport.send(request)
-							.thenApply(response -> response.result);
+							.thenApply(response -> {
+								return response.result.fields.get("result");
+							});
 					if (async) {
 						return future;
 					} else {

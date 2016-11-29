@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.data.DynamicStruct;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
@@ -59,7 +60,10 @@ public class ServerTransportImpl implements ServerTransport {
 		Response response = new Response();
 		try {
 			sessionConsumer.accept(request.session);
-			response.result = method.invoke(service, metaDataService.toArguments(method, request.arguments));
+			Object result = method.invoke(service, metaDataService.toArguments(method, request.arguments));
+			response.result = new DynamicStruct();
+			response.result.name = method + "_Reponse";
+			response.result.fields.put("result", result);
 			sessionConsumer.accept(null);
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 			throw new RpcServiceException(e);

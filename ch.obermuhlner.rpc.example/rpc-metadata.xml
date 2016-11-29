@@ -2,19 +2,19 @@
 <metaData>
     <services>
         <service name="HelloService" javaClass="ch.obermuhlner.rpc.example.api.HelloService">
-            <method name="enrichExample">
-                <returns>ExampleData</returns>
-                <parameter name="poor" type="ExampleData"/>
-            </method>
-            <method name="ping"/>
-            <method name="calculateSquare">
-                <returns>double</returns>
-                <parameter name="arg0" type="double"/>
-            </method>
             <method name="adapterExample">
                 <returns>AdapterExampleData</returns>
                 <parameter name="data" type="AdapterExampleData"/>
             </method>
+            <method name="enrichExample">
+                <returns>ExampleData</returns>
+                <parameter name="poor" type="ExampleData"/>
+            </method>
+            <method name="calculateSquare">
+                <returns>double</returns>
+                <parameter name="arg0" type="double"/>
+            </method>
+            <method name="ping"/>
         </service>
     </services>
     <structs>

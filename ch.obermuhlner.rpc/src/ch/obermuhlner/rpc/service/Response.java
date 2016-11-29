@@ -3,13 +3,14 @@ package ch.obermuhlner.rpc.service;
 import java.io.Serializable;
 
 import ch.obermuhlner.rpc.annotation.RpcStruct;
+import ch.obermuhlner.rpc.data.DynamicStruct;
 
 @RpcStruct(name = "RpcResponse")
 public class Response implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
-	public Object result;
+	public DynamicStruct result;
 	public Exception exception;
 	
 	@Override
