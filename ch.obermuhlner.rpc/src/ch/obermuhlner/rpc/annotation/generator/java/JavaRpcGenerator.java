@@ -19,6 +19,8 @@ public class JavaRpcGenerator {
 
 	private static final String INDENT = "   ";
 	
+	private static final String ASYNC_SUFFIX = "Async";
+	
 	private MetaDataService metaDataService;
 
 	public JavaRpcGenerator(MetaDataService metaDataService) {
@@ -33,7 +35,8 @@ public class JavaRpcGenerator {
 		}
 		
 		for (ServiceDefinition serviceDefinition : metaData.getServiceDefinitions().get()) {
-			generate(serviceDefinition);
+			generate(serviceDefinition, false);
+			generate(serviceDefinition, true);
 		}
 	}
 
@@ -120,8 +123,8 @@ public class JavaRpcGenerator {
 		}
 	}
 
-	private void generate(ServiceDefinition serviceDefinition) {
-		String javaClass = orDefault(serviceDefinition.javaClass, serviceDefinition.name);
+	private void generate(ServiceDefinition serviceDefinition, boolean async) {
+		String javaClass = orDefault(serviceDefinition.javaClass, serviceDefinition.name) + (async ? ASYNC_SUFFIX : "");
 		try (PrintWriter out = new PrintWriter(toJavaFile(javaClass))) {
 			String packageName = toPackageName(javaClass);
 			String className = toClassName(javaClass);
@@ -137,20 +140,25 @@ public class JavaRpcGenerator {
 			out.println("import java.util.List;");
 			out.println("import java.util.Map;");
 			out.println("import java.util.Set;");
+			if (async) {
+				out.println("import java.util.concurrent.CompletableFuture;");
+			}
 			out.println();
 			out.println("import ch.obermuhlner.rpc.annotation.RpcMethod;");
 			out.println("import ch.obermuhlner.rpc.annotation.RpcParameter;");
 			out.println("import ch.obermuhlner.rpc.annotation.RpcService;");
 			out.println();
 
-			out.print("@RpcService(");
-			if (!serviceDefinition.name.equals(javaClass)) {
-				out.print("name = \"");
-				out.print(serviceDefinition.name);
-				out.print("\"");
+			if (!async) {
+				out.print("@RpcService(");
+				if (!serviceDefinition.name.equals(javaClass)) {
+					out.print("name = \"");
+					out.print(serviceDefinition.name);
+					out.print("\"");
+				}
+				out.print(")");
+				out.println();
 			}
-			out.print(")");
-			out.println();
 			
 			out.print("public interface ");
 			out.print(className);
@@ -159,20 +167,37 @@ public class JavaRpcGenerator {
 			out.println();
 			
 			for (MethodDefinition methodDefinition : serviceDefinition.methodDefinitions) {
-				out.print(INDENT);
-				out.print("@RpcMethod(");
-				if (methodDefinition.javaName != null && !methodDefinition.name.equals(methodDefinition.javaName)) {
-					out.print("name=\"");
-					out.print(methodDefinition.name);
-					out.print("\"");
+				if (async) {
+					if (methodDefinition.returns == null) {
+						continue;
+					}
 				}
-				out.print(")");
-				out.println();
-
+				
+				if (!async) {
+					out.print(INDENT);
+					out.print("@RpcMethod(");
+					if (methodDefinition.javaName != null && !methodDefinition.name.equals(methodDefinition.javaName)) {
+						out.print("name=\"");
+						out.print(methodDefinition.name);
+						out.print("\"");
+					}
+					out.print(")");
+					out.println();
+				}
+				
 				out.print(INDENT);
+				if (async) {
+					out.print("CompletableFuture<");
+				}
 				out.print(orDefault(metaDataService.toJavaClassSignature(methodDefinition.returns), "void"));
+				if (async) {
+					out.print(">");
+				}
 				out.print(" ");
 				out.print(orDefault(methodDefinition.javaName, methodDefinition.name));
+				if (async) {
+					out.print(ASYNC_SUFFIX);
+				}
 				out.print("(");
 				
 				if (!methodDefinition.parameterDefinitions.isEmpty()) {
@@ -181,13 +206,15 @@ public class JavaRpcGenerator {
 					for (int i = 0; i < methodDefinition.parameterDefinitions.size(); i++) {
 						ParameterDefinition parameterDefinition = methodDefinition.parameterDefinitions.get(i);
 
-						out.print(INDENT);
-						out.print(INDENT);
-						out.print("@RpcParameter(name=\"");
-						out.print(parameterDefinition.name);
-						out.print("\")");
-						out.println();
-
+						if (!async) {
+							out.print(INDENT);
+							out.print(INDENT);
+							out.print("@RpcParameter(name=\"");
+							out.print(parameterDefinition.name);
+							out.print("\")");
+							out.println();
+						}
+						
 						out.print(INDENT);
 						out.print(INDENT);
 						out.print(metaDataService.toJavaClassSignature(parameterDefinition.type));
