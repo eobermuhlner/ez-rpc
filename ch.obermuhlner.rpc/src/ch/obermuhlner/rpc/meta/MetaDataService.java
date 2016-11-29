@@ -101,6 +101,10 @@ public class MetaDataService implements AutoCloseable {
 	}
 	
 	public StructDefinition registerStruct(Class<?> type) {
+		if (type == DynamicStruct.class) {
+			return null;
+		}
+		
 		String name = type.getSimpleName();
 
 		StructDefinition structDefinition = findStructDefinitionByType(type.getName());
@@ -190,20 +194,20 @@ public class MetaDataService implements AutoCloseable {
 				}
 			}
 			
-//			String neededType = null;
-//			if (fieldType.equals(Type.LIST.toTypeName()) && elementType == null) {
-//				neededType = "element";
-//			} else if (fieldType.equals(Type.SET.toTypeName()) && elementType == null) {
-//				neededType = "element";
-//			} else if (fieldType.equals(Type.MAP.toTypeName()) && keyType == null) {
-//				neededType = "key";
-//			} else if (fieldType.equals(Type.MAP.toTypeName()) && valueType == null) {
-//				neededType = "value";
-//			}
-//			
-//			if (neededType != null) {
-//				throw new RpcServiceException("Field '" + type.getName() + "." + field.getName() + "' of type '" + fieldType + "' must specify '" + neededType + "' type in @RpcField");
-//			}
+			String neededType = null;
+			if (Type.LIST.toTypeName().equals(fieldType) && elementType == null) {
+				neededType = "element";
+			} else if (Type.SET.toTypeName().equals(fieldType) && elementType == null) {
+				neededType = "element";
+			} else if (Type.MAP.toTypeName().equals(fieldType) && keyType == null) {
+				neededType = "key";
+			} else if (Type.MAP.toTypeName().equals(fieldType) && valueType == null) {
+				neededType = "value";
+			}
+			
+			if (neededType != null) {
+				throw new RpcServiceException("Field '" + type.getName() + "." + field.getName() + "' of type '" + fieldType + "' must specify '" + neededType + "' type in @RpcField");
+			}
 
 			FieldDefinition fieldDefinition = new FieldDefinition(fieldName, fieldType, elementType, keyType, valueType);
 			structDefinition.fieldDefinitions.add(fieldDefinition);
@@ -384,7 +388,7 @@ public class MetaDataService implements AutoCloseable {
 			
 			// TODO use RpcParameter for name and convert type if necessary
 			
-			dynamicStruct.fields.put(parameterName, parameterValue);
+			dynamicStruct.setField(parameterName, parameterValue);
 		}
 		
 		return dynamicStruct;
@@ -400,7 +404,7 @@ public class MetaDataService implements AutoCloseable {
 
 			// TODO use RpcParameter for name
 
-			Object parameterValue = arguments.fields.get(parameterName);
+			Object parameterValue = arguments.getField(parameterName);
 			result[i] = parameterValue;
 		}
 		

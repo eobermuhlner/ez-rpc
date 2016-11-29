@@ -86,7 +86,7 @@ public class ServiceFactory {
 									if (response.exception != null) {
 										throwAsException(metaDataService.adaptRemoteToLocal(response.exception));
 									}
-									return response.result.fields.get("result");
+									return response.result.getField("result");
 								});
 						if (async) {
 							return future;

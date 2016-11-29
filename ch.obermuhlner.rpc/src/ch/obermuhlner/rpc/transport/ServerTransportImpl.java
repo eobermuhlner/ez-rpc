@@ -63,7 +63,7 @@ public class ServerTransportImpl implements ServerTransport {
 			Object result = method.invoke(service, metaDataService.toArguments(method, request.arguments));
 			response.result = new DynamicStruct();
 			response.result.name = method + "_Reponse";
-			response.result.fields.put("result", result);
+			response.result.setField("result", result);
 			sessionConsumer.accept(null);
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 			throw new RpcServiceException(e);

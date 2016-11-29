@@ -143,10 +143,10 @@ public class StructureProtocol<T> implements Protocol<T> {
 	private void writeDynamicStruct(StructureWriter writer, DynamicStruct element) {
 		writer.writeStructBegin(element.name);
 
-		for (Entry<String, Object> fieldEntry : element.fields.entrySet()) {
+		for (String fieldName : element.getFields()) {
 			FieldData fieldData = new FieldData();
-			fieldData.name = fieldEntry.getKey();
-			fieldData.value = fieldEntry.getValue();
+			fieldData.name = fieldName;
+			fieldData.value = element.getField(fieldName);
 			
 			writeField(writer, fieldData);
 		}
@@ -283,7 +283,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 	private void addField(Object struct, FieldData fieldData) {
 		if (struct instanceof DynamicStruct) {
 			DynamicStruct dynamicStruct = (DynamicStruct) struct;
-			dynamicStruct.fields.put(fieldData.name, fieldData.value);
+			dynamicStruct.setField(fieldData.name, fieldData.value);
 			return;
 		}
 		

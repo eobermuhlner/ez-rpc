@@ -2,20 +2,20 @@
 <metaData>
     <services>
         <service name="HelloService" javaClass="ch.obermuhlner.rpc.example.api.HelloService">
-            <method name="adapterExample">
-                <returns>AdapterExampleData</returns>
-                <parameter name="data" type="AdapterExampleData"/>
-            </method>
-            <method name="exampleFailure"/>
+            <method name="ping"/>
             <method name="enrichExample">
                 <returns>ExampleData</returns>
                 <parameter name="poor" type="ExampleData"/>
             </method>
+            <method name="exampleFailure"/>
             <method name="calculateSquare">
                 <returns>double</returns>
                 <parameter name="arg0" type="double"/>
             </method>
-            <method name="ping"/>
+            <method name="adapterExample">
+                <returns>AdapterExampleData</returns>
+                <parameter name="data" type="AdapterExampleData"/>
+            </method>
         </service>
     </services>
     <structs>
@@ -36,13 +36,6 @@
         <struct name="IllegalArgument" javaClass="ch.obermuhlner.rpc.meta.adapter.exception.IllegalArgumentStruct">
             <field name="message" type="string"/>
         </struct>
-        <struct name="AdapterExampleData" javaClass="ch.obermuhlner.rpc.example.api.AdapterExampleData">
-            <field name="bigDecimalField" type="BigDecimal"/>
-            <field name="dateField" type="EpochMillisecond"/>
-            <field name="localDateTimeField" type="EpochMillisecond"/>
-            <field name="localDateField" type="EpochDay"/>
-            <field name="periodField" type="Period"/>
-        </struct>
         <struct name="ExampleData" javaClass="ch.obermuhlner.rpc.example.api.ExampleData">
             <field name="booleanField" type="bool"/>
             <field name="intField" type="int"/>
@@ -52,6 +45,13 @@
             <field name="setField" type="set" element="string"/>
             <field name="mapField" type="map" key="int" value="string"/>
             <field name="nestedExampleData" type="ExampleData"/>
+        </struct>
+        <struct name="AdapterExampleData" javaClass="ch.obermuhlner.rpc.example.api.AdapterExampleData">
+            <field name="bigDecimalField" type="BigDecimal"/>
+            <field name="dateField" type="EpochMillisecond"/>
+            <field name="localDateTimeField" type="EpochMillisecond"/>
+            <field name="localDateField" type="EpochDay"/>
+            <field name="periodField" type="Period"/>
         </struct>
     </structs>
 </metaData>
