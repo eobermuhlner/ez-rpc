@@ -41,7 +41,10 @@ public class JavaRpcGenerator {
 	}
 
 	private void generate(StructDefinition structDefinition) {
-		try (PrintWriter out = new PrintWriter(toJavaFile(structDefinition.javaName))) {
+		File javaFile = toJavaFile(structDefinition.javaName);
+		System.out.println("Generating " + javaFile);
+		
+		try (PrintWriter out = new PrintWriter(javaFile)) {
 			String packageName = toPackageName(structDefinition.javaName);
 			String className = toClassName(structDefinition.javaName);
 			
@@ -125,7 +128,10 @@ public class JavaRpcGenerator {
 
 	private void generate(ServiceDefinition serviceDefinition, boolean async) {
 		String javaClass = serviceDefinition.getJavaName() + (async ? ASYNC_SUFFIX : "");
-		try (PrintWriter out = new PrintWriter(toJavaFile(javaClass))) {
+		File javaFile = toJavaFile(javaClass);
+		System.out.println("Generating " + javaFile);
+		
+		try (PrintWriter out = new PrintWriter(javaFile)) {
 			String packageName = toPackageName(javaClass);
 			String className = toClassName(javaClass);
 			
