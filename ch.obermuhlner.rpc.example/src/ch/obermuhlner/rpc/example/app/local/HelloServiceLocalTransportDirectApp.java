@@ -21,7 +21,7 @@ public class HelloServiceLocalTransportDirectApp {
 		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		
 		LocalTransportDirect transport = new LocalTransportDirect();
-		ServiceFactory serviceFactory = new ServiceFactory();
+		ServiceFactory serviceFactory = new ServiceFactory(null);
 		
 		serviceFactory.publishService(HelloService.class, helloServiceImpl, transport);
 		HelloService proxyService = serviceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, transport);

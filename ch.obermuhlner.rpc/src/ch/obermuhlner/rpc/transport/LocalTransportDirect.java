@@ -7,6 +7,10 @@ import ch.obermuhlner.rpc.service.Response;
 
 public class LocalTransportDirect extends ServerTransportImpl implements ClientTransport {
 
+	public LocalTransportDirect() {
+		super(null);
+	}
+	
 	@Override
 	public CompletableFuture<Response> send(Request request) {
 		return CompletableFuture.supplyAsync(() -> receive(request));

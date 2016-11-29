@@ -8,13 +8,20 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.transport.ClientTransport;
 import ch.obermuhlner.rpc.transport.ServerTransport;
 
 public class ServiceFactory {
 
 	private static final String ASYNC_SUFFIX = "Async";
+	
+	private final MetaDataService metaDataService;
 
+	public ServiceFactory(MetaDataService metaDataService) {
+		this.metaDataService = metaDataService;
+	}
+	
 	public <Service, AsyncService, ServiceImpl extends Service> Service createLocalService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ServiceImpl serviceImpl) {
 		return createLocalService(serviceType, asyncServiceType, serviceImpl, () -> null, (session) -> {});
 	}
@@ -65,7 +72,7 @@ public class ServiceFactory {
 					Request request = new Request();
 					request.serviceName = serviceName;
 					request.methodName = methodName;
-					request.arguments = args;
+					request.arguments = metaDataService.createDynamicStruct(method, args);
 					request.session = sessionSupplier.get();
 					CompletableFuture<Object> future = clientTransport.send(request)
 							.thenApply(response -> response.result);

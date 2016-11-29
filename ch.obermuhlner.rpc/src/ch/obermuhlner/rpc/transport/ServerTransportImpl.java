@@ -7,14 +7,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
 
 public class ServerTransportImpl implements ServerTransport {
 
+	private final MetaDataService metaDataService;
+	
 	private final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
 	private final Map<String, Method> methodMap = new ConcurrentHashMap<>();
 	private final Map<String, Consumer<?>> serviceToSessionConsumerMap = new ConcurrentHashMap<>();
+	
+	public ServerTransportImpl(MetaDataService metaDataService) {
+		this.metaDataService = metaDataService;
+	}
 	
 	@Override
 	public <Service, Session> void register(Class<Service> serviceType, Service service, Consumer<Session> sessionConsumer) {
@@ -39,6 +46,7 @@ public class ServerTransportImpl implements ServerTransport {
 
 		Object service = serviceMap.get(request.serviceName);
 
+		@SuppressWarnings("unchecked")
 		Consumer<Object> sessionConsumer = (Consumer<Object>) serviceToSessionConsumerMap.get(request.serviceName);
 
 		String key = request.serviceName + "#" + request.methodName;
@@ -51,7 +59,7 @@ public class ServerTransportImpl implements ServerTransport {
 		Response response = new Response();
 		try {
 			sessionConsumer.accept(request.session);
-			response.result = method.invoke(service, request.arguments);
+			response.result = method.invoke(service, metaDataService.toArguments(method, request.arguments));
 			sessionConsumer.accept(null);
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 			throw new RpcServiceException(e);

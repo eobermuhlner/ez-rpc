@@ -17,6 +17,7 @@ import java.util.function.Function;
 
 import ch.obermuhlner.rpc.RpcServiceException;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
+import ch.obermuhlner.rpc.data.DynamicStruct;
 import ch.obermuhlner.rpc.meta.FieldDefinition;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.meta.StructDefinition;
@@ -96,6 +97,8 @@ public class StructureProtocol<T> implements Protocol<T> {
 			writer.writeDouble((Double) element);
 		} else if (element instanceof String) {
 			writer.writeString((String) element);
+		} else if (element instanceof DynamicStruct) {
+			writeDynamicStruct(writer, (DynamicStruct) element);
 		} else {
 			if (element.getClass().getAnnotation(RpcStruct.class) != null) {
 				writeStruct(writer, element);
@@ -107,7 +110,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 
 	private void writeStruct(StructureWriter writer, Object element) {
 		Class<?> type = element.getClass();
-		
+
 		writer.writeStructBegin(getStructName(type));
 		
 		for (Field field : type.getFields()) {
@@ -128,6 +131,21 @@ public class StructureProtocol<T> implements Protocol<T> {
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RpcServiceException(e);
 			}
+		}
+		
+		writer.writeFieldStop();
+		writer.writeStructEnd();
+	}
+
+	private void writeDynamicStruct(StructureWriter writer, DynamicStruct element) {
+		writer.writeStructBegin(element.name);
+
+		for (Entry<String, Object> fieldEntry : element.fields.entrySet()) {
+			FieldData fieldData = new FieldData();
+			fieldData.name = fieldEntry.getKey();
+			fieldData.value = fieldEntry.getValue();
+			
+			writeField(writer, fieldData);
 		}
 		
 		writer.writeFieldStop();
@@ -242,8 +260,15 @@ public class StructureProtocol<T> implements Protocol<T> {
 	}
 
 	private Object createStruct(String name) {
+		StructDefinition structDefinition = metaDataService.getStructDefinition(name, classLoader);
+		
+		if (structDefinition == null) {
+			DynamicStruct dynamicStruct = new DynamicStruct();
+			dynamicStruct.name = name;
+			return dynamicStruct;
+		}
+		
 		try {
-			StructDefinition structDefinition = metaDataService.getStructDefinition(name, classLoader);
 			Class<?> type = Class.forName(structDefinition.javaClass, true, classLoader);
 
 			return type.newInstance();
@@ -253,6 +278,12 @@ public class StructureProtocol<T> implements Protocol<T> {
 	}
 
 	private void addField(Object struct, FieldData fieldData) {
+		if (struct instanceof DynamicStruct) {
+			DynamicStruct dynamicStruct = (DynamicStruct) struct;
+			dynamicStruct.fields.put(fieldData.name, fieldData.value);
+			return;
+		}
+		
 		try {
 			Class<?> type = struct.getClass();
 

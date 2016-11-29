@@ -20,6 +20,7 @@ import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcParameter;
 import ch.obermuhlner.rpc.annotation.RpcService;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
+import ch.obermuhlner.rpc.data.DynamicStruct;
 import ch.obermuhlner.rpc.meta.adapter.Adapter;
 
 public class MetaDataService implements AutoCloseable {
@@ -270,7 +271,7 @@ public class MetaDataService implements AutoCloseable {
 				Class<?> type = Class.forName(name, false, classLoader);
 				structDefinition = registerStruct(type);
 			} catch (ClassNotFoundException e) {
-				throw new RpcServiceException(e);
+				return null;
 			}
 		}
 		
@@ -341,5 +342,42 @@ public class MetaDataService implements AutoCloseable {
 		} catch (JAXBException e) {
 			throw new RpcServiceException(e);
 		}
+	}
+
+	public DynamicStruct createDynamicStruct(Method method, Object[] args) {
+		DynamicStruct dynamicStruct = new DynamicStruct();
+		
+		// TODO use RpcMethod for name and convert type if necessary
+		dynamicStruct.name = method.getName() + "_Request";
+		
+		Parameter[] parameters = method.getParameters();
+		for (int i = 0; i < parameters.length; i++) {
+			Parameter parameter = parameters[i];
+			String parameterName = parameter.getName();
+			Object parameterValue = args[i];
+			
+			// TODO use RpcParameter for name and convert type if necessary
+			
+			dynamicStruct.fields.put(parameterName, parameterValue);
+		}
+		
+		return dynamicStruct;
+	}
+
+	public Object[] toArguments(Method method, DynamicStruct arguments) {
+		Parameter[] parameters = method.getParameters();
+		Object[] result = new Object[parameters.length];
+		
+		for (int i = 0; i < parameters.length; i++) {
+			Parameter parameter = parameters[i];
+			String parameterName = parameter.getName();
+
+			// TODO use RpcParameter for name
+
+			Object parameterValue = arguments.fields.get(parameterName);
+			result[i] = parameterValue;
+		}
+		
+		return result;
 	}
 }

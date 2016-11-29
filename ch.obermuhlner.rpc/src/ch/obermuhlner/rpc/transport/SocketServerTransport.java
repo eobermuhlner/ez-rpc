@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
@@ -25,11 +26,13 @@ public class SocketServerTransport extends ServerTransportImpl {
 
 	private ExecutorService executorService;
 
-	public SocketServerTransport(Protocol<Object> protocol, int port) {
-		this(protocol, port, Executors.newCachedThreadPool());
+	public SocketServerTransport(MetaDataService metaDataService, Protocol<Object> protocol, int port) {
+		this(metaDataService, protocol, port, Executors.newCachedThreadPool());
 	}
 	
-	public SocketServerTransport(Protocol<Object> protocol, int port, ExecutorService executorService) {
+	public SocketServerTransport(MetaDataService metaDataService, Protocol<Object> protocol, int port, ExecutorService executorService) {
+		super(metaDataService);
+		
 		this.protocol = protocol;
 		this.port = port;
 		this.executorService = executorService;

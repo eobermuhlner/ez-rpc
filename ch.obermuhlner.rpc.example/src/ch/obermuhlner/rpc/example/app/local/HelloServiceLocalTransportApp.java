@@ -26,8 +26,8 @@ public class HelloServiceLocalTransportApp {
 		
 		MetaDataService metaDataService = HelloMetaData.createMetaDataService();
 		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(metaDataService, HelloServiceImpl.class.getClassLoader());
-		LocalTransport transport = new LocalTransport(protocol);
-		ServiceFactory serviceFactory = new ServiceFactory();
+		LocalTransport transport = new LocalTransport(metaDataService, protocol);
+		ServiceFactory serviceFactory = new ServiceFactory(metaDataService);
 		
 		serviceFactory.publishService(HelloService.class, helloServiceImpl, transport);
 		HelloService proxyService = serviceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, transport);

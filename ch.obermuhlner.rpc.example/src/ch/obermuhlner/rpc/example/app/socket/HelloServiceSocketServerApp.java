@@ -23,8 +23,8 @@ public class HelloServiceSocketServerApp {
 		
 		MetaDataService metaDataService = HelloMetaData.createMetaDataService();
 		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(metaDataService, HelloServiceImpl.class.getClassLoader());
-		SocketServerTransport socketServerTransport = new SocketServerTransport(protocol, port);
-		ServiceFactory serviceFactory = new ServiceFactory();
+		SocketServerTransport socketServerTransport = new SocketServerTransport(metaDataService, protocol, port);
+		ServiceFactory serviceFactory = new ServiceFactory(metaDataService);
 		
 		serviceFactory.publishService(HelloService.class, helloServiceImpl, socketServerTransport);
 

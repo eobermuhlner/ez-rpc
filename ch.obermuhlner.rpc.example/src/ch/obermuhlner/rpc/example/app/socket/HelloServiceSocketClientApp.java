@@ -28,7 +28,7 @@ public class HelloServiceSocketClientApp {
 		MetaDataService metaDataService = HelloMetaData.createMetaDataService();
 		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(metaDataService, HelloServiceImpl.class.getClassLoader());
 		SocketClientTransport socketClientTransport = new SocketClientTransport(protocol, hostname, port);
-		ServiceFactory serviceFactory = new ServiceFactory();
+		ServiceFactory serviceFactory = new ServiceFactory(metaDataService);
 		
 		HelloService proxyService = serviceFactory.createRemoteService(HelloService.class, HelloServiceAsync.class, socketClientTransport);
 		
