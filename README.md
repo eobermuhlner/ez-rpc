@@ -281,7 +281,7 @@ Once the meta data file is generated (either from Java interfaces or manually) i
 ## Java Code Generation
 
 The Java command line tool `ch.obermuhlner.rpc.annotation.generator.java.JavaRpcGenerator` takes one or more XML meta data files as arguments and generates the following source code from it:
-* Java service interfaces (`@RpcService`)
+* Java service interfaces (annotated with `@RpcService`, `@RpcMethod`, `@RpcParameter`)
 * Java companion interface for asychronous methods
-* Java struct classes (`@RpcStruct`)
+* Java struct classes (`@RpcStruct`, `@RpcField`)
 
