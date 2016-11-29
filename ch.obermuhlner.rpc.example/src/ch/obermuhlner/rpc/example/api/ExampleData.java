@@ -7,7 +7,7 @@ import java.util.Set;
 import ch.obermuhlner.rpc.annotation.RpcField;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 
-@RpcStruct(name = "ExampleData")
+@RpcStruct()
 public class ExampleData {
 	public boolean booleanField;
 	public int intField;

@@ -73,7 +73,7 @@ public class MetaDataService implements AutoCloseable {
 	}
 
 	public ServiceDefinition registerService(Class<?> type) {
-		String name = type.getName();
+		String name = type.getSimpleName();
 		Class<?> sessionJavaClass = null;
 
 		ServiceDefinition serviceDefinition = findServiceDefinitionByType(name);
@@ -101,9 +101,9 @@ public class MetaDataService implements AutoCloseable {
 	}
 	
 	public StructDefinition registerStruct(Class<?> type) {
-		String name = type.getName();
+		String name = type.getSimpleName();
 
-		StructDefinition structDefinition = findStructDefinitionByType(name);
+		StructDefinition structDefinition = findStructDefinitionByType(type.getName());
 		if (structDefinition != null) {
 			return structDefinition;
 		}

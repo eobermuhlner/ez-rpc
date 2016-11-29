@@ -8,7 +8,7 @@ import java.util.Date;
 
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 
-@RpcStruct(name = "AdapterExampleData")
+@RpcStruct()
 public class AdapterExampleData {
 	public BigDecimal bigDecimalField;
 	public Date dateField;
