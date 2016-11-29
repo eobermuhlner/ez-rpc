@@ -132,7 +132,7 @@ public class MetaDataService implements AutoCloseable {
 		
 		structDefinition = new StructDefinition();
 		structDefinition.name = name;
-		structDefinition.javaClass = type.getName();
+		structDefinition.javaName = type.getName();
 
 		metaData.addStructDefinition(structDefinition); // HACK - register incomplete to avoid recursive registration if type references itself
 		fillStructureDefinition(structDefinition, type);
@@ -319,7 +319,7 @@ public class MetaDataService implements AutoCloseable {
 				return type.toJavaPrimitiveTypeName() + "<" + toJavaClassSignature(fieldDefinition.key) 
 						+ ", " + toJavaClassSignature(fieldDefinition.value) + ">";
 			case STRUCT:
-				return findStructDefinitionByName(fieldDefinition.type).javaClass;
+				return findStructDefinitionByName(fieldDefinition.type).javaName;
 			default:
 				return type.toJavaPrimitiveTypeName();
 		}
@@ -334,7 +334,7 @@ public class MetaDataService implements AutoCloseable {
 
 		switch(type) {
 			case STRUCT:
-				return findStructDefinitionByName(typeString).javaClass;
+				return findStructDefinitionByName(typeString).javaName;
 			default:
 				return type.toJavaClassTypeName();
 		}

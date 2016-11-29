@@ -272,7 +272,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 		}
 		
 		try {
-			Class<?> type = Class.forName(structDefinition.javaClass, true, classLoader);
+			Class<?> type = Class.forName(structDefinition.javaName, true, classLoader);
 
 			return type.newInstance();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {

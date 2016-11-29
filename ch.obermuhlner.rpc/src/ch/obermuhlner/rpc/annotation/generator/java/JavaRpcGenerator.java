@@ -41,9 +41,9 @@ public class JavaRpcGenerator {
 	}
 
 	private void generate(StructDefinition structDefinition) {
-		try (PrintWriter out = new PrintWriter(toJavaFile(structDefinition.javaClass))) {
-			String packageName = toPackageName(structDefinition.javaClass);
-			String className = toClassName(structDefinition.javaClass);
+		try (PrintWriter out = new PrintWriter(toJavaFile(structDefinition.javaName))) {
+			String packageName = toPackageName(structDefinition.javaName);
+			String className = toClassName(structDefinition.javaName);
 			
 			if (packageName != null) {
 				out.print("package ");
@@ -124,7 +124,7 @@ public class JavaRpcGenerator {
 	}
 
 	private void generate(ServiceDefinition serviceDefinition, boolean async) {
-		String javaClass = orDefault(serviceDefinition.javaName, serviceDefinition.name) + (async ? ASYNC_SUFFIX : "");
+		String javaClass = serviceDefinition.getJavaName() + (async ? ASYNC_SUFFIX : "");
 		try (PrintWriter out = new PrintWriter(toJavaFile(javaClass))) {
 			String packageName = toPackageName(javaClass);
 			String className = toClassName(javaClass);
@@ -194,7 +194,7 @@ public class JavaRpcGenerator {
 					out.print(">");
 				}
 				out.print(" ");
-				out.print(orDefault(methodDefinition.javaName, methodDefinition.name));
+				out.print(methodDefinition.getJavaName());
 				if (async) {
 					out.print(ASYNC_SUFFIX);
 				}
@@ -219,7 +219,7 @@ public class JavaRpcGenerator {
 						out.print(INDENT);
 						out.print(metaDataService.toJavaClassSignature(parameterDefinition.type));
 						out.print(" ");
-						out.print(orDefault(parameterDefinition.javaName, parameterDefinition.name));
+						out.print(parameterDefinition.getJavaName());
 						
 						if (i != methodDefinition.parameterDefinitions.size() - 1) {
 							out.print(",");
