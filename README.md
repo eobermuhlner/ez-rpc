@@ -131,7 +131,9 @@ public class BigDecimalAdapter implements Adapter<BigDecimal, BigDecimalStruct> 
 		return localType;
 	}
 }
+```
 
+```java
 @RpcStruct(name = "BigDecimal")
 public class BigDecimalStruct {
 	public String value;
@@ -219,8 +221,6 @@ Once the meta data file is created it becomes the master specification and the a
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <metaData>
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<metaData>
     <services>
         <service name="HelloService" javaClass="ch.obermuhlner.rpc.example.api.HelloService">
             <method name="adapterExample">
@@ -273,4 +273,15 @@ Once the meta data file is created it becomes the master specification and the a
     </structs>
 </metaData>
 ```
+
+## Code Generation from Meta Data
+
+Once the meta data file is generated (either from Java interfaces or manually) it is possible to generate the necessary source code from the meta data.
+
+## Java Code Generation
+
+The Java command line tool `ch.obermuhlner.rpc.annotation.generator.java.JavaRpcGenerator` takes one or more XML meta data files as arguments and generates the following source code from it:
+* Java service interfaces (`@RpcService`)
+* Java companion interface for asychronous methods
+* Java struct classes (`@RpcStruct`)
 
