@@ -8,7 +8,7 @@ import ch.obermuhlner.rpc.example.app.meta.HelloMetaData;
 import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
-import ch.obermuhlner.rpc.service.ProtocolFactory;
+import ch.obermuhlner.rpc.protocol.structure.binary.BinaryProtocol;
 import ch.obermuhlner.rpc.service.ServiceFactory;
 import ch.obermuhlner.rpc.transport.SocketServerTransport;
 
@@ -22,7 +22,7 @@ public class HelloServiceSocketServerApp {
 		int port = 5924;
 		
 		MetaDataService metaDataService = HelloMetaData.createMetaDataService();
-		StructureProtocol<Object> protocol = ProtocolFactory.binaryProtocol(metaDataService, HelloServiceImpl.class.getClassLoader());
+		StructureProtocol<Object> protocol = new BinaryProtocol<Object>(metaDataService, HelloServiceImpl.class.getClassLoader());
 		SocketServerTransport socketServerTransport = new SocketServerTransport(metaDataService, protocol, port);
 		ServiceFactory serviceFactory = new ServiceFactory(metaDataService);
 		
