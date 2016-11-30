@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -45,6 +44,10 @@ public class JavaRpcGenerator {
 	}
 
 	private void generate(StructDefinition structDefinition) {
+		if (isFrameworkClass(structDefinition.javaName)) {
+			return;
+		}
+
 		File javaFile = toJavaFile(structDefinition.javaName);
 		System.out.println("Generating " + javaFile);
 		
@@ -147,6 +150,15 @@ public class JavaRpcGenerator {
 			out.println();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private boolean isFrameworkClass(String javaTypeName) {
+		try {
+			Class.forName(javaTypeName);
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
 		}
 	}
 
@@ -306,8 +318,6 @@ public class JavaRpcGenerator {
 	private void printGeneratedWithComment(PrintWriter out) {
 		out.print("// Generated with ");
 		out.print(getClass().getName());
-		out.print(" ");
-		out.print(LocalDateTime.now());
 		out.println();
 		out.println();
 	}
