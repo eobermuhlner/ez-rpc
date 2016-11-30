@@ -1,4 +1,4 @@
-package ch.obermuhlner.rpc.protocol;
+package ch.obermuhlner.rpc.protocol.java;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,6 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+
+import ch.obermuhlner.rpc.protocol.Protocol;
 
 /**
  * Uses Java {@link Serializable serialization} as {@link Protocol} to convert an object into a serialized representation and back. 

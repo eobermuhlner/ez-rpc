@@ -1,7 +1,7 @@
 package ch.obermuhlner.rpc.service;
 
 import ch.obermuhlner.rpc.meta.MetaDataService;
-import ch.obermuhlner.rpc.protocol.JavaSerializableProtocol;
+import ch.obermuhlner.rpc.protocol.java.JavaSerializableProtocol;
 import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
 import ch.obermuhlner.rpc.protocol.structure.binary.BinaryStructureReader;
 import ch.obermuhlner.rpc.protocol.structure.binary.BinaryStructureWriter;

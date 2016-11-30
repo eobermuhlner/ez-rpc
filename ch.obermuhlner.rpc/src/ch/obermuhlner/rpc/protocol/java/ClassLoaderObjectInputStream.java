@@ -1,4 +1,4 @@
-package ch.obermuhlner.rpc.protocol;
+package ch.obermuhlner.rpc.protocol.java;
 
 import java.io.IOException;
 import java.io.InputStream;
