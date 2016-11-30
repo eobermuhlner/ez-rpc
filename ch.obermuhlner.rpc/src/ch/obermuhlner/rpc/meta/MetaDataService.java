@@ -325,22 +325,26 @@ public class MetaDataService implements AutoCloseable {
 		}
 	}
 
-	public String toJavaClassSignature(String typeString) {
-		if (typeString == null) {
+	public String toJavaClassSignature(String typeName) {
+		if (typeName == null) {
 			return null;
 		}
 		
-		Type type = findTypeByName(typeString);
+		Type type = findTypeByName(typeName);
 
 		switch(type) {
 			case STRUCT:
-				return findStructDefinitionByName(typeString).javaName;
+				return findStructDefinitionByName(typeName).javaName;
 			default:
 				return type.toJavaClassTypeName();
 		}
 	}
 
-	private Type findTypeByName(String typeName) {
+	public Type findTypeByName(String typeName) {
+		if (typeName == null) {
+			return null;
+		}
+		
 		for (Type type : Type.values()) {
 			if (type.toTypeName().equals(typeName)) {
 				return type;

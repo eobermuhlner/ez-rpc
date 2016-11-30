@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import ch.obermuhlner.rpc.meta.FieldDefinition;
@@ -14,6 +16,7 @@ import ch.obermuhlner.rpc.meta.MethodDefinition;
 import ch.obermuhlner.rpc.meta.ParameterDefinition;
 import ch.obermuhlner.rpc.meta.ServiceDefinition;
 import ch.obermuhlner.rpc.meta.StructDefinition;
+import ch.obermuhlner.rpc.meta.Type;
 
 public class JavaRpcGenerator {
 
@@ -45,8 +48,15 @@ public class JavaRpcGenerator {
 		System.out.println("Generating " + javaFile);
 		
 		try (PrintWriter out = new PrintWriter(javaFile)) {
-			String packageName = toPackageName(structDefinition.javaName);
-			String className = toClassName(structDefinition.javaName);
+			String packageName = toJavaPackageName(structDefinition.javaName);
+			String className = toJavaClassName(structDefinition.javaName);
+			
+			Set<String> javaImports = new HashSet<>();
+			for (FieldDefinition fieldDefinition : structDefinition.fieldDefinitions) {
+				if (metaDataService.findTypeByName(fieldDefinition.type) == Type.STRUCT) {
+					javaImports.add(metaDataService.toJavaSignature(fieldDefinition));
+				}
+			}
 			
 			if (packageName != null) {
 				out.print("package ");
@@ -63,7 +73,18 @@ public class JavaRpcGenerator {
 			out.println("import ch.obermuhlner.rpc.annotation.RpcField;");
 			out.println("import ch.obermuhlner.rpc.annotation.RpcStruct;");
 			out.println();
-
+			javaImports.stream()
+				.sorted()
+				.forEach(importJavaClass -> {
+					out.print("import ");
+					out.print(importJavaClass);
+					out.print(";");
+					out.println();
+				});
+			if (!javaImports.isEmpty()) {
+				out.println();
+			}
+			
 			out.print("@RpcStruct(name = \"");
 			out.print(structDefinition.name);
 			out.print("\")");
@@ -111,7 +132,7 @@ public class JavaRpcGenerator {
 
 				out.print(INDENT);
 				out.print("public ");
-				out.print(metaDataService.toJavaSignature(fieldDefinition));
+				out.print(toJavaClassName(metaDataService.toJavaSignature(fieldDefinition)));
 				out.print(" ");
 				out.print(fieldDefinition.name);
 				out.print(";");
@@ -132,9 +153,26 @@ public class JavaRpcGenerator {
 		System.out.println("Generating " + javaFile);
 		
 		try (PrintWriter out = new PrintWriter(javaFile)) {
-			String packageName = toPackageName(javaClass);
-			String className = toClassName(javaClass);
+			String packageName = toJavaPackageName(javaClass);
+			String className = toJavaClassName(javaClass);
 			
+			Set<String> javaImports = new HashSet<>();
+			for (MethodDefinition methodDefinition : serviceDefinition.methodDefinitions) {
+				if (metaDataService.findTypeByName(methodDefinition.returns) == Type.STRUCT) {
+					String returnJavaType = metaDataService.toJavaClassSignature(methodDefinition.returns);
+					if (returnJavaType != null) {
+						javaImports.add(returnJavaType);
+					}
+					
+					for (ParameterDefinition parameterDefinition : methodDefinition.parameterDefinitions) {
+						String parameterJavaType = metaDataService.toJavaClassSignature(parameterDefinition.type);
+						if (metaDataService.findTypeByName(parameterJavaType) == Type.STRUCT) {
+							javaImports.add(parameterJavaType);
+						}
+					}
+				}
+			}
+
 			if (packageName != null) {
 				out.print("package ");
 				out.print(packageName);
@@ -154,6 +192,17 @@ public class JavaRpcGenerator {
 			out.println("import ch.obermuhlner.rpc.annotation.RpcParameter;");
 			out.println("import ch.obermuhlner.rpc.annotation.RpcService;");
 			out.println();
+			javaImports.stream()
+				.sorted()
+				.forEach(importJavaClass -> {
+					out.print("import ");
+					out.print(importJavaClass);
+					out.print(";");
+					out.println();
+				});
+			if (!javaImports.isEmpty()) {
+				out.println();
+			}
 
 			if (!async) {
 				out.print("@RpcService(");
@@ -195,7 +244,7 @@ public class JavaRpcGenerator {
 				if (async) {
 					out.print("CompletableFuture<");
 				}
-				out.print(orDefault(metaDataService.toJavaClassSignature(methodDefinition.returns), "void"));
+				out.print(orDefault(toJavaClassName(metaDataService.toJavaClassSignature(methodDefinition.returns)), "void"));
 				if (async) {
 					out.print(">");
 				}
@@ -223,9 +272,9 @@ public class JavaRpcGenerator {
 						
 						out.print(INDENT);
 						out.print(INDENT);
-						out.print(metaDataService.toJavaClassSignature(parameterDefinition.type));
+						out.print(toJavaClassName(metaDataService.toJavaClassSignature(parameterDefinition.type)));
 						out.print(" ");
-						out.print(parameterDefinition.getJavaName());
+						out.print(toJavaClassName(parameterDefinition.getJavaName()));
 						
 						if (i != methodDefinition.parameterDefinitions.size() - 1) {
 							out.print(",");
@@ -258,8 +307,8 @@ public class JavaRpcGenerator {
 	}
 
 	private File toJavaFile(String javaClass) {
-		String packageName = toPackageName(javaClass);
-		String className = toClassName(javaClass);
+		String packageName = toJavaPackageName(javaClass);
+		String className = toJavaClassName(javaClass);
 		
 		Path packagePath = Paths.get(".", packageName.split(Pattern.quote(".")));
 		packagePath.toFile().mkdirs();
@@ -267,7 +316,7 @@ public class JavaRpcGenerator {
 		return packagePath.resolve(className + ".java").toFile();
 	}
 
-	private String toPackageName(String javaClass) {
+	private String toJavaPackageName(String javaClass) {
 		int index = javaClass.lastIndexOf('.');
 		if (index < 0) {
 			return null;
@@ -275,7 +324,11 @@ public class JavaRpcGenerator {
 		return javaClass.substring(0, index);
 	}
 
-	private String toClassName(String javaClass) {
+	private String toJavaClassName(String javaClass) {
+		if (javaClass == null) {
+			return null;
+		}
+		
 		int index = javaClass.lastIndexOf('.');
 		if (index < 0) {
 			return javaClass;
