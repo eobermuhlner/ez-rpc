@@ -1,7 +1,5 @@
 package ch.obermuhlner.rpc.transport.local;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.concurrent.CompletableFuture;
 
 import ch.obermuhlner.rpc.meta.MetaDataService;
@@ -24,26 +22,15 @@ public class LocalTransport extends ServerTransportImpl implements ClientTranspo
 	@Override
 	public CompletableFuture<Response> send(Request request) {		
 		return CompletableFuture.supplyAsync(() -> {
-			byte[] requestData = toBytes(request);
+			byte[] requestData = protocol.serializeToBytes(request);
 			byte[] responseData = send(requestData);
-			return (Response) toObject(responseData);
+			return (Response) protocol.deserializeFromBytes(responseData);
 		});
 	}
 	
 	private byte[] send(byte[] requestData) {
-		Request request = (Request) toObject(requestData);
+		Request request = (Request) protocol.deserializeFromBytes(requestData);
 		Response response = receive(request);
-		return toBytes(response);
-	}
-
-	private byte[] toBytes(Object object) {
-		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		protocol.serialize(byteArrayOutputStream, object);
-		return byteArrayOutputStream.toByteArray();
-	}
-
-	private Object toObject(byte[] data) {
-		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
-		return protocol.deserialize(byteArrayInputStream);
+		return protocol.serializeToBytes(response);
 	}
 }
