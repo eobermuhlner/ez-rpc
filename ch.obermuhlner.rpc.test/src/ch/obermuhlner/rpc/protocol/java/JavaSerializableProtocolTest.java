@@ -1,5 +1,6 @@
-package JavaSerializableProtocol;
+package ch.obermuhlner.rpc.protocol.java;
 
+import ch.obermuhlner.rpc.protocol.AbstractProtocolTest;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.protocol.java.JavaSerializableProtocol;
 

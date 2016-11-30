@@ -1,4 +1,4 @@
-package JavaSerializableProtocol;
+package ch.obermuhlner.rpc.protocol;
 
 import static org.junit.Assert.assertEquals;
 
