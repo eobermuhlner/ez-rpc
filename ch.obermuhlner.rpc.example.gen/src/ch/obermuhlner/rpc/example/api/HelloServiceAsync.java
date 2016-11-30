@@ -1,3 +1,5 @@
+// Generated with ch.obermuhlner.rpc.annotation.generator.java.JavaRpcGenerator 2016-11-30T07:41:25.117
+
 package ch.obermuhlner.rpc.example.api;
 
 import java.util.List;

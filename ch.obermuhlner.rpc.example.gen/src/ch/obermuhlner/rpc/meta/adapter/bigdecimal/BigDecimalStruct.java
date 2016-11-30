@@ -1,3 +1,5 @@
+// Generated with ch.obermuhlner.rpc.annotation.generator.java.JavaRpcGenerator 2016-11-30T07:41:25.039
+
 package ch.obermuhlner.rpc.meta.adapter.bigdecimal;
 
 import java.util.List;
