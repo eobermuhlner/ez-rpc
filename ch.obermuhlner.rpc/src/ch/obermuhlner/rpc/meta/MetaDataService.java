@@ -22,6 +22,12 @@ import ch.obermuhlner.rpc.annotation.RpcService;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 import ch.obermuhlner.rpc.data.DynamicStruct;
 import ch.obermuhlner.rpc.meta.adapter.Adapter;
+import ch.obermuhlner.rpc.meta.adapter.bigdecimal.BigDecimalAdapter;
+import ch.obermuhlner.rpc.meta.adapter.exception.IllegalArgumentExceptionAdapter;
+import ch.obermuhlner.rpc.meta.adapter.time.DateAdapter;
+import ch.obermuhlner.rpc.meta.adapter.time.LocalDateAdapter;
+import ch.obermuhlner.rpc.meta.adapter.time.LocalDateTimeAdapter;
+import ch.obermuhlner.rpc.meta.adapter.time.PeriodAdapter;
 
 public class MetaDataService implements AutoCloseable {
 
@@ -32,14 +38,31 @@ public class MetaDataService implements AutoCloseable {
 	private final List<Adapter<?, ?>> adapters = new ArrayList<Adapter<?, ?>>();
 
 	public MetaDataService() {
-		this(null);
+		this(true);
 	}
 
+	public MetaDataService(boolean autoAdapters) {
+		this(null, autoAdapters);
+	}
+	
 	public MetaDataService(File metaDataFile) {
+		this(metaDataFile, true);
+	}
+	
+	public MetaDataService(File metaDataFile, boolean autoAdapters) {
 		this.metaDataFile = metaDataFile;
 		
 		if (metaDataFile != null) {
 			load(metaDataFile);
+		}
+		
+		if (autoAdapters) {
+			addAdapter(new BigDecimalAdapter());
+			addAdapter(new DateAdapter());
+			addAdapter(new LocalDateTimeAdapter());
+			addAdapter(new LocalDateAdapter());
+			addAdapter(new PeriodAdapter());
+			addAdapter(new IllegalArgumentExceptionAdapter());
 		}
 	}
 	
