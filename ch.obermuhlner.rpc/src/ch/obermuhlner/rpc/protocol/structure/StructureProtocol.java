@@ -15,7 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 
-import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 import ch.obermuhlner.rpc.data.DynamicStruct;
 import ch.obermuhlner.rpc.meta.FieldDefinition;
@@ -104,7 +104,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 				if (element.getClass().getAnnotation(RpcStruct.class) != null) {
 					writeStruct(writer, element);
 				} else {
-					throw new RpcServiceException("Class not marked as @RpcStruct and no matching Adapter found: " + element.getClass().getName());
+					throw new RpcException("Class not marked as @RpcStruct and no matching Adapter found: " + element.getClass().getName());
 				}
 			}
 		}
@@ -124,7 +124,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 				Object value = field.get(element); 
 				FieldDefinition fieldDefinition = metaDataService.findFieldDefinition(type.getName(), fieldData.name);
 				if (fieldDefinition == null) {
-					throw new RpcServiceException("Unknown field: " + type.getName() + "." + fieldData.name);
+					throw new RpcException("Unknown field: " + type.getName() + "." + fieldData.name);
 				}
 				Class<?> fieldType = metaDataService.getClass(type, fieldDefinition);
 				value = convertToRemote(value, fieldType);
@@ -132,7 +132,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 
 				writeField(writer, fieldData);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
-				throw new RpcServiceException(e);
+				throw new RpcException(e);
 			}
 		}
 		
@@ -198,12 +198,12 @@ public class StructureProtocol<T> implements Protocol<T> {
 		case STRUCT:
 			return readStruct(reader);
 		case FIELD:
-			throw new RpcServiceException("FIELD only allowed inside STRUCT");
+			throw new RpcException("FIELD only allowed inside STRUCT");
 		case FIELD_STOP:
-			throw new RpcServiceException("FIELD_STOP only allowed inside STRUCT");
+			throw new RpcException("FIELD_STOP only allowed inside STRUCT");
 		}
 
-		throw new RpcServiceException("Unkown type: " + type);
+		throw new RpcException("Unkown type: " + type);
 	}
 
 	private List<Object> readList(StructureReader reader) {
@@ -248,7 +248,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 		StructureType type = reader.readType();
 		while (type != StructureType.FIELD_STOP) {
 			if (type != StructureType.FIELD) {
-				throw new RpcServiceException("Type must be FIELD or FIELD_STOP: " + type);
+				throw new RpcException("Type must be FIELD or FIELD_STOP: " + type);
 			}
 			
 			FieldData field = readField(reader);
@@ -276,7 +276,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 
 			return type.newInstance();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			throw new RpcServiceException(e);
+			throw new RpcException(e);
 		}
 	}
 
@@ -301,7 +301,7 @@ public class StructureProtocol<T> implements Protocol<T> {
 			Object value = convertToLocal(fieldData.value, field.getType());
 			field.set(struct, value);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException | SecurityException e) {
-			throw new RpcServiceException(e);
+			throw new RpcException(e);
 		}
 	}
 

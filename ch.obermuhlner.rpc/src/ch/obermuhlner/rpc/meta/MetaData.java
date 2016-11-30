@@ -3,7 +3,7 @@ package ch.obermuhlner.rpc.meta;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.RpcException;
 
 @XmlRootElement
 public class MetaData {
@@ -58,7 +58,7 @@ public class MetaData {
 
 	private void checkEqual(String name, Object existing, Object update) {
 		if (!existing.equals(update)) {
-			throw new RpcServiceException("Conflicting meta data: '" + name + "' existing='" + existing + "', update='" + update + "'");
+			throw new RpcException("Conflicting meta data: '" + name + "' existing='" + existing + "', update='" + update + "'");
 		}
 	}
 	

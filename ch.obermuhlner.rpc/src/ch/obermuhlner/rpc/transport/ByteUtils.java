@@ -6,7 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.RpcException;
 
 public class ByteUtils {
 
@@ -30,7 +30,7 @@ public class ByteUtils {
 		try {
 			return in.readInt();
 		} catch (IOException e) {
-			throw new RpcServiceException(e);
+			throw new RpcException(e);
 		}
 	}
 

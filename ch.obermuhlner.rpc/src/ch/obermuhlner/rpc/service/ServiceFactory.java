@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.transport.ClientTransport;
 import ch.obermuhlner.rpc.transport.ServerTransport;
@@ -43,7 +43,7 @@ public class ServiceFactory {
 									implMethod = serviceImpl.getClass().getMethod(syncMethodName, method.getParameterTypes());
 									return implMethod.invoke(serviceImpl, args);
 								} catch (Exception e) {
-									throw new RpcServiceException(e);
+									throw new RpcException(e);
 								}
 							});
 						} else {
@@ -118,7 +118,7 @@ public class ServiceFactory {
 		}
 		
 		if (exception instanceof Exception) {
-			throw new RpcServiceException((Exception) exception);
+			throw new RpcException((Exception) exception);
 		}
 	}
 

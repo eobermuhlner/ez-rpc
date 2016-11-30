@@ -10,7 +10,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.service.Request;
@@ -80,7 +80,7 @@ public class SocketServerTransport extends ServerTransportImpl {
 				out.write(responseData);
 				out.flush();
 			} catch (IOException e) {
-				throw new RpcServiceException(e);
+				throw new RpcException(e);
 			} finally {
 				try {
 					socket.close();

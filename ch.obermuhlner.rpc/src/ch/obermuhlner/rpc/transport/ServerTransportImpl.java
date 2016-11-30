@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.data.DynamicStruct;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.service.Request;
@@ -42,7 +42,7 @@ public class ServerTransportImpl implements ServerTransport {
 	@Override
 	public Response receive(Request request) {
 		if (!serviceMap.containsKey(request.serviceName)) {
-			throw new RpcServiceException("No registered service: " + request.serviceName);
+			throw new RpcException("No registered service: " + request.serviceName);
 		}
 
 		Object service = serviceMap.get(request.serviceName);
@@ -52,7 +52,7 @@ public class ServerTransportImpl implements ServerTransport {
 
 		String key = request.serviceName + "#" + request.methodName;
 		if (!methodMap.containsKey(key)) {
-			throw new RpcServiceException("No registered service method: " + key);
+			throw new RpcException("No registered service method: " + key);
 		}
 		
 		Method method = methodMap.get(key);
@@ -66,7 +66,7 @@ public class ServerTransportImpl implements ServerTransport {
 			response.result.setField("result", result);
 			sessionConsumer.accept(null);
 		} catch (IllegalAccessException | IllegalArgumentException e) {
-			throw new RpcServiceException(e);
+			throw new RpcException(e);
 		} catch (InvocationTargetException e) {
 			response.exception = e.getTargetException();
 		}

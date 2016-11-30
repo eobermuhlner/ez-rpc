@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.protocol.structure.StructureReader;
 import ch.obermuhlner.rpc.protocol.structure.StructureType;
 
@@ -57,12 +57,12 @@ public class BinaryStructureReader implements StructureReader {
 				return StructureType.NULL;
 			}
 			
-			throw new RpcServiceException("Unknown type: " + type);
+			throw new RpcException("Unknown type: " + type);
 		} catch (IOException e) {
 			// ignore
 		}
 		
-		throw new RpcServiceException();
+		throw new RpcException();
 	}
 
 	@Override

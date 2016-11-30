@@ -14,7 +14,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.annotation.RpcField;
 import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcParameter;
@@ -247,7 +247,7 @@ public class MetaDataService implements AutoCloseable {
 			}
 			
 			if (neededType != null) {
-				throw new RpcServiceException("Field '" + structClass.getName() + "." + field.getName() + "' of type '" + fieldDefinition.type + "' must specify '" + neededType + "' type in @RpcField");
+				throw new RpcException("Field '" + structClass.getName() + "." + field.getName() + "' of type '" + fieldDefinition.type + "' must specify '" + neededType + "' type in @RpcField");
 			}
 
 			structDefinition.fieldDefinitions.add(fieldDefinition);
@@ -326,7 +326,7 @@ public class MetaDataService implements AutoCloseable {
 		try {
 			return type.getField(fieldDefinition.name).getType();
 		} catch (NoSuchFieldException | SecurityException e) {
-			throw new RpcServiceException(e);
+			throw new RpcException(e);
 		}
 	}
 	
@@ -446,7 +446,7 @@ public class MetaDataService implements AutoCloseable {
 			
 			marshaller.marshal(metaData, file);
 		} catch (JAXBException e) {
-			throw new RpcServiceException(e);
+			throw new RpcException(e);
 		}
 	}
 	
@@ -457,7 +457,7 @@ public class MetaDataService implements AutoCloseable {
 
 			return (MetaData) unmarshaller.unmarshal(file);
 		} catch (JAXBException e) {
-			throw new RpcServiceException(e);
+			throw new RpcException(e);
 		}
 	}
 

@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.RpcException;
 
 public class StructDefinitionList {
 	
@@ -15,7 +15,7 @@ public class StructDefinitionList {
 	public void add(StructDefinition structDefinition) {
 		StructDefinition existing = findByTemplate(structDefinition);
 		if (existing != null) {
-			throw new RpcServiceException("Failed to add " + structDefinition + " because " + existing + " already exists");
+			throw new RpcException("Failed to add " + structDefinition + " because " + existing + " already exists");
 		}
 		
 		structDefinitions.add(structDefinition);

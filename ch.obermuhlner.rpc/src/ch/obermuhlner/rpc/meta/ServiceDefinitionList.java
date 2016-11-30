@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import ch.obermuhlner.rpc.RpcServiceException;
+import ch.obermuhlner.rpc.RpcException;
 
 // TODO duplicate of StructDefinitionList !
 public class ServiceDefinitionList {
@@ -16,7 +16,7 @@ public class ServiceDefinitionList {
 	public void add(ServiceDefinition serviceDefinition) {
 		ServiceDefinition existing = findByTemplate(serviceDefinition);
 		if (existing != null) {
-			throw new RpcServiceException("Failed to add " + serviceDefinition + " because " + existing + " already exists");
+			throw new RpcException("Failed to add " + serviceDefinition + " because " + existing + " already exists");
 		}
 		
 		serviceDefinitions.add(serviceDefinition);
