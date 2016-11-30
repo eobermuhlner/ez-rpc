@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -59,8 +61,20 @@ public class JavaRpcGenerator {
 			
 			Set<String> javaImports = new HashSet<>();
 			for (FieldDefinition fieldDefinition : structDefinition.fieldDefinitions) {
-				if (metaDataService.findTypeByName(fieldDefinition.type) == Type.STRUCT) {
+				switch(metaDataService.findTypeByName(fieldDefinition.type)) {
+				case STRUCT:
 					javaImports.add(metaDataService.toJavaSignature(fieldDefinition));
+					break;
+				case LIST:
+					javaImports.add(List.class.getName());
+					break;
+				case SET:
+					javaImports.add(Set.class.getName());
+					break;
+				case MAP:
+					javaImports.add(Map.class.getName());
+					break;
+				default:
 				}
 			}
 			
@@ -72,10 +86,6 @@ public class JavaRpcGenerator {
 				out.println();
 			}
 
-			out.println("import java.util.List;");
-			out.println("import java.util.Map;");
-			out.println("import java.util.Set;");
-			out.println();
 			out.println("import ch.obermuhlner.rpc.annotation.RpcField;");
 			out.println("import ch.obermuhlner.rpc.annotation.RpcStruct;");
 			out.println();
@@ -175,18 +185,10 @@ public class JavaRpcGenerator {
 			
 			Set<String> javaImports = new HashSet<>();
 			for (MethodDefinition methodDefinition : serviceDefinition.methodDefinitions) {
-				if (metaDataService.findTypeByName(methodDefinition.returns) == Type.STRUCT) {
-					String returnJavaType = metaDataService.toJavaClassSignature(methodDefinition.returns);
-					if (returnJavaType != null) {
-						javaImports.add(returnJavaType);
-					}
-					
-					for (ParameterDefinition parameterDefinition : methodDefinition.parameterDefinitions) {
-						String parameterJavaType = metaDataService.toJavaClassSignature(parameterDefinition.type);
-						if (metaDataService.findTypeByName(parameterJavaType) == Type.STRUCT) {
-							javaImports.add(parameterJavaType);
-						}
-					}
+				addJavaImport(javaImports, methodDefinition.returns);
+				
+				for (ParameterDefinition parameterDefinition : methodDefinition.parameterDefinitions) {
+					addJavaImport(javaImports, parameterDefinition.type);
 				}
 			}
 
@@ -198,17 +200,16 @@ public class JavaRpcGenerator {
 				out.println();
 			}
 
-			out.println("import java.util.List;");
-			out.println("import java.util.Map;");
-			out.println("import java.util.Set;");
 			if (async) {
 				out.println("import java.util.concurrent.CompletableFuture;");
+				out.println();
 			}
-			out.println();
-			out.println("import ch.obermuhlner.rpc.annotation.RpcMethod;");
-			out.println("import ch.obermuhlner.rpc.annotation.RpcParameter;");
-			out.println("import ch.obermuhlner.rpc.annotation.RpcService;");
-			out.println();
+			if (!async) {
+				out.println("import ch.obermuhlner.rpc.annotation.RpcMethod;");
+				out.println("import ch.obermuhlner.rpc.annotation.RpcParameter;");
+				out.println("import ch.obermuhlner.rpc.annotation.RpcService;");
+				out.println();
+			}
 			javaImports.stream()
 				.sorted()
 				.forEach(importJavaClass -> {
@@ -312,6 +313,31 @@ public class JavaRpcGenerator {
 			out.println();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void addJavaImport(Set<String> javaImports, String typeString) {
+		String javaType = metaDataService.toJavaClassSignature(typeString);
+		Type type = metaDataService.findTypeByName(typeString);
+		
+		if (type == null) {
+			return;
+		}
+		
+		switch(type) {
+		case STRUCT:
+			javaImports.add(javaType);
+			break;
+		case LIST:
+			javaImports.add(List.class.getName());
+			break;
+		case SET:
+			javaImports.add(Set.class.getName());
+			break;
+		case MAP:
+			javaImports.add(Map.class.getName());
+			break;
+		default:
 		}
 	}
 

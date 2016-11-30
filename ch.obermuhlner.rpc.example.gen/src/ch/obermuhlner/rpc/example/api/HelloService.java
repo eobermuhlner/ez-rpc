@@ -2,10 +2,6 @@
 
 package ch.obermuhlner.rpc.example.api;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcParameter;
 import ch.obermuhlner.rpc.annotation.RpcService;

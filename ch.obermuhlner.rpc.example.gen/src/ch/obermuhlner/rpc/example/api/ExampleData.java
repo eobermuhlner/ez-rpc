@@ -1,15 +1,14 @@
-// Generated with ch.obermuhlner.rpc.annotation.generator.java.JavaRpcGenerator 2016-11-30T07:41:25.086
+// Generated with ch.obermuhlner.rpc.annotation.generator.java.JavaRpcGenerator
 
 package ch.obermuhlner.rpc.example.api;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import ch.obermuhlner.rpc.annotation.RpcField;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 
 import ch.obermuhlner.rpc.example.api.ExampleData;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RpcStruct(name = "ExampleData")
 public class ExampleData {
