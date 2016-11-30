@@ -1,4 +1,4 @@
-package ch.obermuhlner.rpc.transport;
+package ch.obermuhlner.rpc.transport.socket;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,6 +12,8 @@ import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
+import ch.obermuhlner.rpc.transport.ByteUtils;
+import ch.obermuhlner.rpc.transport.ClientTransport;
 
 public class SocketClientTransport implements ClientTransport {
 

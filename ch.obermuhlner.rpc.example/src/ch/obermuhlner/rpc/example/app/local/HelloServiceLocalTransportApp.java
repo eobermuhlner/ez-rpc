@@ -9,7 +9,7 @@ import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
 import ch.obermuhlner.rpc.protocol.structure.binary.BinaryProtocol;
 import ch.obermuhlner.rpc.service.ServiceFactory;
-import ch.obermuhlner.rpc.transport.LocalTransport;
+import ch.obermuhlner.rpc.transport.local.LocalTransport;
 
 public class HelloServiceLocalTransportApp {
 

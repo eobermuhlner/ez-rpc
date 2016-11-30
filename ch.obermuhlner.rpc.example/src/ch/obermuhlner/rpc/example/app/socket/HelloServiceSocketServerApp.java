@@ -10,7 +10,7 @@ import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
 import ch.obermuhlner.rpc.protocol.structure.binary.BinaryProtocol;
 import ch.obermuhlner.rpc.service.ServiceFactory;
-import ch.obermuhlner.rpc.transport.SocketServerTransport;
+import ch.obermuhlner.rpc.transport.socket.SocketServerTransport;
 
 public class HelloServiceSocketServerApp {
 

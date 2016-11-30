@@ -6,7 +6,7 @@ import ch.obermuhlner.rpc.example.client.HelloServiceClient;
 import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.service.ServiceFactory;
-import ch.obermuhlner.rpc.transport.LocalTransportDirect;
+import ch.obermuhlner.rpc.transport.local.LocalTransportDirect;
 
 public class HelloServiceLocalTransportDirectApp {
 

@@ -1,10 +1,12 @@
-package ch.obermuhlner.rpc.transport;
+package ch.obermuhlner.rpc.transport.local;
 
 import java.util.concurrent.CompletableFuture;
 
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
+import ch.obermuhlner.rpc.transport.ClientTransport;
+import ch.obermuhlner.rpc.transport.ServerTransportImpl;
 
 public class LocalTransportDirect extends ServerTransportImpl implements ClientTransport {
 
