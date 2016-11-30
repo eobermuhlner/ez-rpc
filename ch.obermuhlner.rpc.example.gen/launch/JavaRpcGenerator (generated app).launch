@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<stringAttribute key="bad_container_name" value="\ch.obermuhlner.rpc.example.gen/l"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/ch.obermuhlner.rpc/src/ch/obermuhlner/rpc/annotation/generator/java/JavaRpcGenerator.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="ch.obermuhlner.rpc.annotation.generator.java.JavaRpcGenerator"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="../rpc-metadata.xml"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="ch.obermuhlner.rpc.example.gen"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:ch.obermuhlner.rpc.example.gen}/src"/>
+</launchConfiguration>
