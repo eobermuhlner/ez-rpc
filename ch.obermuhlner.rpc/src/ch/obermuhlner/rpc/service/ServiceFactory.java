@@ -61,14 +61,20 @@ public class ServiceFactory {
 		return proxyService;
 	}
 
+	public <Service, AsyncService> Service createRemoteService(Class<Service> serviceType, ClientTransport clientTransport) {
+		return createRemoteService(serviceType, null, clientTransport, () -> null);
+	}
+	
 	public <Service, AsyncService> Service createRemoteService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ClientTransport clientTransport) {
 		return createRemoteService(serviceType, asyncServiceType, clientTransport, () -> null);
 	}
 	
 	public <Service, AsyncService, Session> Service createRemoteService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ClientTransport clientTransport, Supplier<Session> sessionSupplier) {
+		Class<?>[] interfaces = asyncServiceType == null ? new Class<?>[] { serviceType } : new Class<?>[] { serviceType, asyncServiceType };
+		
 		Object proxyObject = Proxy.newProxyInstance(
 				serviceType.getClassLoader(),
-				new Class<?>[] { serviceType, asyncServiceType },
+				interfaces,
 				(Object proxy, Method method, Object[] args) -> {
 					try {
 						boolean async = method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class;

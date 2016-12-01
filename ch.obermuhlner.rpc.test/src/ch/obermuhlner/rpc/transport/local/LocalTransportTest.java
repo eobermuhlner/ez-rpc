@@ -1,50 +1,24 @@
 package ch.obermuhlner.rpc.transport.local;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
-import org.junit.Test;
-
-import ch.obermuhlner.rpc.annotation.RpcService;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.protocol.java.JavaSerializableProtocol;
-import ch.obermuhlner.rpc.service.Request;
-import ch.obermuhlner.rpc.service.Response;
+import ch.obermuhlner.rpc.service.ServiceFactory;
+import ch.obermuhlner.rpc.transport.AbstractTransportTest;
 
-public class LocalTransportTest {
+public class LocalTransportTest extends AbstractTransportTest {
 
-	@Test
-	public void testBasics() throws InterruptedException, ExecutionException {
+	protected TestService getTestService() {
 		MetaDataService metaDataService = new MetaDataService();
 		metaDataService.registerService(TestService.class);
 		
-		Protocol<Object> protocol = new JavaSerializableProtocol(getClass().getClassLoader());
-		LocalTransport localTransport = new LocalTransport(metaDataService, protocol);
-		localTransport.register(TestService.class, new TestServiceImpl(), (session) -> {});
+		Protocol<Object> protocol = new JavaSerializableProtocol(LocalTransportTest.class.getClassLoader());
+		LocalTransport transport = new LocalTransport(metaDataService, protocol);
+		ServiceFactory serviceFactory = new ServiceFactory(metaDataService);
+
+		serviceFactory.publishService(TestService.class, new TestServiceImpl(), transport);
+		TestService testService = serviceFactory.createRemoteService(TestService.class, transport);
 		
-		Request request = new Request();
-		request.serviceName = "TestService";
-		request.methodName = "testMethod";
-		
-		CompletableFuture<Response> future = localTransport.send(request);
-		Response response = future.get();
-		
-		assertEquals(1, response.result.getField("result"));
-	}
-	
-	@RpcService
-	public static interface TestService {
-		int testMethod();
-	}
-	
-	public static class TestServiceImpl implements TestService {
-		@Override
-		public int testMethod() {
-			return 1;
-		}
-		
+		return testService;
 	}
 }
