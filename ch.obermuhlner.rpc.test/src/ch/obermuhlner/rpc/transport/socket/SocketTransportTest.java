@@ -7,8 +7,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import ch.obermuhlner.rpc.meta.MetaDataService;
-import ch.obermuhlner.rpc.protocol.Protocol;
-import ch.obermuhlner.rpc.protocol.java.JavaSerializableProtocol;
+import ch.obermuhlner.rpc.protocol.structure.StructureProtocol;
+import ch.obermuhlner.rpc.protocol.structure.binary.BinaryProtocol;
 import ch.obermuhlner.rpc.service.ServiceFactory;
 import ch.obermuhlner.rpc.transport.AbstractTransportTest;
 
@@ -23,7 +23,7 @@ public class SocketTransportTest extends AbstractTransportTest {
 		int port = 15924;
 		String hostname = "localhost";
 		
-		Protocol<Object> protocol = new JavaSerializableProtocol(SocketTransportTest.class.getClassLoader());
+		StructureProtocol<Object> protocol = new BinaryProtocol<Object>(metaDataService, SocketTransportTest.class.getClassLoader());
 		SocketServerTransport socketServerTransport = new SocketServerTransport(metaDataService, protocol, port);
 		executorService.execute(() -> socketServerTransport.run());
 		
