@@ -16,8 +16,6 @@ public class SocketTransportTest extends AbstractTransportTest {
 
 	private static ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-	private static ServiceFactory serviceFactory;
-
 	private static TestService testService;
 
 	@BeforeClass
@@ -33,7 +31,7 @@ public class SocketTransportTest extends AbstractTransportTest {
 		
 		SocketClientTransport socketClientTransport = new SocketClientTransport(protocol, hostname, port);
 		
-		serviceFactory = new ServiceFactory(metaDataService);
+		ServiceFactory serviceFactory = new ServiceFactory(metaDataService);
 
 		TestServiceImpl testServiceImpl = new TestServiceImpl();
 
@@ -44,7 +42,6 @@ public class SocketTransportTest extends AbstractTransportTest {
 	@AfterClass
 	public static void afterClass() {
 		testService = null;
-		serviceFactory = null;
 		executorService.shutdown();
 	}
 	

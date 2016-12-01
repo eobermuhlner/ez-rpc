@@ -40,6 +40,5 @@ public abstract class AbstractTransportTest {
 		public int methodIntToInt(int value) {
 			return 2;
 		}
-		
 	}
 }
