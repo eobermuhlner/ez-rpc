@@ -11,8 +11,6 @@ import ch.obermuhlner.rpc.transport.AbstractTransportTest;
 
 public class LocalTransportTest extends AbstractTransportTest {
 
-	private static TestService testService;
-
 	@BeforeClass
 	public static void beforeClass() {
 		MetaDataService metaDataService = new MetaDataService();
@@ -24,16 +22,13 @@ public class LocalTransportTest extends AbstractTransportTest {
 		TestServiceImpl testServiceImpl = new TestServiceImpl();
 
 		serviceFactory.publishService(TestService.class, testServiceImpl, transport);
-		testService = serviceFactory.createRemoteService(TestService.class, transport);
+		
+		testService = serviceFactory.createRemoteService(TestService.class, TestServiceAsync.class, transport);
+		testServiceAsync = (TestServiceAsync) testService;
 	}
 	
 	@AfterClass
 	public static void afterClass() {
 		testService = null;
 	}
-	
-	protected TestService getTestService() {
-		return testService;
-	}
-
 }

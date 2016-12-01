@@ -14,9 +14,7 @@ import ch.obermuhlner.rpc.transport.AbstractTransportTest;
 
 public class SocketTransportTest extends AbstractTransportTest {
 
-	private static ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-	private static TestService testService;
+	private static ExecutorService executorService = Executors.newCachedThreadPool();
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -36,16 +34,13 @@ public class SocketTransportTest extends AbstractTransportTest {
 		TestServiceImpl testServiceImpl = new TestServiceImpl();
 
 		serviceFactory.publishService(TestService.class, testServiceImpl, socketServerTransport);
-		testService = serviceFactory.createRemoteService(TestService.class, socketClientTransport);
+		testService = serviceFactory.createRemoteService(TestService.class, TestServiceAsync.class, socketClientTransport);
+		testServiceAsync = (TestServiceAsync) testService;
 	}
 
 	@AfterClass
 	public static void afterClass() {
 		testService = null;
 		executorService.shutdown();
-	}
-	
-	protected TestService getTestService() {
-		return testService;
 	}
 }
