@@ -2,6 +2,10 @@ package ch.obermuhlner.rpc.protocol;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,5 +46,27 @@ public abstract class AbstractProtocolTest {
 	public void testString() {
 		assertEquals("", protocol.deserializeFromBytes(protocol.serializeToBytes("")));
 		assertEquals("Hello", protocol.deserializeFromBytes(protocol.serializeToBytes("Hello")));
+	}
+	
+	@Test
+	public void testList() {
+		assertEquals(Arrays.asList(), protocol.deserializeFromBytes(protocol.serializeToBytes(Arrays.asList())));
+		assertEquals(Arrays.asList("one", "two"), protocol.deserializeFromBytes(protocol.serializeToBytes(Arrays.asList("one", "two"))));
+	}
+	
+	@Test
+	public void testSet() {
+		assertEquals(new HashSet<>(), protocol.deserializeFromBytes(protocol.serializeToBytes(new HashSet<>())));
+		assertEquals(new HashSet<>(Arrays.asList("one", "two")), protocol.deserializeFromBytes(protocol.serializeToBytes(new HashSet<>(Arrays.asList("one", "two")))));
+	}
+	
+	@Test
+	public void testMap() {
+		assertEquals(new HashMap<>(), protocol.deserializeFromBytes(protocol.serializeToBytes(new HashMap<>())));
+
+		HashMap<Integer, String> testMap = new HashMap<>();
+		testMap.put(1, "one");
+		testMap.put(2, "two");
+		assertEquals(testMap, protocol.deserializeFromBytes(protocol.serializeToBytes(testMap)));
 	}
 }
