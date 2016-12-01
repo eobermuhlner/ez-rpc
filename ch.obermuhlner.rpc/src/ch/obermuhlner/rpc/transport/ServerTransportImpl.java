@@ -26,7 +26,7 @@ public class ServerTransportImpl implements ServerTransport {
 	
 	@Override
 	public <Service, Session> void register(Class<Service> serviceType, Service service, Consumer<Session> sessionConsumer) {
-		String serviceName = serviceType.getName();
+		String serviceName = metaDataService.registerService(serviceType).name;
 		
 		serviceMap.put(serviceName, service);
 		serviceToSessionConsumerMap.put(serviceName, sessionConsumer);
@@ -41,6 +41,12 @@ public class ServerTransportImpl implements ServerTransport {
 	
 	@Override
 	public Response receive(Request request) {
+		if (request.serviceName == null) {
+			throw new RpcException("No service name in request: " + request);
+		}
+		if (request.methodName == null) {
+			throw new RpcException("No method name in request: " + request);
+		}
 		if (!serviceMap.containsKey(request.serviceName)) {
 			throw new RpcException("No registered service: " + request.serviceName);
 		}

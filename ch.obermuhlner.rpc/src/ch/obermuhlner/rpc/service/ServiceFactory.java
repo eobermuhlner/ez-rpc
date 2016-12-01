@@ -73,8 +73,8 @@ public class ServiceFactory {
 					try {
 						boolean async = method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class;
 						
-						String serviceName = serviceType.getName();
-						String methodName = async ? withoutAsyncSuffix(method.getName()) : method.getName();
+						String serviceName = metaDataService.registerService(serviceType).name;
+						String methodName = async ? withoutAsyncSuffix(method.getName()) : method.getName(); // ask metaDataService for method name
 	
 						Request request = new Request();
 						request.serviceName = serviceName;
