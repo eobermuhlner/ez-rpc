@@ -14,18 +14,31 @@ public abstract class AbstractTransportTest {
 	public void testService() {
 		TestService testService = getTestService();
 		
-		assertEquals(1, testService.testMethod());
+		testService.methodVoidToInt();
+		assertEquals(1, testService.methodVoidToInt());
+		assertEquals(2, testService.methodIntToInt(1));
 	}
 	
 	@RpcService
 	public static interface TestService {
-		int testMethod();
+		void methodVoidToVoid();
+		int methodVoidToInt();
+		int methodIntToInt(int value);
 	}
 	
 	public static class TestServiceImpl implements TestService {
 		@Override
-		public int testMethod() {
+		public void methodVoidToVoid() {
+		}
+
+		@Override
+		public int methodVoidToInt() {
 			return 1;
+		}
+
+		@Override
+		public int methodIntToInt(int value) {
+			return 2;
 		}
 		
 	}
