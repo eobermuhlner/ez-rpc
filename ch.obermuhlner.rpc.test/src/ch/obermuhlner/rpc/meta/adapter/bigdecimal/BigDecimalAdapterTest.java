@@ -9,7 +9,7 @@ import org.junit.Test;
 public class BigDecimalAdapterTest {
 
 	@Test
-	public void testBasics() {
+	public void testTypes() {
 		BigDecimalAdapter adapter = new BigDecimalAdapter();
 		
 		assertEquals(BigDecimal.class, adapter.getLocalType());
