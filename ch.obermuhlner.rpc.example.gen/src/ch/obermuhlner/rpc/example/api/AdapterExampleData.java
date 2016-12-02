@@ -6,7 +6,7 @@ import ch.obermuhlner.rpc.annotation.RpcField;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 
 import ch.obermuhlner.rpc.meta.adapter.bigdecimal.BigDecimalStruct;
-import ch.obermuhlner.rpc.meta.adapter.time.EpochDayStruct;
+import ch.obermuhlner.rpc.meta.adapter.time.DateStruct;
 import ch.obermuhlner.rpc.meta.adapter.time.EpochMillisecondStruct;
 import ch.obermuhlner.rpc.meta.adapter.time.PeriodStruct;
 
@@ -23,7 +23,7 @@ public class AdapterExampleData {
    public EpochMillisecondStruct localDateTimeField;
 
    @RpcField()
-   public EpochDayStruct localDateField;
+   public DateStruct localDateField;
 
    @RpcField()
    public PeriodStruct periodField;

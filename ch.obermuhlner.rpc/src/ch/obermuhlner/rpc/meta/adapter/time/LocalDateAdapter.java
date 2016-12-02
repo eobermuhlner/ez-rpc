@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import ch.obermuhlner.rpc.meta.adapter.Adapter;
 
-public class LocalDateAdapter implements Adapter<LocalDate, EpochDayStruct> {
+public class LocalDateAdapter implements Adapter<LocalDate, DateStruct> {
 
 	@Override
 	public Class<LocalDate> getLocalType() {
@@ -12,20 +12,22 @@ public class LocalDateAdapter implements Adapter<LocalDate, EpochDayStruct> {
 	}
 
 	@Override
-	public Class<EpochDayStruct> getRemoteType() {
-		return EpochDayStruct.class;
+	public Class<DateStruct> getRemoteType() {
+		return DateStruct.class;
 	}
 
 	@Override
-	public EpochDayStruct convertLocalToRemote(LocalDate local) {
-		EpochDayStruct remote = new EpochDayStruct();
-		remote.days = local.toEpochDay();
+	public DateStruct convertLocalToRemote(LocalDate local) {
+		DateStruct remote = new DateStruct();
+		remote.year = local.getYear();
+		remote.month = local.getMonthValue();
+		remote.day = local.getDayOfMonth();
 		return remote;
 	}
 
 	@Override
-	public LocalDate convertRemoteToLocal(EpochDayStruct remote) {
-		return LocalDate.ofEpochDay(remote.days);
+	public LocalDate convertRemoteToLocal(DateStruct remote) {
+		return LocalDate.of(remote.year, remote.month, remote.day);
 	}
 
 }
