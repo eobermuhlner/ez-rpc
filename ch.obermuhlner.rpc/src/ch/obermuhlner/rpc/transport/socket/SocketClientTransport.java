@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.protocol.Protocol;
+import ch.obermuhlner.rpc.service.CancelRequest;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
 import ch.obermuhlner.rpc.transport.ByteUtils;
@@ -32,27 +33,45 @@ public class SocketClientTransport implements ClientTransport {
 		return CompletableFuture.supplyAsync(() -> {
 			try (Socket socket = new Socket(host, port)) {
 				OutputStream out = socket.getOutputStream();
-				
-				ByteArrayOutputStream requestByteArrayOutputStream = new ByteArrayOutputStream();
-				protocol.serialize(requestByteArrayOutputStream, request);
-				byte[] requestData = requestByteArrayOutputStream.toByteArray();
-				byte[] sizeData = ByteUtils.toBytes(requestData.length);
-				out.write(sizeData);
-				out.write(requestData);
-				out.flush();
-				requestData = null;
+				sendObject(request, out);
 				
 				InputStream in = socket.getInputStream();
-				in.read(sizeData);
-				int responseSize = ByteUtils.toInt(sizeData);
-				byte[] responseData = new byte[responseSize];
-				in.read(responseData);
-				
-				Response response = (Response) protocol.deserialize(new ByteArrayInputStream(responseData));
-				return response;
+				return (Response) readObject(in);
 			} catch (IOException e) {
 				throw new RpcException(e);
 			}
 		});
+	}
+
+	@Override
+	public void sendCancel(CancelRequest cancelRequest) {
+		try (Socket socket = new Socket(host, port)) {
+			OutputStream out = socket.getOutputStream();
+			sendObject(cancelRequest, out);
+		} catch (IOException e) {
+			throw new RpcException(e);
+		}
+	}
+
+	private void sendObject(Object object, OutputStream out) throws IOException {
+		ByteArrayOutputStream requestByteArrayOutputStream = new ByteArrayOutputStream();
+		protocol.serialize(requestByteArrayOutputStream, object);
+		byte[] requestData = requestByteArrayOutputStream.toByteArray();
+		byte[] sizeData = ByteUtils.toBytes(requestData.length);
+		
+		out.write(sizeData);
+		out.write(requestData);
+		out.flush();
+	}
+	
+	private Object readObject(InputStream in) throws IOException {
+		byte[] sizeData = new byte[4];
+		in.read(sizeData);
+		int responseSize = ByteUtils.toInt(sizeData);
+		
+		byte[] responseData = new byte[responseSize];
+		in.read(responseData);
+		
+		return protocol.deserialize(new ByteArrayInputStream(responseData));
 	}
 }

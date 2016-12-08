@@ -3,6 +3,8 @@ package ch.obermuhlner.rpc.service;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.UUID;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -35,7 +37,7 @@ public class ServiceFactory {
 				(Object proxy, Method method, Object[] args) -> {
 					try {
 						if (method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class) { 
-							return CompletableFuture.supplyAsync(() -> {
+							CompletableFuture<Object> future = CompletableFuture.supplyAsync(() -> {
 								String syncMethodName = withoutAsyncSuffix(method.getName());
 								Method implMethod;
 								try {
@@ -46,6 +48,7 @@ public class ServiceFactory {
 									throw new RpcException(e);
 								}
 							});
+							return future;
 						} else {
 							Method implMethod = serviceImpl.getClass().getMethod(method.getName(), method.getParameterTypes());
 							return implMethod.invoke(serviceImpl, args);
@@ -80,13 +83,14 @@ public class ServiceFactory {
 						boolean async = method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class;
 						
 						String serviceName = metaDataService.registerService(serviceType).name;
-						String methodName = async ? withoutAsyncSuffix(method.getName()) : method.getName(); // ask metaDataService for method name
+						String methodName = async ? withoutAsyncSuffix(method.getName()) : method.getName(); // TODO ask metaDataService for method name
 	
 						Request request = new Request();
 						request.serviceName = serviceName;
 						request.methodName = methodName;
 						request.arguments = metaDataService.createDynamicStruct(method, args);
 						request.session = sessionSupplier.get();
+						request.requestId = UUID.randomUUID().toString();
 						CompletableFuture<Object> future = clientTransport.send(request)
 								.thenApply(response -> {
 									if (response.exception != null) {
@@ -94,6 +98,16 @@ public class ServiceFactory {
 									}
 									return response.result.getField("result");
 								});
+						future.exceptionally((ex) -> {
+							if (ex instanceof CancellationException) {
+								CancelRequest cancelRequest = new CancelRequest();
+								cancelRequest.serviceName = request.serviceName;
+								cancelRequest.methodName = request.methodName;
+								cancelRequest.requestId = request.requestId;
+								clientTransport.sendCancel(cancelRequest);
+							}
+							return null;
+						});
 						if (async) {
 							return future;
 						} else {

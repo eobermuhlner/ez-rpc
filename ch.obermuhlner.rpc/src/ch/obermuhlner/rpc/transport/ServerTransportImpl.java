@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.data.DynamicStruct;
 import ch.obermuhlner.rpc.meta.MetaDataService;
+import ch.obermuhlner.rpc.service.CancelRequest;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
 
@@ -19,6 +20,8 @@ public class ServerTransportImpl implements ServerTransport {
 	private final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
 	private final Map<String, Method> methodMap = new ConcurrentHashMap<>();
 	private final Map<String, Consumer<?>> serviceToSessionConsumerMap = new ConcurrentHashMap<>();
+	
+	private final Map<String, Thread> requestIdToThreadMap = new ConcurrentHashMap<>();
 	
 	public ServerTransportImpl(MetaDataService metaDataService) {
 		this.metaDataService = metaDataService;
@@ -66,6 +69,7 @@ public class ServerTransportImpl implements ServerTransport {
 		Response response = new Response();
 		try {
 			sessionConsumer.accept(request.session);
+			startRequestThread(request.requestId);
 			Object result = method.invoke(service, metaDataService.toArguments(method, request.arguments));
 			response.result = new DynamicStruct();
 			response.result.name = method + "_Reponse";
@@ -75,9 +79,37 @@ public class ServerTransportImpl implements ServerTransport {
 			throw new RpcException(e);
 		} catch (InvocationTargetException e) {
 			response.exception = e.getTargetException();
+		} finally {
+			finishRequestThread(request.requestId);
 		}
 		
 		return response;
 	}
 
+	@Override
+	public void receiveCancel(CancelRequest cancelRequest) {
+		interruptRequestThread(cancelRequest.requestId);
+	}
+	
+	private void startRequestThread(String requestId) {
+		synchronized (requestIdToThreadMap) {
+			requestIdToThreadMap.put(requestId, Thread.currentThread());
+		}		
+	}
+
+	private void finishRequestThread(String requestId) {
+		synchronized (requestIdToThreadMap) {
+			requestIdToThreadMap.remove(requestId);
+			Thread.interrupted(); // clear interrupted flag
+		}
+	}
+
+	private void interruptRequestThread(String requestId) {
+		synchronized (requestIdToThreadMap) {
+			Thread thread = requestIdToThreadMap.get(requestId);
+			if (thread != null) {
+				thread.interrupt();
+			}
+		}
+	}
 }

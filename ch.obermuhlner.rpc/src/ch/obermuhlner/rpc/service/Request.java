@@ -14,9 +14,11 @@ public class Request implements Serializable {
 	public String methodName;
 	public DynamicStruct arguments;
 	public Object session;
+	public String requestId;
 
 	@Override
 	public String toString() {
-		return "Request [serviceName=" + serviceName + ", methodName=" + methodName + ", arguments=" + arguments + ", session=" + session + "]";
+		return "Request [serviceName=" + serviceName + ", methodName=" + methodName + ", arguments=" + arguments
+				+ ", session=" + session + ", requestId=" + requestId + "]";
 	}
 }
