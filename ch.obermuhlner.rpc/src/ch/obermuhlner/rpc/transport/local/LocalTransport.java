@@ -16,7 +16,7 @@ import ch.obermuhlner.rpc.transport.ServerTransportImpl;
  * 
  * This is useful to test the protocol.
  * 
- * Use {@link LocalTransportDirect} if you want the most efficient transport implementation on the same JVM.
+ * Use {@link DirectLocalTransport} if you want the most efficient transport implementation on the same JVM.
  */
 public class LocalTransport extends ServerTransportImpl implements ClientTransport {
 

@@ -14,9 +14,9 @@ import ch.obermuhlner.rpc.transport.ServerTransportImpl;
  * 
  * This is the fastest implementation of a local transport.
  */
-public class LocalTransportDirect extends ServerTransportImpl implements ClientTransport {
+public class DirectLocalTransport extends ServerTransportImpl implements ClientTransport {
 
-	public LocalTransportDirect(MetaDataService metaDataService) {
+	public DirectLocalTransport(MetaDataService metaDataService) {
 		super(metaDataService);
 	}
 	
