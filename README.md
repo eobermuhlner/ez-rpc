@@ -66,9 +66,9 @@ public interface HelloServiceAsync {
 
 The asynchronous interface methods can also be used to cancel a call execution on the server.
 
-Simply call `Future.call()` on the result of an asynchronous method and a cancel request is sent to the server.
+Simply call `Future.cancel()` on the result of an asynchronous method and a cancel request is sent to the server.
 
-Java based server implementations will interrupt the Thread executing the original execution request.
+Java based server implementations will interrupt the Thread executing the original request.
 Implementations in other languages might or might not be able to comply with the cancelation request. 
 
 ## Data structures used over RPC
