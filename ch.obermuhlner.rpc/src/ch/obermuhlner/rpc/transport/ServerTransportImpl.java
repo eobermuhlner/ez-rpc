@@ -2,10 +2,12 @@ package ch.obermuhlner.rpc.transport;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import ch.obermuhlner.rpc.RpcAlreadyCancelledException;
 import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.data.DynamicStruct;
 import ch.obermuhlner.rpc.meta.MetaDataService;
@@ -21,7 +23,7 @@ public class ServerTransportImpl implements ServerTransport {
 	private final Map<String, Method> methodMap = new ConcurrentHashMap<>();
 	private final Map<String, Consumer<?>> serviceToSessionConsumerMap = new ConcurrentHashMap<>();
 	
-	private final Map<String, Thread> requestIdToThreadMap = new ConcurrentHashMap<>();
+	private final Map<String, Thread> requestIdToThreadMap = new HashMap<>();
 	
 	public ServerTransportImpl(MetaDataService metaDataService) {
 		this.metaDataService = metaDataService;
@@ -68,8 +70,8 @@ public class ServerTransportImpl implements ServerTransport {
 		
 		Response response = new Response();
 		try {
-			sessionConsumer.accept(request.session);
 			startRequestThread(request.requestId);
+			sessionConsumer.accept(request.session);
 			Object result = method.invoke(service, metaDataService.toArguments(method, request.arguments));
 			response.result = new DynamicStruct();
 			response.result.name = method + "_Reponse";
@@ -79,6 +81,8 @@ public class ServerTransportImpl implements ServerTransport {
 			throw new RpcException(e);
 		} catch (InvocationTargetException e) {
 			response.exception = e.getTargetException();
+		} catch (RpcAlreadyCancelledException e) {
+			// ignored - since this is a valid special case - request already cancelled before being executed
 		} finally {
 			finishRequestThread(request.requestId);
 		}
@@ -93,6 +97,14 @@ public class ServerTransportImpl implements ServerTransport {
 	
 	private void startRequestThread(String requestId) {
 		synchronized (requestIdToThreadMap) {
+			if (requestIdToThreadMap.containsKey(requestId)) {
+				Thread thread = requestIdToThreadMap.get(requestId);
+				if (thread == null) {
+					throw new RpcAlreadyCancelledException("Request already cancelled: " + requestId);
+				} else {
+					throw new IllegalStateException("Request already executed in a thread: " + requestId + " " + thread);
+				}
+			}
 			requestIdToThreadMap.put(requestId, Thread.currentThread());
 		}		
 	}
@@ -107,7 +119,10 @@ public class ServerTransportImpl implements ServerTransport {
 	private void interruptRequestThread(String requestId) {
 		synchronized (requestIdToThreadMap) {
 			Thread thread = requestIdToThreadMap.get(requestId);
-			if (thread != null) {
+			if (thread == null) {
+				// special case - cancel request arrived before execution request
+				requestIdToThreadMap.put(requestId, null);
+			} else {
 				thread.interrupt();
 			}
 		}

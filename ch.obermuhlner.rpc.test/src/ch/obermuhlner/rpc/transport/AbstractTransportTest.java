@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
@@ -53,19 +54,25 @@ public abstract class AbstractTransportTest {
 	
 	@Test
 	public void testSleepAsync() throws InterruptedException, ExecutionException {
+		int sleepCounter = testService.sleepCounter();
+		
 		CompletableFuture<Long> future = testServiceAsync.sleepAsync(1000);
 		assertEquals(true, future.get() > 900);
 		
-		assertEquals(false, testService.lastSleepWasInterrupted());
+		assertEquals(sleepCounter + 1, testService.sleepCounter());
 	}
 	
 	@Test
 	public void testSleepAsyncCancel() throws InterruptedException, ExecutionException {
+		int sleepCounter = testService.sleepCounter();
+
 		CompletableFuture<Long> future = testServiceAsync.sleepAsync(1000);
 		future.cancel(true);
 		assertEquals(true, future.isCancelled());
 
-		assertEquals(true, testService.lastSleepWasInterrupted());
+		Thread.sleep(2000);
+		
+		assertEquals(sleepCounter + 0, testService.sleepCounter());
 		assertEquals(false, Thread.currentThread().isInterrupted());
 	}
 	
@@ -79,7 +86,7 @@ public abstract class AbstractTransportTest {
 
 		long sleep(long milliseconds);
 		
-		boolean lastSleepWasInterrupted();
+		int sleepCounter();
 	}
 
 	public static interface TestServiceAsync {
@@ -94,7 +101,7 @@ public abstract class AbstractTransportTest {
 		 * Services should always be stateless and not depend on previous calls.
 		 * In this case we do this for testing purposes.
 		 */
-		private volatile boolean lastSleepInterrupted;
+		private AtomicInteger sleepCounter = new AtomicInteger();
 		
 		@Override
 		public void methodVoidToVoid() {
@@ -117,20 +124,21 @@ public abstract class AbstractTransportTest {
 		
 		@Override
 		public long sleep(long milliseconds) {
-			lastSleepInterrupted = false;
 			long startMillis = System.currentTimeMillis();
 			try {
 				Thread.sleep(milliseconds);
+				long endMillis = System.currentTimeMillis();
+				long deltaMillis = endMillis - startMillis;
+				sleepCounter.incrementAndGet();
+				return deltaMillis;
 			} catch (InterruptedException e) {
-				lastSleepInterrupted = true;
+				return -1;
 			}
-			long endMillis = System.currentTimeMillis();
-			return endMillis - startMillis;
 		}
-
+		
 		@Override
-		public boolean lastSleepWasInterrupted() {
-			return lastSleepInterrupted;
+		public int sleepCounter() {
+			return sleepCounter.get();
 		}
 	}
 }
