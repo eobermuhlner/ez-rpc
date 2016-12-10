@@ -52,6 +52,8 @@ public interface HelloService {
 }
 ```
 
+### Java Asynchronous Service Interface
+
 Additionally it is possible to provide a companion interface that specifies the asynchronous methods.
 These methods are only available on the client side.
 The implementation of the asynchronous methods will automatically be provided by the ez-rpc framework.
@@ -61,6 +63,13 @@ public interface HelloServiceAsync {
 	CompletableFuture<Double> calculateSquareAsync(double value);
 }
 ```
+
+The asynchronous interface methods can also be used to cancel a call execution on the server.
+
+Simply call `Future.cancel()` on the result of an asynchronous method and a cancel request is sent to the server.
+
+Java based server implementations will interrupt the Thread executing the original request.
+Implementations in other languages might or might not be able to comply with the cancelation request. 
 
 ## Data structures used over RPC
 

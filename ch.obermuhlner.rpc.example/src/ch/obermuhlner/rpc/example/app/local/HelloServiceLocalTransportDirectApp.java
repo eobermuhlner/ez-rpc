@@ -6,7 +6,7 @@ import ch.obermuhlner.rpc.example.client.HelloServiceClient;
 import ch.obermuhlner.rpc.example.server.HelloServiceImpl;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.service.ServiceFactory;
-import ch.obermuhlner.rpc.transport.local.LocalTransportDirect;
+import ch.obermuhlner.rpc.transport.local.DirectLocalTransport;
 
 public class HelloServiceLocalTransportDirectApp {
 
@@ -22,7 +22,7 @@ public class HelloServiceLocalTransportDirectApp {
 		HelloServiceImpl helloServiceImpl = new HelloServiceImpl();
 		
 		MetaDataService metaDataService = new MetaDataService();
-		LocalTransportDirect transport = new LocalTransportDirect(metaDataService);
+		DirectLocalTransport transport = new DirectLocalTransport(metaDataService);
 		ServiceFactory serviceFactory = new ServiceFactory(metaDataService);
 		
 		serviceFactory.publishService(HelloService.class, helloServiceImpl, transport);
