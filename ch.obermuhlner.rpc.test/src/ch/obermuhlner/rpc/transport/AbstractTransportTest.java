@@ -3,6 +3,8 @@ package ch.obermuhlner.rpc.transport;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -22,9 +24,11 @@ public abstract class AbstractTransportTest {
 
 	@Test
 	public void testSync() {
-		testService.methodVoidToInt();
+		testService.methodVoidToVoid();
 		assertEquals(1, testService.methodVoidToInt());
 		assertEquals(2, testService.methodIntToInt(1));
+		assertEquals("int:1234", testService.methodIntToString(1234));
+		assertEquals(Arrays.asList("first", "int:123", "last"), testService.methodIntToListOfString(123));
 	}
 	
 	@Test
@@ -81,6 +85,8 @@ public abstract class AbstractTransportTest {
 		void methodVoidToVoid();
 		int methodVoidToInt();
 		int methodIntToInt(int value);
+		String methodIntToString(int value);
+		List<String> methodIntToListOfString(int value);
 		
 		int methodIllegalArgumentException();
 
@@ -115,6 +121,16 @@ public abstract class AbstractTransportTest {
 		@Override
 		public int methodIntToInt(int value) {
 			return 2;
+		}
+		
+		@Override
+		public String methodIntToString(int value) {
+			return "int:" + String.valueOf(value);
+		}
+		
+		@Override
+		public List<String> methodIntToListOfString(int value) {
+			return Arrays.asList("first", "int:" + value , "last");
 		}
 
 		@Override
