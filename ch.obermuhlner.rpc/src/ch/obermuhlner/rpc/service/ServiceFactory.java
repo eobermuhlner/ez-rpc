@@ -15,15 +15,20 @@ import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.transport.ClientTransport;
 import ch.obermuhlner.rpc.transport.ServerTransport;
+import ch.obermuhlner.rpc.transport.ServiceExecutor;
 
 public class ServiceFactory {
 
 	private static final String ASYNC_SUFFIX = "Async";
 
 	private final MetaDataService metaDataService;
+	
+	private final ServiceExecutor localServiceExecutor;
 
 	public ServiceFactory(MetaDataService metaDataService) {
 		this.metaDataService = metaDataService;
+		
+		localServiceExecutor = new ServiceExecutor();
 	}
 	
 	public <Service, AsyncService, ServiceImpl extends Service> Service createLocalService(Class<Service> serviceType, Class<AsyncService> asyncServiceType, ServiceImpl serviceImpl) {
@@ -37,22 +42,34 @@ public class ServiceFactory {
 				(Object proxy, Method method, Object[] args) -> {
 					try {
 						if (method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class) { 
+							String requestId = UUID.randomUUID().toString();
 							CompletableFuture<Object> future = CompletableFuture.supplyAsync(() -> {
-								sessionConsumer.accept(sessionSupplier.get());
-								String underlyingMethodName = withoutSuffix(method.getName(), ASYNC_SUFFIX);
-								Method implMethod;
 								try {
-									implMethod = serviceImpl.getClass().getMethod(underlyingMethodName, method.getParameterTypes());
-									return implMethod.invoke(serviceImpl, args);
+									sessionConsumer.accept(sessionSupplier.get());
+									String underlyingMethodName = withoutSuffix(method.getName(), ASYNC_SUFFIX);
+									Method implMethod = serviceImpl.getClass().getMethod(underlyingMethodName, method.getParameterTypes());
+									return localServiceExecutor.execute(requestId, serviceImpl, implMethod, args);
 								} catch (Exception e) {
 									throw new RpcException(e);
+								} finally {
+									sessionConsumer.accept(null);
 								}
+							});
+							future.exceptionally((ex) -> {
+								if (ex instanceof CancellationException) {
+									localServiceExecutor.interruptRequestThread(requestId);
+								}
+								return null;
 							});
 							return future;
 						} else {
-							sessionConsumer.accept(sessionSupplier.get());
-							Method implMethod = serviceImpl.getClass().getMethod(method.getName(), method.getParameterTypes());
-							return implMethod.invoke(serviceImpl, args);
+							try {
+								sessionConsumer.accept(sessionSupplier.get());
+								Method implMethod = serviceImpl.getClass().getMethod(method.getName(), method.getParameterTypes());
+								return implMethod.invoke(serviceImpl, args);
+							} finally {
+								sessionConsumer.accept(null);
+							}
 						}
 					} catch (InvocationTargetException e) {
 						throw e.getTargetException();
@@ -92,6 +109,7 @@ public class ServiceFactory {
 						Request request = new Request();
 						request.serviceName = serviceName;
 						request.methodName = methodName;
+						request.execute = true;
 						request.arguments = metaDataService.createDynamicStruct(method, args);
 						request.session = sessionSupplier.get();
 						request.requestId = UUID.randomUUID().toString();
@@ -105,11 +123,12 @@ public class ServiceFactory {
 								});
 						future.exceptionally((ex) -> {
 							if (ex instanceof CancellationException) {
-								CancelRequest cancelRequest = new CancelRequest();
+								Request cancelRequest = new Request();
 								cancelRequest.serviceName = request.serviceName;
 								cancelRequest.methodName = request.methodName;
+								cancelRequest.execute = false;
 								cancelRequest.requestId = request.requestId;
-								clientTransport.sendCancel(cancelRequest);
+								clientTransport.send(cancelRequest);
 							}
 							return null;
 						});

@@ -3,7 +3,6 @@ package ch.obermuhlner.rpc.transport.local;
 import java.util.concurrent.CompletableFuture;
 
 import ch.obermuhlner.rpc.meta.MetaDataService;
-import ch.obermuhlner.rpc.service.CancelRequest;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
 import ch.obermuhlner.rpc.transport.ClientTransport;
@@ -23,10 +22,5 @@ public class DirectLocalTransport extends ServerTransportImpl implements ClientT
 	@Override
 	public CompletableFuture<Response> send(Request request) {
 		return CompletableFuture.supplyAsync(() -> receive(request));
-	}
-	
-	@Override
-	public void sendCancel(CancelRequest cancelRequest) {
-		receiveCancel(cancelRequest);
 	}
 }

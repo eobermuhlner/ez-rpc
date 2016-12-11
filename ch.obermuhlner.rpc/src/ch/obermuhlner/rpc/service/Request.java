@@ -12,13 +12,14 @@ public class Request implements Serializable {
 	
 	public String serviceName;
 	public String methodName;
+	public boolean execute;
 	public DynamicStruct arguments;
 	public Object session;
 	public String requestId;
-
+	
 	@Override
 	public String toString() {
-		return "Request [serviceName=" + serviceName + ", methodName=" + methodName + ", arguments=" + arguments
-				+ ", session=" + session + ", requestId=" + requestId + "]";
+		return "Request [serviceName=" + serviceName + ", methodName=" + methodName + ", execute=" + execute
+				+ ", arguments=" + arguments + ", session=" + session + ", requestId=" + requestId + "]";
 	}
 }

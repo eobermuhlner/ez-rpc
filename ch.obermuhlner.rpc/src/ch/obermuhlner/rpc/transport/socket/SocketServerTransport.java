@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
 import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.protocol.Protocol;
-import ch.obermuhlner.rpc.service.CancelRequest;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;
 import ch.obermuhlner.rpc.transport.ByteUtils;
@@ -84,9 +83,6 @@ public class SocketServerTransport extends ServerTransportImpl {
 					out.write(ByteUtils.toBytes(responseData.length));
 					out.write(responseData);
 					out.flush();
-				} else if (requestObject instanceof CancelRequest) {
-					CancelRequest cancelRequest = (CancelRequest) requestObject;
-					receiveCancel(cancelRequest);
 				}
 			} catch (IOException e) {
 				throw new RpcException(e);
