@@ -74,7 +74,7 @@ public abstract class AbstractTransportTest {
 		future.cancel(true);
 		assertEquals(true, future.isCancelled());
 
-		Thread.sleep(2000);
+		Thread.sleep(2000); // wait to make sure we catch the incremented sleep counter in case the service execution is not interrupted
 		
 		assertEquals(sleepCounter + 0, testService.sleepCounter());
 		assertEquals(false, Thread.currentThread().isInterrupted());
