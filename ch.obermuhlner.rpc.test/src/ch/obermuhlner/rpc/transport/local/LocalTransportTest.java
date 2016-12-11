@@ -30,5 +30,6 @@ public class LocalTransportTest extends AbstractTransportTest {
 	@AfterClass
 	public static void afterClass() {
 		testService = null;
+		testServiceAsync = null;
 	}
 }

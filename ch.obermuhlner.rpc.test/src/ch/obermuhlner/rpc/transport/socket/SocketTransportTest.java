@@ -41,6 +41,7 @@ public class SocketTransportTest extends AbstractTransportTest {
 	@AfterClass
 	public static void afterClass() {
 		testService = null;
+		testServiceAsync = null;
 		executorService.shutdown();
 	}
 }
