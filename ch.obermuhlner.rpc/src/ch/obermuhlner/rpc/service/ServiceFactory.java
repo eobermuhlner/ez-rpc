@@ -19,7 +19,7 @@ import ch.obermuhlner.rpc.transport.ServerTransport;
 public class ServiceFactory {
 
 	private static final String ASYNC_SUFFIX = "Async";
-	
+
 	private final MetaDataService metaDataService;
 
 	public ServiceFactory(MetaDataService metaDataService) {
@@ -38,11 +38,11 @@ public class ServiceFactory {
 					try {
 						if (method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class) { 
 							CompletableFuture<Object> future = CompletableFuture.supplyAsync(() -> {
-								String syncMethodName = withoutAsyncSuffix(method.getName());
+								sessionConsumer.accept(sessionSupplier.get());
+								String underlyingMethodName = withoutSuffix(method.getName(), ASYNC_SUFFIX);
 								Method implMethod;
 								try {
-									sessionConsumer.accept(sessionSupplier.get());
-									implMethod = serviceImpl.getClass().getMethod(syncMethodName, method.getParameterTypes());
+									implMethod = serviceImpl.getClass().getMethod(underlyingMethodName, method.getParameterTypes());
 									return implMethod.invoke(serviceImpl, args);
 								} catch (Exception e) {
 									throw new RpcException(e);
@@ -50,6 +50,7 @@ public class ServiceFactory {
 							});
 							return future;
 						} else {
+							sessionConsumer.accept(sessionSupplier.get());
 							Method implMethod = serviceImpl.getClass().getMethod(method.getName(), method.getParameterTypes());
 							return implMethod.invoke(serviceImpl, args);
 						}
@@ -80,10 +81,13 @@ public class ServiceFactory {
 				interfaces,
 				(Object proxy, Method method, Object[] args) -> {
 					try {
-						boolean async = method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class;
+						boolean asyncMode = method.getReturnType() == CompletableFuture.class || method.getReturnType() == Future.class;
 						
 						String serviceName = metaDataService.registerService(serviceType).name;
-						String methodName = async ? withoutAsyncSuffix(method.getName()) : method.getName(); // TODO ask metaDataService for method name
+						String methodName = method.getName(); // TODO ask metaDataService for method name
+						if (asyncMode) {
+							methodName = withoutSuffix(methodName, ASYNC_SUFFIX); 
+						}
 	
 						Request request = new Request();
 						request.serviceName = serviceName;
@@ -96,7 +100,8 @@ public class ServiceFactory {
 									if (response.exception != null) {
 										throwAsException(metaDataService.adaptRemoteToLocal(response.exception));
 									}
-									return response.result.getField("result");
+									Object result = response.result.getField("result");
+									return result;
 								});
 						future.exceptionally((ex) -> {
 							if (ex instanceof CancellationException) {
@@ -108,7 +113,7 @@ public class ServiceFactory {
 							}
 							return null;
 						});
-						if (async) {
+						if (asyncMode) {
 							return future;
 						} else {
 							return future.get();
@@ -150,9 +155,9 @@ public class ServiceFactory {
 		serverTransport.register(serviceType, serviceImpl, sessionConsumer);
 	}
 
-	private String withoutAsyncSuffix(String name) {
-		if (name.endsWith(ASYNC_SUFFIX)) {
-			return name.substring(0, name.length() - ASYNC_SUFFIX.length());
+	private String withoutSuffix(String name, String suffix) {
+		if (name.endsWith(suffix)) {
+			return name.substring(0, name.length() - suffix.length());
 		}
 		
 		return name;
