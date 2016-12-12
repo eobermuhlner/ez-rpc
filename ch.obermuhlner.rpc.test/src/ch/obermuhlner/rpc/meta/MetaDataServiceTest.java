@@ -25,7 +25,7 @@ public class MetaDataServiceTest {
 		}
 	}
 
-	@Test(expected = RpcMetaDataException.class)
+	@Test
 	public void testMetaDataLoadDifferentServiceJavaName() {
 		try (MetaDataService metaDataService = new MetaDataService()) {
 			metaDataService.load(new File("testservice.xml"));
@@ -38,6 +38,14 @@ public class MetaDataServiceTest {
 		try (MetaDataService metaDataService = new MetaDataService()) {
 			metaDataService.load(new File("testservice.xml"));
 			metaDataService.load(new File("testservice_different_method_name.xml"));
+		}
+	}
+
+	@Test
+	public void testMetaDataLoadDifferentMethodJavaName() {
+		try (MetaDataService metaDataService = new MetaDataService()) {
+			metaDataService.load(new File("testservice.xml"));
+			metaDataService.load(new File("testservice_different_method_javaname.xml"));
 		}
 	}
 }

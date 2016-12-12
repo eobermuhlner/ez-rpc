@@ -48,7 +48,6 @@ public class MetaData {
 
 	private void checkMatch(ServiceDefinition existingServiceDefinition, ServiceDefinition updateServiceDefinition) {
 		checkEqual("service.name", existingServiceDefinition.name, updateServiceDefinition.name);
-		checkEqual("service.javaName", existingServiceDefinition.javaName, updateServiceDefinition.javaName);
 		
 		for (MethodDefinition existingMethodDefinition : existingServiceDefinition.methodDefinitions) {
 			MethodDefinition updateMethodDefinition = updateServiceDefinition.findByTemplate(existingMethodDefinition);
@@ -62,12 +61,10 @@ public class MetaData {
 
 	private void checkMatch(StructDefinition existing, StructDefinition update) {
 		checkEqual("struct.name", existing.name, update.name);
-		checkEqual("struct.javaName", existing.javaName, update.javaName);
 	}
 
 	private void checkMatch(MethodDefinition existing, MethodDefinition update) {
 		checkEqual("method.name", existing.name, update.name);
-		checkEqual("method.javaName", existing.javaName, update.javaName);
 	}
 
 	private void checkEqual(String name, Object existing, Object update) {
