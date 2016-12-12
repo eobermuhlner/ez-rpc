@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.junit.Test;
 
-import ch.obermuhlner.rpc.exception.RpcException;
+import ch.obermuhlner.rpc.exception.meta.RpcMetaDataException;
 
 public class MetaDataServiceTest {
 
@@ -17,7 +17,7 @@ public class MetaDataServiceTest {
 		
 	}
 
-	@Test(expected = RpcException.class)
+	@Test(expected = RpcMetaDataException.class)
 	public void testMetaDataLoadDifferentServiceName() {
 		try (MetaDataService metaDataService = new MetaDataService()) {
 			metaDataService.load(new File("testservice.xml"));
@@ -25,7 +25,7 @@ public class MetaDataServiceTest {
 		}
 	}
 
-	@Test(expected = RpcException.class)
+	@Test(expected = RpcMetaDataException.class)
 	public void testMetaDataLoadDifferentServiceJavaName() {
 		try (MetaDataService metaDataService = new MetaDataService()) {
 			metaDataService.load(new File("testservice.xml"));
@@ -33,7 +33,7 @@ public class MetaDataServiceTest {
 		}
 	}
 
-	@Test(expected = RpcException.class)
+	@Test(expected = RpcMetaDataException.class)
 	public void testMetaDataLoadDifferentMethodName() {
 		try (MetaDataService metaDataService = new MetaDataService()) {
 			metaDataService.load(new File("testservice.xml"));

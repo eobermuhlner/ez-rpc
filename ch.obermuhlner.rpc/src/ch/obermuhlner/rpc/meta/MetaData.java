@@ -3,7 +3,7 @@ package ch.obermuhlner.rpc.meta;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import ch.obermuhlner.rpc.exception.RpcException;
+import ch.obermuhlner.rpc.exception.meta.RpcMetaDataException;
 
 @XmlRootElement
 public class MetaData {
@@ -55,7 +55,7 @@ public class MetaData {
 			if (updateMethodDefinition != null) {
 				checkMatch(existingMethodDefinition, updateMethodDefinition);
 			} else {
-				throw new RpcException("Missing service method: " + existingMethodDefinition);
+				throw new RpcMetaDataException("Missing meta data for service method: " + existingMethodDefinition.name);
 			}
 		}
 	}
@@ -75,7 +75,7 @@ public class MetaData {
 			return;
 		}
 		if (!existing.equals(update)) {
-			throw new RpcException("Conflicting meta data: '" + name + "' existing='" + existing + "', update='" + update + "'");
+			throw new RpcMetaDataException("Conflicting meta data: '" + name + "' existing='" + existing + "', update='" + update + "'");
 		}
 	}
 	
