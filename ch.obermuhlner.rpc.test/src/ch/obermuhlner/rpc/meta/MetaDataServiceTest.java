@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.junit.Test;
 
-import ch.obermuhlner.rpc.RpcException;
+import ch.obermuhlner.rpc.exception.RpcException;
 
 public class MetaDataServiceTest {
 

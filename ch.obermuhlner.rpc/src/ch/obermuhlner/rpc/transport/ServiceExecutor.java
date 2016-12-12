@@ -5,8 +5,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.obermuhlner.rpc.RpcAlreadyCancelledException;
-import ch.obermuhlner.rpc.RpcException;
+import ch.obermuhlner.rpc.exception.RpcAlreadyCancelledException;
+import ch.obermuhlner.rpc.exception.RpcException;
 
 public class ServiceExecutor {
 

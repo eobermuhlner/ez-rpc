@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
 
-import ch.obermuhlner.rpc.RpcException;
+import ch.obermuhlner.rpc.exception.RpcException;
 import ch.obermuhlner.rpc.protocol.Protocol;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;

@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import ch.obermuhlner.rpc.RpcException;
+import ch.obermuhlner.rpc.exception.RpcException;
 import ch.obermuhlner.rpc.protocol.structure.StructureReader;
 import ch.obermuhlner.rpc.protocol.structure.StructureType;
 

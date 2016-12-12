@@ -14,13 +14,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.annotation.RpcField;
 import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcParameter;
 import ch.obermuhlner.rpc.annotation.RpcService;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 import ch.obermuhlner.rpc.data.DynamicStruct;
+import ch.obermuhlner.rpc.exception.RpcException;
 import ch.obermuhlner.rpc.meta.adapter.Adapter;
 import ch.obermuhlner.rpc.meta.adapter.bigdecimal.BigDecimalAdapter;
 import ch.obermuhlner.rpc.meta.adapter.exception.IllegalArgumentExceptionAdapter;

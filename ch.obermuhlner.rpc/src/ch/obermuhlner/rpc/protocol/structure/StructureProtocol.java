@@ -15,9 +15,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 
-import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 import ch.obermuhlner.rpc.data.DynamicStruct;
+import ch.obermuhlner.rpc.exception.RpcException;
 import ch.obermuhlner.rpc.meta.FieldDefinition;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.meta.StructDefinition;

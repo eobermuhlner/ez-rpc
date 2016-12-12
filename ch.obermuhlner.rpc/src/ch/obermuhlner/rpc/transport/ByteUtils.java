@@ -6,7 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import ch.obermuhlner.rpc.RpcException;
+import ch.obermuhlner.rpc.exception.RpcException;
 
 public class ByteUtils {
 

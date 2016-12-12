@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import ch.obermuhlner.rpc.RpcException;
 import ch.obermuhlner.rpc.data.DynamicStruct;
+import ch.obermuhlner.rpc.exception.RpcException;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.service.Request;
 import ch.obermuhlner.rpc.service.Response;

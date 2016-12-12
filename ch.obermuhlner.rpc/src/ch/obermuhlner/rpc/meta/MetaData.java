@@ -3,7 +3,7 @@ package ch.obermuhlner.rpc.meta;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import ch.obermuhlner.rpc.RpcException;
+import ch.obermuhlner.rpc.exception.RpcException;
 
 @XmlRootElement
 public class MetaData {

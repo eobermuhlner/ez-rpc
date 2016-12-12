@@ -1,4 +1,4 @@
-package ch.obermuhlner.rpc;
+package ch.obermuhlner.rpc.exception;
 
 public class RpcException extends RuntimeException {
 
