@@ -65,6 +65,7 @@ public class MetaData {
 
 	private void checkMatch(MethodDefinition existing, MethodDefinition update) {
 		checkEqual("method.name", existing.name, update.name);
+		checkEqual("method.return", existing.returns, update.returns);
 	}
 
 	private void checkEqual(String name, Object existing, Object update) {
