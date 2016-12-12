@@ -14,6 +14,9 @@ public class MetaData {
 	@XmlElement(name = "structs")
 	private final StructDefinitionList structDefinitions = new StructDefinitionList();
 	
+	@XmlElement(name = "enums")
+	private final EnumDefinitionList enumDefinitions = new EnumDefinitionList();
+	
 	public boolean addServiceDefinition(ServiceDefinition serviceDefinition) {
 		ServiceDefinition existing = serviceDefinitions.findByTemplate(serviceDefinition);
 		
@@ -44,6 +47,10 @@ public class MetaData {
 
 	public StructDefinitionList getStructDefinitions() {
 		return structDefinitions;
+	}
+
+	public EnumDefinitionList getEnumDefinitions() {
+		return enumDefinitions;
 	}
 
 	private void checkMatch(ServiceDefinition existingServiceDefinition, ServiceDefinition updateServiceDefinition) {

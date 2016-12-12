@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import ch.obermuhlner.rpc.annotation.RpcEnum;
 import ch.obermuhlner.rpc.annotation.RpcField;
 import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcParameter;
@@ -163,6 +164,37 @@ public class MetaDataService implements AutoCloseable {
 		metaData.addStructDefinition(structDefinition);
 
 		return structDefinition;
+	}
+	
+	public EnumDefinition registerEnum(Class<Enum<?>> type) {
+		String name = type.getSimpleName();
+		
+		EnumDefinition enumDefinition = findEnumDefinitionByType(type.getName());
+		if (enumDefinition != null) {
+			return enumDefinition;
+		}
+
+		RpcEnum annotation = type.getAnnotation(RpcEnum.class);
+		if (annotation != null) {
+			if (annotation.name() != null && !annotation.name().equals("")) {
+				name = annotation.name();
+			}
+		}
+
+		enumDefinition = new EnumDefinition();
+		enumDefinition.name = name;
+		enumDefinition.javaName = type.getName();
+		
+		fillEnumDefinition(enumDefinition, type);
+		
+		return enumDefinition;
+	}
+
+	private void fillEnumDefinition(EnumDefinition enumDefinition, Class<Enum<?>> type) {
+		enumDefinition.values = new ArrayList<>();
+		for (Enum<?> enumValue : type.getEnumConstants()) {
+			enumDefinition.values.add(enumValue.name());
+		}
 	}
 	
 	private void fillServiceDefinition(ServiceDefinition serviceDefinition, Class<?> type) {
@@ -435,6 +467,10 @@ public class MetaDataService implements AutoCloseable {
 	
 	private StructDefinition findStructDefinitionByType(String javaTypeName) {
 		return metaData.getStructDefinitions().findByType(javaTypeName);
+	}
+	
+	private EnumDefinition findEnumDefinitionByType(String javaTypeName) {
+		return metaData.getEnumDefinitions().findByType(javaTypeName);
 	}
 	
 	public static void saveMetaData(MetaData metaData, File file) {
