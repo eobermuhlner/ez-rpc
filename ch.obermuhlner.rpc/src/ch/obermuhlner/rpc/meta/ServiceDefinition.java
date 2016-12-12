@@ -27,6 +27,13 @@ public class ServiceDefinition {
 		return javaName == null ? name : javaName;
 	}
 
+	public MethodDefinition findByTemplate(MethodDefinition template) {
+		return methodDefinitions.stream()
+				.filter(methodDefinition -> methodDefinition.name.equals(template.name) || (methodDefinition.javaName != null && methodDefinition.javaName.equals(template.javaName)))
+				.findFirst()
+				.orElse(null);
+	}
+
 	@Override
 	public String toString() {
 		return "ServiceDefinition [name=" + name + ", javaName=" + javaName + ", sessionType=" + sessionType + ", methodDefinitions=" + methodDefinitions + "]";
