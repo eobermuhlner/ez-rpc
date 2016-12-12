@@ -52,7 +52,11 @@ public class MetaData {
 		
 		for (MethodDefinition existingMethodDefinition : existingServiceDefinition.methodDefinitions) {
 			MethodDefinition updateMethodDefinition = updateServiceDefinition.findByTemplate(existingMethodDefinition);
-			checkMatch(existingMethodDefinition, updateMethodDefinition);
+			if (updateMethodDefinition != null) {
+				checkMatch(existingMethodDefinition, updateMethodDefinition);
+			} else {
+				throw new RpcException("Missing service method: " + existingMethodDefinition);
+			}
 		}
 	}
 
@@ -62,8 +66,8 @@ public class MetaData {
 	}
 
 	private void checkMatch(MethodDefinition existing, MethodDefinition update) {
-		checkEqual("struct.name", existing.name, update.name);
-		checkEqual("struct.javaName", existing.javaName, update.javaName);
+		checkEqual("method.name", existing.name, update.name);
+		checkEqual("method.javaName", existing.javaName, update.javaName);
 	}
 
 	private void checkEqual(String name, Object existing, Object update) {
