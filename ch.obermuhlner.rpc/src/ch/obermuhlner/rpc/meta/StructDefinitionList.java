@@ -41,8 +41,7 @@ public class StructDefinitionList {
 	
 	public StructDefinition findByTemplate(StructDefinition template) {
 		return structDefinitions.stream()
-				.filter(structDefinition -> structDefinition.name.equals(template.name))
-				.filter(structDefinition -> structDefinition.getJavaName().equals(template.javaName))
+				.filter(structDefinition -> structDefinition.name.equals(template.name) || (structDefinition.javaName != null && structDefinition.getJavaName().equals(template.javaName)))
 				.findFirst()
 				.orElse(null);
 	}

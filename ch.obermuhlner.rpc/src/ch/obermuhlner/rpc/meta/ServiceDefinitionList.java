@@ -42,8 +42,7 @@ public class ServiceDefinitionList {
 	
 	public ServiceDefinition findByTemplate(ServiceDefinition template) {
 		return serviceDefinitions.stream()
-				.filter(serviceDefinition -> serviceDefinition.name.equals(template.name))
-				.filter(serviceDefinition -> serviceDefinition.javaName.equals(template.javaName))
+				.filter(serviceDefinition -> serviceDefinition.name.equals(template.name) || (serviceDefinition.javaName != null && serviceDefinition.javaName.equals(template.javaName)))
 				.findFirst()
 				.orElse(null);
 	}
