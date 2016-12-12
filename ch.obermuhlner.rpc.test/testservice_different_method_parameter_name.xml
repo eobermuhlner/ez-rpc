@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<metaData>
+    <services>
+        <service name="TestService" javaName="ch.obermuhlner.rpc.test.api.TestService">
+            <method name="calculateSquare">
+                <returns>double</returns>
+                <parameter name="arg0Different" type="double"/>
+            </method>
+        </service>
+    </services>
+</metaData>

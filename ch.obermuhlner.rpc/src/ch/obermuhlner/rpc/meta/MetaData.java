@@ -54,7 +54,7 @@ public class MetaData {
 			if (updateMethodDefinition != null) {
 				checkMatch(existingMethodDefinition, updateMethodDefinition);
 			} else {
-				throw new RpcMetaDataException("Missing meta data for service method: " + existingMethodDefinition.name);
+				throw new RpcMetaDataException("Missing meta data for service method: " + existingServiceDefinition.name + "." + existingMethodDefinition.name);
 			}
 		}
 	}
@@ -63,11 +63,23 @@ public class MetaData {
 		checkEqual("struct.name", existing.name, update.name);
 	}
 
-	private void checkMatch(MethodDefinition existing, MethodDefinition update) {
-		checkEqual("method.name", existing.name, update.name);
-		checkEqual("method.return", existing.returns, update.returns);
+	private void checkMatch(MethodDefinition existingMethodDefinition, MethodDefinition updateMethodDefinition) {
+		checkEqual("method.name", existingMethodDefinition.name, updateMethodDefinition.name);
+		checkEqual("method.return", existingMethodDefinition.returns, updateMethodDefinition.returns);
+
+		for (int i = 0; i < existingMethodDefinition.parameterDefinitions.size(); i++) {
+			ParameterDefinition existingParameterDefinition = existingMethodDefinition.parameterDefinitions.get(i);
+			ParameterDefinition updateParameterDefinition = updateMethodDefinition.parameterDefinitions.get(i);
+
+			checkMatch(existingParameterDefinition, updateParameterDefinition);
+		}
 	}
 
+	private void checkMatch(ParameterDefinition existingParameterDefinition, ParameterDefinition updateParameterDefinition) {
+		checkEqual("parameter.name", existingParameterDefinition.name, updateParameterDefinition.name);
+		checkEqual("parameter.type", existingParameterDefinition.type, updateParameterDefinition.type);
+	}
+	
 	private void checkEqual(String name, Object existing, Object update) {
 		if (existing == null && update == null) {
 			return;
