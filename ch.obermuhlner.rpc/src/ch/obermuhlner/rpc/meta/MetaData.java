@@ -46,9 +46,14 @@ public class MetaData {
 		return structDefinitions;
 	}
 
-	private void checkMatch(ServiceDefinition existing, ServiceDefinition update) {
-		checkEqual("service.name", existing.name, update.name);
-		checkEqual("service.javaName", existing.javaName, update.javaName);
+	private void checkMatch(ServiceDefinition existingServiceDefinition, ServiceDefinition updateServiceDefinition) {
+		checkEqual("service.name", existingServiceDefinition.name, updateServiceDefinition.name);
+		checkEqual("service.javaName", existingServiceDefinition.javaName, updateServiceDefinition.javaName);
+		
+		for (MethodDefinition existingMethodDefinition : existingServiceDefinition.methodDefinitions) {
+			MethodDefinition updateMethodDefinition = updateServiceDefinition.findByTemplate(existingMethodDefinition);
+			checkMatch(existingMethodDefinition, updateMethodDefinition);
+		}
 	}
 
 	private void checkMatch(StructDefinition existing, StructDefinition update) {
@@ -56,7 +61,15 @@ public class MetaData {
 		checkEqual("struct.javaName", existing.javaName, update.javaName);
 	}
 
+	private void checkMatch(MethodDefinition existing, MethodDefinition update) {
+		checkEqual("struct.name", existing.name, update.name);
+		checkEqual("struct.javaName", existing.javaName, update.javaName);
+	}
+
 	private void checkEqual(String name, Object existing, Object update) {
+		if (existing == null && update == null) {
+			return;
+		}
 		if (!existing.equals(update)) {
 			throw new RpcException("Conflicting meta data: '" + name + "' existing='" + existing + "', update='" + update + "'");
 		}
