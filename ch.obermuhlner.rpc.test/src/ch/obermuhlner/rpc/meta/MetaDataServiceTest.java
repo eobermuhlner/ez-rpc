@@ -72,4 +72,12 @@ public class MetaDataServiceTest {
 			metaDataService.load(new File("testservice_different_method_parameter_type.xml"));
 		}
 	}
+
+	@Test(expected = RpcMetaDataException.class)
+	public void testMetaDataLoadDifferentMethodParameterMissing() {
+		try (MetaDataService metaDataService = new MetaDataService()) {
+			metaDataService.load(new File("testservice.xml"));
+			metaDataService.load(new File("testservice_different_method_parameter_missing.xml"));
+		}
+	}
 }

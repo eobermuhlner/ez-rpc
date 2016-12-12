@@ -67,6 +67,10 @@ public class MetaData {
 		checkEqual("method.name", existingMethodDefinition.name, updateMethodDefinition.name);
 		checkEqual("method.return", existingMethodDefinition.returns, updateMethodDefinition.returns);
 
+		if (existingMethodDefinition.parameterDefinitions.size() != updateMethodDefinition.parameterDefinitions.size()) {
+			throw new RpcMetaDataException("Wrong number of parameters in service method " + updateMethodDefinition.name);
+		}
+		
 		for (int i = 0; i < existingMethodDefinition.parameterDefinitions.size(); i++) {
 			ParameterDefinition existingParameterDefinition = existingMethodDefinition.parameterDefinitions.get(i);
 			ParameterDefinition updateParameterDefinition = updateMethodDefinition.parameterDefinitions.get(i);
