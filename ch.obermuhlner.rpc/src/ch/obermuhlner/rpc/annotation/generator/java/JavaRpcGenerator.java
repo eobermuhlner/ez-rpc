@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import ch.obermuhlner.rpc.meta.EnumDefinition;
 import ch.obermuhlner.rpc.meta.FieldDefinition;
 import ch.obermuhlner.rpc.meta.MetaData;
 import ch.obermuhlner.rpc.meta.MetaDataService;
@@ -37,6 +38,10 @@ public class JavaRpcGenerator {
 		
 		for (StructDefinition structDefinition : metaData.getStructDefinitions().get()) {
 			generate(structDefinition);
+		}
+		
+		for (EnumDefinition enumDefinition : metaData.getEnumDefinitions().get()) {
+			generate(enumDefinition);
 		}
 		
 		for (ServiceDefinition serviceDefinition : metaData.getServiceDefinitions().get()) {
@@ -163,6 +168,55 @@ public class JavaRpcGenerator {
 		}
 	}
 
+	private void generate(EnumDefinition enumDefinition) {
+		if (isFrameworkClass(enumDefinition.javaName)) {
+			return;
+		}
+
+		File javaFile = toJavaFile(enumDefinition.javaName);
+		System.out.println("Generating " + javaFile);
+		
+		try (PrintWriter out = new PrintWriter(javaFile)) {
+			printGeneratedWithComment(out);
+
+			String packageName = toJavaPackageName(enumDefinition.javaName);
+			String className = toJavaClassName(enumDefinition.javaName);
+
+			if (packageName != null) {
+				out.print("package ");
+				out.print(packageName);
+				out.print(";");
+				out.println();
+				out.println();
+			}
+
+			out.println("import ch.obermuhlner.rpc.annotation.RpcEnum;");
+			out.println();
+			
+			out.print("@RpcEnum(name = \"");
+			out.print(enumDefinition.name);
+			out.print("\")");
+			out.println();
+			
+			out.print("public enum ");
+			out.print(className);
+			out.print(" {");
+			out.println();
+
+			for (String value : enumDefinition.values) {
+				out.print(INDENT);
+				out.print(value);
+				out.print(",");
+				out.println();				
+			}
+			
+			out.print("}");
+			out.println();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+			
 	private boolean isFrameworkClass(String javaTypeName) {
 		try {
 			Class.forName(javaTypeName);

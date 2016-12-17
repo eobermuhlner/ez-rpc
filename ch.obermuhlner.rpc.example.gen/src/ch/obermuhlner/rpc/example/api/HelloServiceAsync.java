@@ -9,12 +9,12 @@ import ch.obermuhlner.rpc.example.api.ExampleData;
 
 public interface HelloServiceAsync {
 
-   CompletableFuture<Double> calculateSquareAsync(
-      Double arg0
-      );
-
    CompletableFuture<ExampleData> exampleMethodAsync(
       ExampleData poor
+      );
+
+   CompletableFuture<Double> calculateSquareAsync(
+      Double arg0
       );
 
    CompletableFuture<AdapterExampleData> adapterExampleMethodAsync(

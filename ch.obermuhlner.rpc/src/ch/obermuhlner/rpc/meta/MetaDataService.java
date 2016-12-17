@@ -81,12 +81,16 @@ public class MetaDataService implements AutoCloseable {
 		
 		MetaData loading = loadMetaData(file);
 		
-		for (ServiceDefinition serviceDefinition : loading.getServiceDefinitions().get()) {
-			metaData.addServiceDefinition(serviceDefinition);
+		for (EnumDefinition enumDefinition : loading.getEnumDefinitions().get()) {
+			metaData.addEnumDefinition(enumDefinition);
 		}
-		
+
 		for (StructDefinition structDefinition : loading.getStructDefinitions().get()) {
 			metaData.addStructDefinition(structDefinition);
+		}
+
+		for (ServiceDefinition serviceDefinition : loading.getServiceDefinitions().get()) {
+			metaData.addServiceDefinition(serviceDefinition);
 		}
 	}
 
@@ -383,8 +387,17 @@ public class MetaDataService implements AutoCloseable {
 			case MAP:
 				return type.toJavaPrimitiveTypeName() + "<" + toJavaClassSignature(fieldDefinition.key) 
 						+ ", " + toJavaClassSignature(fieldDefinition.value) + ">";
+			case ENUM:
 			case STRUCT:
-				return findStructDefinitionByName(fieldDefinition.type).javaName;
+				EnumDefinition enumDefinition = findEnumDefinitionByName(fieldDefinition.type);
+				if (enumDefinition != null) {
+					return enumDefinition.javaName;
+				}
+				StructDefinition structDefinition = findStructDefinitionByName(fieldDefinition.type);
+				if (structDefinition != null) {
+					return structDefinition.javaName;
+				}
+				throw new RpcException("Unknown type: " + fieldDefinition);
 			default:
 				return type.toJavaPrimitiveTypeName();
 		}
@@ -416,6 +429,7 @@ public class MetaDataService implements AutoCloseable {
 			}
 		}
 		
+		// TODO how to recognize Type.ENUM?
 		return Type.STRUCT;
 	}
 

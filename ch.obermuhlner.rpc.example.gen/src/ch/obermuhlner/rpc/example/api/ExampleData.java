@@ -6,6 +6,7 @@ import ch.obermuhlner.rpc.annotation.RpcField;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 
 import ch.obermuhlner.rpc.example.api.ExampleData;
+import ch.obermuhlner.rpc.example.api.Planet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,9 @@ public class ExampleData {
 
    @RpcField()
    public String stringField;
+
+   @RpcField()
+   public Planet planetField;
 
    @RpcField(element=String.class)
    public List<String> listField;

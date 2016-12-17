@@ -2,16 +2,16 @@
 <metaData>
     <services>
         <service name="HelloService" javaName="ch.obermuhlner.rpc.example.api.HelloService">
-            <method name="calculateSquare">
-                <returns>double</returns>
-                <parameter name="arg0" type="double"/>
-            </method>
             <method name="ping"/>
             <method name="enrichExample" javaName="exampleMethod">
                 <returns>ExampleData</returns>
                 <parameter name="poor" type="ExampleData"/>
             </method>
             <method name="exampleFailure"/>
+            <method name="calculateSquare">
+                <returns>double</returns>
+                <parameter name="arg0" type="double"/>
+            </method>
             <method name="adapterExample" javaName="adapterExampleMethod">
                 <returns>AdapterExampleData</returns>
                 <parameter name="data" type="AdapterExampleData"/>
@@ -25,8 +25,10 @@
         <struct name="EpochMillisecond" javaName="ch.obermuhlner.rpc.meta.adapter.time.EpochMillisecondStruct">
             <field name="milliseconds" type="long"/>
         </struct>
-        <struct name="EpochDay" javaName="ch.obermuhlner.rpc.meta.adapter.time.EpochDayStruct">
-            <field name="days" type="long"/>
+        <struct name="DateStruct" javaName="ch.obermuhlner.rpc.meta.adapter.time.DateStruct">
+            <field name="year" type="int"/>
+            <field name="month" type="int"/>
+            <field name="day" type="int"/>
         </struct>
         <struct name="Period" javaName="ch.obermuhlner.rpc.meta.adapter.time.PeriodStruct">
             <field name="years" type="int"/>
@@ -41,6 +43,7 @@
             <field name="intField" type="int"/>
             <field name="longField" type="long"/>
             <field name="stringField" type="string"/>
+            <field name="planetField" type="Planet"/>
             <field name="listField" type="list" element="string"/>
             <field name="setField" type="set" element="string"/>
             <field name="mapField" type="map" key="int" value="string"/>
@@ -50,8 +53,20 @@
             <field name="bigDecimalField" type="BigDecimal"/>
             <field name="dateField" type="EpochMillisecond"/>
             <field name="localDateTimeField" type="EpochMillisecond"/>
-            <field name="localDateField" type="EpochDay"/>
+            <field name="localDateField" type="DateStruct"/>
             <field name="periodField" type="Period"/>
         </struct>
     </structs>
+    <enums>
+        <enum name="Planet" javaName="ch.obermuhlner.rpc.example.api.Planet">
+            <value>MERCURY</value>
+            <value>VENUS</value>
+            <value>EARTH</value>
+            <value>MARS</value>
+            <value>JUPITER</value>
+            <value>SATURN</value>
+            <value>URANOS</value>
+            <value>NEPTUNE</value>
+        </enum>
+    </enums>
 </metaData>

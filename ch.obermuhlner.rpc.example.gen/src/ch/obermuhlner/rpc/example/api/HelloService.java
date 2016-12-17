@@ -13,12 +13,6 @@ import ch.obermuhlner.rpc.example.api.ExampleData;
 public interface HelloService {
 
    @RpcMethod()
-   Double calculateSquare(
-      @RpcParameter(name="arg0")
-      Double arg0
-      );
-
-   @RpcMethod()
    void ping();
 
    @RpcMethod(name="enrichExample")
@@ -29,6 +23,12 @@ public interface HelloService {
 
    @RpcMethod()
    void exampleFailure();
+
+   @RpcMethod()
+   Double calculateSquare(
+      @RpcParameter(name="arg0")
+      Double arg0
+      );
 
    @RpcMethod(name="adapterExample")
    AdapterExampleData adapterExampleMethod(
