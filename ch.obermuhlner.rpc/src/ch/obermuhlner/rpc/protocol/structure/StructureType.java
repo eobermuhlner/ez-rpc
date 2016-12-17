@@ -12,5 +12,6 @@ public enum StructureType {
 	LONG,
 	DOUBLE,
 	STRING,
+	ENUM,
 	STRUCT
 }

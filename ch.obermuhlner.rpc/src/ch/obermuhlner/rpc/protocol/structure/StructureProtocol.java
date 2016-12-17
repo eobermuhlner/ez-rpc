@@ -18,6 +18,7 @@ import java.util.function.Function;
 import ch.obermuhlner.rpc.annotation.RpcStruct;
 import ch.obermuhlner.rpc.data.DynamicStruct;
 import ch.obermuhlner.rpc.exception.RpcException;
+import ch.obermuhlner.rpc.meta.EnumDefinition;
 import ch.obermuhlner.rpc.meta.FieldDefinition;
 import ch.obermuhlner.rpc.meta.MetaDataService;
 import ch.obermuhlner.rpc.meta.StructDefinition;
@@ -87,6 +88,8 @@ public class StructureProtocol<T> implements Protocol<T> {
 				writer.writeMapEntryEnd();
 			}
 			writer.writeSetEnd();
+		} else if (element instanceof Enum<?>) {
+			writeEnum(writer, (Enum<?>)element);
 		} else if (element instanceof Boolean) {
 			writer.writeBoolean((Boolean) element);
 		} else if (element instanceof Integer) {
@@ -108,9 +111,17 @@ public class StructureProtocol<T> implements Protocol<T> {
 				}
 			}
 		}
-		
 	}
 
+	private void writeEnum(StructureWriter writer, Enum<?> element) {
+		String typeName = element.getDeclaringClass().getSimpleName();
+		String valueName = element.name();
+
+		writer.writeEnumBegin(typeName);
+		writer.writeEnumValue(valueName);
+		writer.writeEnumEnd();
+	}
+	
 	private void writeStruct(StructureWriter writer, Object element) {
 		Class<?> type = element.getClass();
 
@@ -189,6 +200,8 @@ public class StructureProtocol<T> implements Protocol<T> {
 			return reader.readLong();
 		case STRING:
 			return reader.readString();
+		case ENUM:
+			return readEnum(reader);
 		case LIST:
 			return readList(reader);
 		case MAP:
@@ -239,6 +252,25 @@ public class StructureProtocol<T> implements Protocol<T> {
 		}
 		
 		return set;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private Enum<?> readEnum(StructureReader reader) {
+		String typeName = reader.readEnumBegin();
+		String valueName = reader.readEnumValue();
+		reader.readEnumEnd();
+		
+		EnumDefinition enumDefinition = metaDataService.findEnumDefinitionByName(typeName);
+		if (enumDefinition != null) {
+			typeName = enumDefinition.getJavaName();
+		}
+		
+		try {
+			Class enumClass = classLoader.loadClass(typeName);
+			return Enum.valueOf(enumClass, valueName);
+		} catch (ClassNotFoundException e) {
+			throw new RpcException(e);
+		}
 	}
 	
 	private Object readStruct(StructureReader reader) {

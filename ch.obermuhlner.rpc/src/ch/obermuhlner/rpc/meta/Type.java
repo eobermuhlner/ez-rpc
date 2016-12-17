@@ -9,7 +9,8 @@ public enum Type {
 	LIST("List", "List"),
 	SET("Set", "Set"),
 	MAP("Map", "Map"),
-	STRUCT(null, null);
+	STRUCT(null, null),
+	ENUM(null, null);
 	
 	private String javaPrimitiveTypeName;
 

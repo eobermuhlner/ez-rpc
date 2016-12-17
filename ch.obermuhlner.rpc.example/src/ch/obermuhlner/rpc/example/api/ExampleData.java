@@ -13,6 +13,7 @@ public class ExampleData {
 	public int intField;
 	public long longField;
 	public String stringField;
+	public Planet planetField;
 	@RpcField(element=String.class)
 	public List<String> listField;
 	@RpcField(element=String.class)
@@ -24,7 +25,8 @@ public class ExampleData {
 	@Override
 	public String toString() {
 		return "ExampleData [booleanField=" + booleanField + ", intField=" + intField + ", longField=" + longField
-				+ ", stringField=" + stringField + ", listField=" + listField + ", setField=" + setField + ", mapField="
-				+ mapField + ", nestedExampleData=" + nestedExampleData + "]";
+				+ ", stringField=" + stringField + ", planetField=" + planetField + ", listField=" + listField
+				+ ", setField=" + setField + ", mapField=" + mapField + ", nestedExampleData=" + nestedExampleData
+				+ "]";
 	}
 }

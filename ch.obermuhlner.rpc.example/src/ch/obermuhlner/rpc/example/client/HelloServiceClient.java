@@ -14,6 +14,7 @@ import ch.obermuhlner.rpc.example.api.AdapterExampleData;
 import ch.obermuhlner.rpc.example.api.ExampleData;
 import ch.obermuhlner.rpc.example.api.HelloService;
 import ch.obermuhlner.rpc.example.api.HelloServiceAsync;
+import ch.obermuhlner.rpc.example.api.Planet;
 
 public class HelloServiceClient {
 
@@ -43,6 +44,7 @@ public class HelloServiceClient {
 		exampleData.intField = 1;
 		exampleData.longField = 1000;
 		exampleData.stringField = "Hello";
+		exampleData.planetField = Planet.EARTH;
 		exampleData.listField = new ArrayList<>();
 		exampleData.listField.add("alpha");
 		exampleData.listField.add("beta");

@@ -20,6 +20,7 @@ public class BinaryStructureWriter implements StructureWriter {
 	public static final int LONG = 9;
 	public static final int DOUBLE = 10;
 	public static final int STRING = 11;
+	public static final int ENUM = 12;
 
 	private final DataOutputStream out;
 
@@ -181,6 +182,30 @@ public class BinaryStructureWriter implements StructureWriter {
 		}
 	}
 
+	@Override
+	public void writeEnumBegin(String typeName) {
+		try {
+			out.writeByte(ENUM);
+			out.writeUTF(typeName);
+		} catch (IOException e) {
+			// ignore
+		}
+	}
+	
+	@Override
+	public void writeEnumValue(String valueName) {
+		try {
+			out.writeUTF(valueName);
+		} catch (IOException e) {
+			// ignore
+		}
+	}
+	
+	@Override
+	public void writeEnumEnd() {
+		// does nothing
+	}
+	
 	@Override
 	public void writeNull() {
 		try {

@@ -9,6 +9,9 @@ public class BinaryProtocolTest extends AbstractProtocolTest {
 	@Override
 	protected <T> Protocol<T> getProtocol() {
 		MetaDataService metaDataService = new MetaDataService();
+		
+		metaDataService.registerEnum(TestEnum.class);
+		
 		return new BinaryProtocol<>(metaDataService, getClass().getClassLoader());
 	}
 }

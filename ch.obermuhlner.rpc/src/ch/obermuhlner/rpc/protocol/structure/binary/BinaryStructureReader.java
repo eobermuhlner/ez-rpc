@@ -53,6 +53,8 @@ public class BinaryStructureReader implements StructureReader {
 				return StructureType.DOUBLE;
 			case BinaryStructureWriter.STRING:
 				return StructureType.STRING;
+			case BinaryStructureWriter.ENUM:
+				return StructureType.ENUM;
 			case BinaryStructureWriter.NULL:
 				return StructureType.NULL;
 			}
@@ -186,6 +188,28 @@ public class BinaryStructureReader implements StructureReader {
 		} catch (IOException e) {
 			throw new IllegalStateException();
 		}
+	}
+
+	@Override
+	public String readEnumBegin() {
+		try {
+			return in.readUTF();
+		} catch (IOException e) {
+			throw new IllegalStateException();
+		}
+	}
+
+	@Override
+	public String readEnumValue() {
+		try {
+			return in.readUTF();
+		} catch (IOException e) {
+			throw new IllegalStateException();
+		}
+	}
+
+	@Override
+	public void readEnumEnd() {
 	}
 
 }

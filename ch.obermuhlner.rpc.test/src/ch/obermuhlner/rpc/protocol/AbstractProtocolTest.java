@@ -69,4 +69,15 @@ public abstract class AbstractProtocolTest {
 		testMap.put(2, "two");
 		assertEquals(testMap, protocol.deserializeFromBytes(protocol.serializeToBytes(testMap)));
 	}
+
+	@Test
+	public void testEnum() {
+		assertEquals(TestEnum.ALPHA, protocol.deserializeFromBytes(protocol.serializeToBytes(TestEnum.ALPHA)));
+	}
+
+	public enum TestEnum {
+		ALPHA,
+		BETA,
+		GAMMA
+	}
 }

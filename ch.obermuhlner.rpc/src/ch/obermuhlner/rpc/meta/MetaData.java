@@ -41,6 +41,18 @@ public class MetaData {
 		}
 	}
 
+	public boolean addEnumDefinition(EnumDefinition enumDefinition) {
+		EnumDefinition existing = enumDefinitions.findByTemplate(enumDefinition);
+		
+		if (existing != null) {
+			checkMatch(existing, enumDefinition);
+			return false;
+		} else {
+			enumDefinitions.add(enumDefinition);
+			return true;
+		}
+	}
+
 	public ServiceDefinitionList getServiceDefinitions() {
 		return serviceDefinitions;
 	}
@@ -68,6 +80,10 @@ public class MetaData {
 
 	private void checkMatch(StructDefinition existing, StructDefinition update) {
 		checkEqual("struct.name", existing.name, update.name);
+	}
+
+	private void checkMatch(EnumDefinition existing, EnumDefinition update) {
+		checkEqual("enum.name", existing.name, update.name);
 	}
 
 	private void checkMatch(MethodDefinition existingMethodDefinition, MethodDefinition updateMethodDefinition) {

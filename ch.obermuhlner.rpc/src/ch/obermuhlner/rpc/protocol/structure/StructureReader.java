@@ -24,7 +24,11 @@ public interface StructureReader {
 	
 	String readFieldBegin();
 	void readFieldEnd();
-	
+
+	String readEnumBegin();
+	String readEnumValue();
+	void readEnumEnd();
+
 	boolean readBoolean();
 	int readInt();
 	long readLong();

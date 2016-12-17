@@ -8,6 +8,10 @@ public interface StructureWriter {
 	void writeStructBegin(String typeName);
 	void writeStructEnd();
 
+	void writeEnumBegin(String typeName);
+	void writeEnumValue(String valueName);
+	void writeEnumEnd();
+
 	void writeListBegin(int size);
 	void writeListEnd();
 

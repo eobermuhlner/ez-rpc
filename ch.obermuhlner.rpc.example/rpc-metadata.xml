@@ -6,16 +6,16 @@
                 <returns>AdapterExampleData</returns>
                 <parameter name="data" type="AdapterExampleData"/>
             </method>
+            <method name="exampleFailure"/>
+            <method name="calculateSquare">
+                <returns>double</returns>
+                <parameter name="arg0" type="double"/>
+            </method>
             <method name="ping"/>
             <method name="enrichExample" javaName="exampleMethod">
                 <returns>ExampleData</returns>
                 <parameter name="poor" type="ExampleData"/>
             </method>
-            <method name="calculateSquare">
-                <returns>double</returns>
-                <parameter name="arg0" type="double"/>
-            </method>
-            <method name="exampleFailure"/>
         </service>
     </services>
     <structs>
@@ -50,10 +50,23 @@
             <field name="intField" type="int"/>
             <field name="longField" type="long"/>
             <field name="stringField" type="string"/>
+            <field name="planetField" type="Planet"/>
             <field name="listField" type="list" element="string"/>
             <field name="setField" type="set" element="string"/>
             <field name="mapField" type="map" key="int" value="string"/>
             <field name="nestedExampleData" type="ExampleData"/>
         </struct>
     </structs>
+    <enums>
+        <enum name="Planet" javaName="ch.obermuhlner.rpc.example.api.Planet">
+            <values>MERCURY</values>
+            <values>VENUS</values>
+            <values>EARTH</values>
+            <values>MARS</values>
+            <values>JUPITER</values>
+            <values>SATURN</values>
+            <values>URANOS</values>
+            <values>NEPTUNE</values>
+        </enum>
+    </enums>
 </metaData>

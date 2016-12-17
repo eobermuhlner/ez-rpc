@@ -128,6 +128,23 @@ public class XmlStructureWriter implements StructureWriter {
 	}
 
 	@Override
+	public void writeEnumBegin(String typeName) {
+		out.print("<enum type=\"");
+		out.print(sanitize(typeName));
+		out.print("\">");
+	}
+
+	@Override
+	public void writeEnumValue(String valueName) {
+		out.print(sanitize(valueName));
+	}
+
+	@Override
+	public void writeEnumEnd() {
+		out.print("</enum>");
+	}
+
+	@Override
 	public void writeNull() {
 		out.print("<null/>");
 	}

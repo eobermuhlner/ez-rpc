@@ -166,7 +166,7 @@ public class MetaDataService implements AutoCloseable {
 		return structDefinition;
 	}
 	
-	public EnumDefinition registerEnum(Class<Enum<?>> type) {
+	public EnumDefinition registerEnum(Class<?> type) {
 		String name = type.getSimpleName();
 		
 		EnumDefinition enumDefinition = findEnumDefinitionByType(type.getName());
@@ -186,13 +186,17 @@ public class MetaDataService implements AutoCloseable {
 		enumDefinition.javaName = type.getName();
 		
 		fillEnumDefinition(enumDefinition, type);
-		
+
+		metaData.addEnumDefinition(enumDefinition);
+
 		return enumDefinition;
 	}
 
-	private void fillEnumDefinition(EnumDefinition enumDefinition, Class<Enum<?>> type) {
+	private void fillEnumDefinition(EnumDefinition enumDefinition, Class<?> type) {
+		@SuppressWarnings("unchecked")
+		Class<Enum<?>> enumType = (Class<Enum<?>>) type;
 		enumDefinition.values = new ArrayList<>();
-		for (Enum<?> enumValue : type.getEnumConstants()) {
+		for (Enum<?> enumValue : enumType.getEnumConstants()) {
 			enumDefinition.values.add(enumValue.name());
 		}
 	}
@@ -318,6 +322,9 @@ public class MetaDataService implements AutoCloseable {
 		if (type.getAnnotation(RpcStruct.class) != null) {
 			return Type.STRUCT;
 		}
+		if (type.getAnnotation(RpcEnum.class) != null) {
+			return Type.ENUM;
+		}
 
 		return null;
 	}
@@ -335,6 +342,8 @@ public class MetaDataService implements AutoCloseable {
 		}
 		if (type == Type.STRUCT) {
 			return registerStruct(javaClass).name;
+		} else if (type == Type.ENUM) {
+			return registerEnum(javaClass).name;
 		} else {
 			return type.toTypeName();
 		}
@@ -344,7 +353,8 @@ public class MetaDataService implements AutoCloseable {
 		StructDefinition structDefinition = findStructDefinitionByName(name);
 		if (structDefinition == null) {
 			try {
-				Class<?> type = Class.forName(name, false, classLoader);
+				
+				Class<?> type = classLoader.loadClass(name);
 				structDefinition = registerStruct(type);
 			} catch (ClassNotFoundException e) {
 				return null;
@@ -471,6 +481,10 @@ public class MetaDataService implements AutoCloseable {
 	
 	private EnumDefinition findEnumDefinitionByType(String javaTypeName) {
 		return metaData.getEnumDefinitions().findByType(javaTypeName);
+	}
+	
+	public EnumDefinition findEnumDefinitionByName(String name) {
+		return metaData.getEnumDefinitions().findByName(name);
 	}
 	
 	public static void saveMetaData(MetaData metaData, File file) {
