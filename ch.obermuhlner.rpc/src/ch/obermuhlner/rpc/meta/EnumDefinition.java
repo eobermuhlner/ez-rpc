@@ -16,7 +16,7 @@ public class EnumDefinition {
 	@XmlAttribute
 	public String javaName;
 
-	@XmlElement
+	@XmlElement(name = "value")
 	public List<String> values;
 
 	public String getJavaName() {
