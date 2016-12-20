@@ -1,6 +1,6 @@
 #include <jni.h>
 #include <string>
-#include "JniHelloService.h"
+#include "jni_JniHelloService.h"
 
 /*
 Type     Chararacter 
@@ -39,15 +39,15 @@ void CopyJStringToStdString(JNIEnv *env, jstring inJString, std::string &outStdS
 }
 */
  
-JNIEXPORT void JNICALL Java_JniHelloService_ping(JNIEnv *env, jobject thisObj) {
+JNIEXPORT void JNICALL Java_jni_JniHelloService_ping(JNIEnv *env, jobject thisObj) {
 	return;
 }
 
-JNIEXPORT double JNICALL Java_JniHelloService_calculateSquare(JNIEnv *env, jobject thisObj, jdouble value) {
+JNIEXPORT double JNICALL Java_jni_JniHelloService_calculateSquare(JNIEnv *env, jobject thisObj, jdouble value) {
 	return value * value;
 }
 
-JNIEXPORT jobject JNICALL Java_JniHelloService_exampleMethod(JNIEnv *env, jobject thisObj, jobject jniExampleData) {
+JNIEXPORT jobject JNICALL Java_jni_JniHelloService_exampleMethod(JNIEnv *env, jobject thisObj, jobject jniExampleData) {
 	ExampleData exampleData;
 	
 	jclass jniExampleDataClass = env->GetObjectClass(jniExampleData);
@@ -73,9 +73,9 @@ JNIEXPORT jobject JNICALL Java_JniHelloService_exampleMethod(JNIEnv *env, jobjec
 	return jniExampleData;
 }
 
-JNIEXPORT jobject JNICALL Java_JniHelloService_adapterExampleMethod(JNIEnv *env, jobject thisObj, jobject adapterExampleData) {
+JNIEXPORT jobject JNICALL Java_jni_JniHelloService_adapterExampleMethod(JNIEnv *env, jobject thisObj, jobject adapterExampleData) {
 	return adapterExampleData;
 }
 
-JNIEXPORT void JNICALL Java_JniHelloService_exampleFailure(JNIEnv *env, jobject thisObj) {
+JNIEXPORT void JNICALL Java_jni_JniHelloService_exampleFailure(JNIEnv *env, jobject thisObj) {
 }

@@ -1,3 +1,5 @@
+package jni;
+
 import ch.obermuhlner.rpc.example.api.AdapterExampleData;
 import ch.obermuhlner.rpc.example.api.ExampleData;
 import ch.obermuhlner.rpc.example.api.HelloService;
