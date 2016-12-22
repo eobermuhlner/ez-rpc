@@ -22,10 +22,17 @@ Supported protocols:
 
 ## Approach
 
-The framework is designed so that the services can be written directly in your favorite programming language (for example Java)
+The ez-rpc framework is designed so that the services can be written directly in your favorite programming language (for example Java)
 and will work immediately as soon as they are implemented.
 
 The specification of the services is then generated from the running services and can now be published between the different languages.
+
+![Simplified approach](ch.obermuhlner.rpc.docs/docs/images/generate_from_Java.png "Simplified approach - Generate service specification from Java, then generate services in other languages from the specification") 
+
+The standard approach to generate services in all participating languages from the specification is of course supported as well.
+
+![Standard approach](ch.obermuhlner.rpc.docs/docs/images/generate_from_XML.png "Standard approach - Generate services in all languages from specification") 
+
 
 ## Service used over RPC
 
