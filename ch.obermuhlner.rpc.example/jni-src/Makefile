@@ -12,17 +12,20 @@ install :
 	mv JniHelloService.dll ..
 
 # $@ matches the target, $< matches the first dependency
-JniHelloService.dll : JniHelloService.o
-	${GPLUSPLUS} -Wl,--add-stdcall-alias -shared -o $@ $<
+JniHelloService.dll : JniHelloService.o HelloService.o
+	${GPLUSPLUS} -Wl,--add-stdcall-alias -shared -o $@ JniHelloService.o HelloService.o
 
 # $@ matches the target, $< matches the first dependancy
 JniHelloService.o : JniHelloService.cpp jni_JniHelloService.h
 	${GPLUSPLUS} -I"${JAVA_HOME}\include" -I"${JAVA_HOME}\include\win32" -c $< -o $@
+
+HelloService.o : HelloService.cpp HelloService.h
+	${GPLUSPLUS} -c $< -o $@
 
 # $* matches the target filename without the extension
 jni_JniHelloService.h : 
 	javah -classpath $(CLASS_PATH) jni.JniHelloService
 
 clean :
-	rm JniHelloService.o
+	rm JniHelloService.o HelloService.o
 
