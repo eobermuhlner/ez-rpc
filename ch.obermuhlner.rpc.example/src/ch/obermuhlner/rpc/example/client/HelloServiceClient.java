@@ -38,7 +38,9 @@ public class HelloServiceClient {
 		calculateSquareAsync.thenAccept((result) -> {
 			System.out.println("async square(4) = " + result);	
 		});
-		
+
+		System.out.println(helloService.exampleMethod(null));
+
 		ExampleData exampleData = new ExampleData();
 		exampleData.booleanField = true;
 		exampleData.intField = 1;

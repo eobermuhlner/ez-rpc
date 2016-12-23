@@ -12,7 +12,7 @@ public:
 	
 	double calculateSquare(double value);
 	
-	ExampleData enrichExample(ExampleData &exampleData);
+	ExampleData* enrichExample(ExampleData *exampleData);
 };
 
 #endif

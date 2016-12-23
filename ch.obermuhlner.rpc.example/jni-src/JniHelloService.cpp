@@ -32,7 +32,11 @@ void copy_jstring_to_std_string(JNIEnv *env, jstring inJString, std::string &out
 	env->ReleaseStringUTFChars(inJString,s);
 }
 
-void copy_jobject_to_ExampleData(JNIEnv *env, jobject jniExampleData, ExampleData &exampleData) {
+ExampleData* copy_jobject_to_ExampleData(JNIEnv *env, jobject jniExampleData) {
+	if (!jniExampleData) {
+		return NULL;
+	}
+	
 	jclass class_ExampleData = env->FindClass("ch/obermuhlner/rpc/example/api/ExampleData");
 	
 	jfieldID field_booleanField = env->GetFieldID(class_ExampleData, "booleanField", "Z");
@@ -41,13 +45,20 @@ void copy_jobject_to_ExampleData(JNIEnv *env, jobject jniExampleData, ExampleDat
 	jfieldID field_stringField = env->GetFieldID(class_ExampleData, "stringField", "Ljava/lang/String;");
 	jfieldID field_planetField = env->GetFieldID(class_ExampleData, "planetField", "Lch/obermuhlner/rpc/example/api/Planet;");
 
-	exampleData.booleanField = env->GetBooleanField(jniExampleData, field_booleanField);
-	exampleData.intField = env->GetIntField(jniExampleData, field_intField);
-	exampleData.longField = env->GetLongField(jniExampleData, field_longField);
-	copy_jstring_to_std_string(env, (jstring) env->GetObjectField(jniExampleData, field_stringField), exampleData.stringField);
+	ExampleData *exampleData = new ExampleData();
+	exampleData->booleanField = env->GetBooleanField(jniExampleData, field_booleanField);
+	exampleData->intField = env->GetIntField(jniExampleData, field_intField);
+	exampleData->longField = env->GetLongField(jniExampleData, field_longField);
+	copy_jstring_to_std_string(env, (jstring) env->GetObjectField(jniExampleData, field_stringField), exampleData->stringField);
+	
+	return exampleData;
 }
 
-jobject copy_ExampleData_to_jobject(JNIEnv *env, ExampleData &exampleData) {
+jobject copy_ExampleData_to_jobject(JNIEnv *env, ExampleData *exampleData) {
+	if (!exampleData) {
+		return NULL;
+	}
+
 	jclass class_ExampleData = env->FindClass("ch/obermuhlner/rpc/example/api/ExampleData");
 	
 	jmethodID method_init = env->GetMethodID(class_ExampleData, "<init>", "()V");
@@ -59,10 +70,10 @@ jobject copy_ExampleData_to_jobject(JNIEnv *env, ExampleData &exampleData) {
 	jfieldID field_stringField = env->GetFieldID(class_ExampleData, "stringField", "Ljava/lang/String;");
 	jfieldID field_planetField = env->GetFieldID(class_ExampleData, "planetField", "Lch/obermuhlner/rpc/example/api/Planet;");
 
-	env->SetBooleanField(jniExampleData, field_booleanField, exampleData.booleanField);
-	env->SetIntField(jniExampleData, field_intField, exampleData.intField);
-	env->SetLongField(jniExampleData, field_longField, exampleData.longField);
-	env->SetObjectField(jniExampleData, field_stringField, env->NewStringUTF(exampleData.stringField.c_str()));
+	env->SetBooleanField(jniExampleData, field_booleanField, exampleData->booleanField);
+	env->SetIntField(jniExampleData, field_intField, exampleData->intField);
+	env->SetLongField(jniExampleData, field_longField, exampleData->longField);
+	env->SetObjectField(jniExampleData, field_stringField, env->NewStringUTF(exampleData->stringField.c_str()));
 	
 	return jniExampleData;
 }
@@ -78,10 +89,9 @@ JNIEXPORT double JNICALL Java_jni_JniHelloService_calculateSquare(JNIEnv *env, j
 }
 
 JNIEXPORT jobject JNICALL Java_jni_JniHelloService_exampleMethod(JNIEnv *env, jobject thisObj, jobject jniExampleData) {
-	ExampleData exampleData;
-	copy_jobject_to_ExampleData(env, jniExampleData, exampleData);
+	ExampleData *exampleData = copy_jobject_to_ExampleData(env, jniExampleData);
 	
-	ExampleData result = helloService.enrichExample(exampleData);
+	ExampleData *result = helloService.enrichExample(exampleData);
 	
 	return copy_ExampleData_to_jobject(env, exampleData);
 }

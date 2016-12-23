@@ -15,11 +15,15 @@ double HelloService::calculateSquare(double value) {
 	return value * value;
 }
 
-ExampleData HelloService::enrichExample(ExampleData &exampleData) {
-	exampleData.intField += 111;
-	exampleData.longField += 22222222;
-	exampleData.stringField += " from C++";
-	exampleData.planetField = MARS;
+ExampleData* HelloService::enrichExample(ExampleData *exampleData) {
+	if (!exampleData) {
+		return NULL;
+	}
+
+	exampleData->intField += 111;
+	exampleData->longField += 22222222;
+	exampleData->stringField += " from C++";
+	exampleData->planetField = MARS;
 
 	return exampleData;
 }
