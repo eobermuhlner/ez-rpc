@@ -12,8 +12,8 @@ install :
 	mv JniHelloService.dll ..
 
 # $@ matches the target, $< matches the first dependency
-JniHelloService.dll : JniHelloService.o HelloService.o
-	${GPLUSPLUS} -Wl,--add-stdcall-alias -shared -o $@ JniHelloService.o HelloService.o
+JniHelloService.dll : JniHelloService.o HelloService.o ExampleData.o
+	${GPLUSPLUS} -Wl,--add-stdcall-alias -shared -o $@ JniHelloService.o HelloService.o ExampleData.o
 
 # $@ matches the target, $< matches the first dependancy
 JniHelloService.o : JniHelloService.cpp jni_JniHelloService.h
@@ -22,10 +22,13 @@ JniHelloService.o : JniHelloService.cpp jni_JniHelloService.h
 HelloService.o : HelloService.cpp HelloService.h
 	${GPLUSPLUS} -c $< -o $@
 
+ExampleData.o : ExampleData.cpp ExampleData.h
+	${GPLUSPLUS} -c $< -o $@
+
 # $* matches the target filename without the extension
 jni_JniHelloService.h : 
 	javah -classpath $(CLASS_PATH) jni.JniHelloService
 
 clean :
-	rm JniHelloService.o HelloService.o
+	rm JniHelloService.o HelloService.o ExampleData.o
 

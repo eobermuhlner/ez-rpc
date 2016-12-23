@@ -39,7 +39,7 @@ public class HelloServiceClient {
 			System.out.println("async square(4) = " + result);	
 		});
 
-		System.out.println(helloService.exampleMethod(null));
+		System.out.println("Expected null: " + helloService.exampleMethod(null));
 
 		ExampleData exampleData = new ExampleData();
 		exampleData.booleanField = true;
@@ -57,7 +57,7 @@ public class HelloServiceClient {
 		exampleData.mapField.put(1, "one");
 		exampleData.mapField.put(2, "two");
 		exampleData.nestedExampleData = new ExampleData();
-		System.out.println(helloService.exampleMethod(exampleData));
+		System.out.println("Expected enriched: " + helloService.exampleMethod(exampleData));
 		
 		AdapterExampleData adapterExampleData = new AdapterExampleData();
 		adapterExampleData.bigDecimalField = BigDecimal.valueOf(1.234);
