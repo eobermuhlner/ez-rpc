@@ -24,6 +24,7 @@ ExampleData* HelloService::enrichExample(ExampleData *exampleData) {
 	exampleData->longField += 22222222;
 	exampleData->stringField += " from C++";
 	exampleData->planetField = MARS;
+	exampleData->listField.push_back("from C++");
 
 	return exampleData;
 }

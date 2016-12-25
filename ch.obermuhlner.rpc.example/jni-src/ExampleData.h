@@ -2,6 +2,7 @@
 #define ExampleData_h
 
 #include <string>
+#include <list>
 #include "Planet.h"
 
 class ExampleData {
@@ -14,6 +15,7 @@ public:
 	long long longField;
 	std::string stringField;
 	Planet planetField;
+	std::list<std::string> listField;
 	
 	ExampleData *nestedExampleData;
 };
