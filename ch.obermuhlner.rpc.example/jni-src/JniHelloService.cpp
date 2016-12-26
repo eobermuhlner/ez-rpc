@@ -176,7 +176,25 @@ jobject copy_std_long_string_map_to_java_map(JNIEnv *env, std::map<long, std::st
 	return javaMap;
 }
 
-// convert ExampleData
+// convert enum Planet
+
+Planet convert_jobject_to_enum_Planet(JNIEnv *env, jobject jniPlanet) {
+	if (!jniPlanet) {
+		return MERCURY; // TODO define default value?
+	}
+
+	jclass class_Planet = env->FindClass("ch/obermuhlner/rpc/example/api/Planet");
+
+	return VENUS;
+}
+
+jobject convert_enum_Planet_to_jobject(JNIEnv *env, Planet planet) {
+	jclass class_Planet = env->FindClass("ch/obermuhlner/rpc/example/api/Planet");
+
+	return NULL;
+}
+
+// convert struct ExampleData
 
 ExampleData* convert_jobject_to_ExampleData(JNIEnv *env, jobject jniExampleData) {
 	if (!jniExampleData) {
@@ -238,6 +256,8 @@ jobject convert_ExampleData_to_jobject(JNIEnv *env, ExampleData *exampleData) {
 	
 	return jniExampleData;
 }
+
+// service: HelloService
 
 HelloService helloService = HelloService();
 
