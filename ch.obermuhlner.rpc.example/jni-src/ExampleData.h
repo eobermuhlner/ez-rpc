@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <set>
 #include "Planet.h"
 
 class ExampleData {
@@ -16,6 +17,7 @@ public:
 	std::string stringField;
 	Planet planetField;
 	std::list<std::string> listField;
+	std::set<std::string> setField;
 	
 	ExampleData *nestedExampleData;
 };
