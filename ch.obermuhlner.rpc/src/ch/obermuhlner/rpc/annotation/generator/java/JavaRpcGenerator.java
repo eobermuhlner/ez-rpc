@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import ch.obermuhlner.rpc.meta.EnumDefinition;
+import ch.obermuhlner.rpc.meta.EnumValueDefinition;
 import ch.obermuhlner.rpc.meta.FieldDefinition;
 import ch.obermuhlner.rpc.meta.MetaData;
 import ch.obermuhlner.rpc.meta.MetaDataService;
@@ -191,6 +192,7 @@ public class JavaRpcGenerator {
 			}
 
 			out.println("import ch.obermuhlner.rpc.annotation.RpcEnum;");
+			out.println("import ch.obermuhlner.rpc.annotation.RpcEnumValue;");
 			out.println();
 			
 			out.print("@RpcEnum(name = \"");
@@ -203,9 +205,19 @@ public class JavaRpcGenerator {
 			out.print(" {");
 			out.println();
 
-			for (String value : enumDefinition.values) {
+			for (EnumValueDefinition value : enumDefinition.values) {
 				out.print(INDENT);
-				out.print(value);
+				out.print("@RpcEnumValue(name = \"");
+				out.print(value.name);
+				out.print("\"");
+				if (value.id != null) {
+					out.print(", id=");
+					out.print(value.id);
+				}
+				out.print(")");
+				out.println();				
+				out.print(INDENT);
+				out.print(value.getJavaName());
 				out.print(",");
 				out.println();				
 			}

@@ -15,6 +15,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import ch.obermuhlner.rpc.annotation.RpcEnum;
+import ch.obermuhlner.rpc.annotation.RpcEnumValue;
 import ch.obermuhlner.rpc.annotation.RpcField;
 import ch.obermuhlner.rpc.annotation.RpcMethod;
 import ch.obermuhlner.rpc.annotation.RpcParameter;
@@ -201,10 +202,32 @@ public class MetaDataService implements AutoCloseable {
 		Class<Enum<?>> enumType = (Class<Enum<?>>) type;
 		enumDefinition.values = new ArrayList<>();
 		for (Enum<?> enumValue : enumType.getEnumConstants()) {
-			enumDefinition.values.add(enumValue.name());
+			EnumValueDefinition enumValueDefinition = new EnumValueDefinition();
+			enumValueDefinition.name = enumValue.name();
+			enumValueDefinition.id = null;
+			try {
+				Field field = enumType.getField(enumValue.name());
+				RpcEnumValue annotation = field.getAnnotation(RpcEnumValue.class);
+				if (annotation != null) {
+					if (annotation.name() != null && !annotation.name().equals("")) {
+						enumValueDefinition.name = annotation.name();
+					}
+					if (annotation.id() >= 0) {
+						enumValueDefinition.id = annotation.id();
+					}
+				}
+			} catch (NoSuchFieldException | SecurityException e) {
+				throw new RpcException(e);
+			}
+			enumDefinition.values.add(enumValueDefinition);
 		}
 	}
 	
+	public static long generateId(String name) {
+		long id = -Math.abs(name.hashCode());
+		return id;
+	}
+
 	private void fillServiceDefinition(ServiceDefinition serviceDefinition, Class<?> type) {
 		for (Method method : type.getMethods()) {
 			MethodDefinition methodDefinition = toMethodDefinition(method);

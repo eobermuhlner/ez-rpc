@@ -59,14 +59,14 @@
     </structs>
     <enums>
         <enum name="Planet" javaName="ch.obermuhlner.rpc.example.api.Planet">
-            <value>MERCURY</value>
-            <value>VENUS</value>
-            <value>EARTH</value>
-            <value>MARS</value>
-            <value>JUPITER</value>
-            <value>SATURN</value>
-            <value>URANOS</value>
-            <value>NEPTUNE</value>
+            <enumValue id="1" name="MERCURY"/>
+            <enumValue id="2" name="VENUS"/>
+            <enumValue id="3" name="EARTH"/>
+            <enumValue name="MARS"/>
+            <enumValue name="JUPITER"/>
+            <enumValue name="SATURN"/>
+            <enumValue name="URANOS"/>
+            <enumValue name="NEPTUNE"/>
         </enum>
     </enums>
 </metaData>
