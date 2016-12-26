@@ -44,14 +44,13 @@ void copy_java_string_list_to_std_list(JNIEnv *env, jobject inJavaList, std::lis
 	}
 	
 	jclass class_List = env->FindClass("java/util/List");
-
-	jmethodID method_size = env->GetMethodID(class_List, "size", "()I");
-	jmethodID method_get = env->GetMethodID(class_List, "get", "(I)Ljava/lang/Object;");
+	jmethodID method_List_size = env->GetMethodID(class_List, "size", "()I");
+	jmethodID method_List_get = env->GetMethodID(class_List, "get", "(I)Ljava/lang/Object;");
 	
-	long size = env->CallIntMethod(inJavaList, method_size);
+	long size = env->CallIntMethod(inJavaList, method_List_size);
 
 	for(jlong i=0; i<size; i++) {
-		jobject javaElement = env->CallObjectMethod(inJavaList, method_get, i);
+		jobject javaElement = env->CallObjectMethod(inJavaList, method_List_get, i);
 		
 		std::string element;
 		copy_java_string_to_std_string(env, (jstring) javaElement, element);
@@ -61,7 +60,6 @@ void copy_java_string_list_to_std_list(JNIEnv *env, jobject inJavaList, std::lis
 
 jobject copy_std_string_list_to_java_list(JNIEnv *env, std::list<std::string> &inStdList) {
 	jclass class_ArrayList = env->FindClass("java/util/ArrayList");
-
 	jmethodID method_ArrayList_init = env->GetMethodID(class_ArrayList, "<init>", "()V");
 	jmethodID method_ArrayList_add = env->GetMethodID(class_ArrayList, "add", "(Ljava/lang/Object;)Z");
 
@@ -120,6 +118,64 @@ jobject copy_std_string_set_to_java_set(JNIEnv *env, std::set<std::string> &inSt
 	return javaSet;
 }
 
+// convert map
+
+void copy_java_integer_string_map_to_std_map(JNIEnv *env, jobject inJavaMap, std::map<long, std::string> &outStdMap) {
+	if (!inJavaMap) {
+		outStdMap.clear();
+		return;
+	}
+
+	jclass class_Map = env->FindClass("java/util/Map");
+	jmethodID method_Map_keySet = env->GetMethodID(class_Map, "keySet", "()Ljava/util/Set;");
+	jmethodID method_Map_get = env->GetMethodID(class_Map, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
+
+	jclass class_Set = env->FindClass("java/util/Set");
+	jmethodID method_Set_iterator = env->GetMethodID(class_Set, "iterator", "()Ljava/util/Iterator;");
+	
+	jclass class_Iterator = env->FindClass("java/util/Iterator");
+	jmethodID method_Iterator_hasNext = env->GetMethodID(class_Iterator, "hasNext", "()Z");
+	jmethodID method_Iterator_next = env->GetMethodID(class_Iterator, "next", "()Ljava/lang/Object;");
+
+	jclass class_Integer = env->FindClass("java/lang/Integer");
+	jmethodID method_Integer_intValue = env->GetMethodID(class_Integer, "intValue", "()I");
+
+	jobject javaKeySet = env->CallObjectMethod(inJavaMap, method_Map_keySet);
+	jobject javaIterator = env->CallObjectMethod(javaKeySet, method_Set_iterator);
+	while (env->CallBooleanMethod(javaIterator, method_Iterator_hasNext)) {
+		jobject javaKey = env->CallObjectMethod(javaIterator, method_Iterator_next);
+		jobject javaValue = env->CallObjectMethod(inJavaMap, method_Map_get, javaKey);
+	
+		jint javaIntKey = env->CallIntMethod(javaKey, method_Integer_intValue);
+		
+		std::string value;
+		copy_java_string_to_std_string(env, (jstring) javaValue, value);
+		outStdMap[javaIntKey] = value;
+	}
+}
+
+jobject copy_std_long_string_map_to_java_map(JNIEnv *env, std::map<long, std::string> &inStdMap) {
+	jclass class_HashMap = env->FindClass("java/util/HashMap");
+	jmethodID method_HashMap_init = env->GetMethodID(class_HashMap, "<init>", "()V");
+	jmethodID method_HashMap_put = env->GetMethodID(class_HashMap, "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+
+	jclass class_Integer = env->FindClass("java/lang/Integer");
+	jmethodID method_Integer_init = env->GetMethodID(class_Integer, "<init>", "(I)V");
+
+	jobject javaMap = env->NewObject(class_HashMap, method_HashMap_init);
+
+	for (std::map<long, std::string>::iterator iter = inStdMap.begin(); iter != inStdMap.end(); iter++) {
+		long key = iter->first;
+		std::string value = iter->second;
+		
+		jobject javaIntegerKey = env->NewObject(class_Integer, method_Integer_init, key);
+		jstring javaStringValue = env->NewStringUTF(value.c_str());
+		env->CallObjectMethod(javaMap, method_HashMap_put, javaIntegerKey, javaStringValue);
+	}
+
+	return javaMap;
+}
+
 // convert ExampleData
 
 ExampleData* convert_jobject_to_ExampleData(JNIEnv *env, jobject jniExampleData) {
@@ -136,6 +192,7 @@ ExampleData* convert_jobject_to_ExampleData(JNIEnv *env, jobject jniExampleData)
 	jfieldID field_ExampleData_nestedExampleData = env->GetFieldID(class_ExampleData, "nestedExampleData", "Lch/obermuhlner/rpc/example/api/ExampleData;");
 	jfieldID field_ExampleData_listField = env->GetFieldID(class_ExampleData, "listField", "Ljava/util/List;");
 	jfieldID field_ExampleData_setField = env->GetFieldID(class_ExampleData, "setField", "Ljava/util/Set;");
+	jfieldID field_ExampleData_mapField = env->GetFieldID(class_ExampleData, "mapField", "Ljava/util/Map;");
 
 	ExampleData *exampleData = new ExampleData();
 	exampleData->booleanField = env->GetBooleanField(jniExampleData, field_ExampleData_booleanField);
@@ -145,6 +202,7 @@ ExampleData* convert_jobject_to_ExampleData(JNIEnv *env, jobject jniExampleData)
 	exampleData->nestedExampleData = convert_jobject_to_ExampleData(env, env->GetObjectField(jniExampleData, field_ExampleData_nestedExampleData));
 	copy_java_string_list_to_std_list(env, env->GetObjectField(jniExampleData, field_ExampleData_listField), exampleData->listField);
 	copy_java_string_set_to_std_set(env, env->GetObjectField(jniExampleData, field_ExampleData_setField), exampleData->setField);
+	copy_java_integer_string_map_to_std_map(env, env->GetObjectField(jniExampleData, field_ExampleData_mapField), exampleData->mapField);
 		
 	return exampleData;
 }
@@ -167,6 +225,7 @@ jobject convert_ExampleData_to_jobject(JNIEnv *env, ExampleData *exampleData) {
 	jfieldID field_ExampleData_nestedExampleData = env->GetFieldID(class_ExampleData, "nestedExampleData", "Lch/obermuhlner/rpc/example/api/ExampleData;");
 	jfieldID field_ExampleData_listField = env->GetFieldID(class_ExampleData, "listField", "Ljava/util/List;");
 	jfieldID field_ExampleData_setField = env->GetFieldID(class_ExampleData, "setField", "Ljava/util/Set;");
+	jfieldID field_ExampleData_mapField = env->GetFieldID(class_ExampleData, "mapField", "Ljava/util/Map;");
 
 	env->SetBooleanField(jniExampleData, field_ExampleData_booleanField, exampleData->booleanField);
 	env->SetIntField(jniExampleData, field_ExampleData_intField, exampleData->intField);
@@ -175,6 +234,7 @@ jobject convert_ExampleData_to_jobject(JNIEnv *env, ExampleData *exampleData) {
 	env->SetObjectField(jniExampleData, field_ExampleData_nestedExampleData, convert_ExampleData_to_jobject(env, exampleData->nestedExampleData));
 	env->SetObjectField(jniExampleData, field_ExampleData_listField, copy_std_string_list_to_java_list(env, exampleData->listField));
 	env->SetObjectField(jniExampleData, field_ExampleData_setField, copy_std_string_set_to_java_set(env, exampleData->setField));
+	env->SetObjectField(jniExampleData, field_ExampleData_mapField, copy_std_long_string_map_to_java_map(env, exampleData->mapField));
 	
 	return jniExampleData;
 }
