@@ -8,11 +8,14 @@ The client and server code can be developed completely unaware of the ez-rpc fra
 
 Supported languages:
 * Java
-* ... (currently under development)
+* C++ (currently under development)
+* ...
 
 Supported transport layers:
 * TCP Sockets
-* ... (currently under development)
+* direct call (Java to Java)
+* JNI (Java to C++)
+* ...
 
 Supported protocols:
 * Java serialization (only between Java applications)
